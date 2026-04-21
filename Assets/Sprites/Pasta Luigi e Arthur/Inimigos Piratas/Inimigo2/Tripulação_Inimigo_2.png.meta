@@ -1,0 +1,793 @@
+fileFormatVersion: 2
+guid: 818f123e43fa2a64a9a22e85af15d80c
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 5518527895650817502
+    second: "Tripula\xE7\xE3o_Inimigo_2_0"
+  - first:
+      213: 2954370288253278255
+    second: "Tripula\xE7\xE3o_Inimigo_2_1"
+  - first:
+      213: 9096454689380813277
+    second: "Tripula\xE7\xE3o_Inimigo_2_2"
+  - first:
+      213: 2685471116841464777
+    second: "Tripula\xE7\xE3o_Inimigo_2_3"
+  - first:
+      213: 4646042815355632348
+    second: "Tripula\xE7\xE3o_Inimigo_2_4"
+  - first:
+      213: -1182851071116872846
+    second: "Tripula\xE7\xE3o_Inimigo_2_5"
+  - first:
+      213: 1546818680582270429
+    second: "Tripula\xE7\xE3o_Inimigo_2_6"
+  - first:
+      213: 7690633921681791388
+    second: "Tripula\xE7\xE3o_Inimigo_2_7"
+  - first:
+      213: 2220551686342327975
+    second: "Tripula\xE7\xE3o_Inimigo_2_8"
+  - first:
+      213: 4913941493713234935
+    second: "Tripula\xE7\xE3o_Inimigo_2_9"
+  - first:
+      213: 6179035393185289828
+    second: "Tripula\xE7\xE3o_Inimigo_2_10"
+  - first:
+      213: 2554025586561201452
+    second: "Tripula\xE7\xE3o_Inimigo_2_11"
+  - first:
+      213: 6103981271176929752
+    second: "Tripula\xE7\xE3o_Inimigo_2_12"
+  - first:
+      213: 1395949702453811430
+    second: "Tripula\xE7\xE3o_Inimigo_2_13"
+  - first:
+      213: 2137784394303766181
+    second: "Tripula\xE7\xE3o_Inimigo_2_14"
+  - first:
+      213: -6308683670531171643
+    second: "Tripula\xE7\xE3o_Inimigo_2_15"
+  - first:
+      213: -5341857179722650945
+    second: "Tripula\xE7\xE3o_Inimigo_2_16"
+  - first:
+      213: 6055318856662393456
+    second: "Tripula\xE7\xE3o_Inimigo_2_17"
+  - first:
+      213: 4256166875840756036
+    second: "Tripula\xE7\xE3o_Inimigo_2_18"
+  - first:
+      213: 7506401464827019721
+    second: "Tripula\xE7\xE3o_Inimigo_2_19"
+  - first:
+      213: -3186448939391188937
+    second: "Tripula\xE7\xE3o_Inimigo_2_20"
+  - first:
+      213: -1213386416216867986
+    second: "Tripula\xE7\xE3o_Inimigo_2_21"
+  - first:
+      213: -8434316374002171304
+    second: "Tripula\xE7\xE3o_Inimigo_2_22"
+  - first:
+      213: -2805406586753817217
+    second: "Tripula\xE7\xE3o_Inimigo_2_23"
+  - first:
+      213: -5480183268472037591
+    second: "Tripula\xE7\xE3o_Inimigo_2_24"
+  - first:
+      213: 194380310611675164
+    second: "Tripula\xE7\xE3o_Inimigo_2_25"
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: "Tripula\xE7\xE3o_Inimigo_2_0"
+      rect:
+        serializedVersion: 2
+        x: 2
+        y: 127
+        width: 12
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ed5d957f1efb59c40800000000000000
+      internalID: 5518527895650817502
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Tripula\xE7\xE3o_Inimigo_2_1"
+      rect:
+        serializedVersion: 2
+        x: 19
+        y: 127
+        width: 12
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f281e4ecf18000920800000000000000
+      internalID: 2954370288253278255
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Tripula\xE7\xE3o_Inimigo_2_2"
+      rect:
+        serializedVersion: 2
+        x: 20
+        y: 111
+        width: 10
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dd9cafb48591d3e70800000000000000
+      internalID: 9096454689380813277
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Tripula\xE7\xE3o_Inimigo_2_3"
+      rect:
+        serializedVersion: 2
+        x: 33
+        y: 127
+        width: 12
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9c338e5a0c5b44520800000000000000
+      internalID: 2685471116841464777
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Tripula\xE7\xE3o_Inimigo_2_4"
+      rect:
+        serializedVersion: 2
+        x: 34
+        y: 111
+        width: 10
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cda3784235f0a7040800000000000000
+      internalID: 4646042815355632348
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Tripula\xE7\xE3o_Inimigo_2_5"
+      rect:
+        serializedVersion: 2
+        x: 50
+        y: 127
+        width: 12
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 27373e3c73ba59fe0800000000000000
+      internalID: -1182851071116872846
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Tripula\xE7\xE3o_Inimigo_2_6"
+      rect:
+        serializedVersion: 2
+        x: 50
+        y: 111
+        width: 12
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ddd6b040567677510800000000000000
+      internalID: 1546818680582270429
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Tripula\xE7\xE3o_Inimigo_2_7"
+      rect:
+        serializedVersion: 2
+        x: 66
+        y: 127
+        width: 11
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c9999671ece9aba60800000000000000
+      internalID: 7690633921681791388
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Tripula\xE7\xE3o_Inimigo_2_8"
+      rect:
+        serializedVersion: 2
+        x: 83
+        y: 127
+        width: 11
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7ae34d56efbf0de10800000000000000
+      internalID: 2220551686342327975
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Tripula\xE7\xE3o_Inimigo_2_9"
+      rect:
+        serializedVersion: 2
+        x: 99
+        y: 127
+        width: 12
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7fb64dbd0c3d13440800000000000000
+      internalID: 4913941493713234935
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Tripula\xE7\xE3o_Inimigo_2_10"
+      rect:
+        serializedVersion: 2
+        x: 100
+        y: 111
+        width: 10
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4661061c3f750c550800000000000000
+      internalID: 6179035393185289828
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Tripula\xE7\xE3o_Inimigo_2_11"
+      rect:
+        serializedVersion: 2
+        x: 113
+        y: 127
+        width: 12
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c253d3a3db8b17320800000000000000
+      internalID: 2554025586561201452
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Tripula\xE7\xE3o_Inimigo_2_12"
+      rect:
+        serializedVersion: 2
+        x: 114
+        y: 111
+        width: 10
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8d1632830a2b5b450800000000000000
+      internalID: 6103981271176929752
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Tripula\xE7\xE3o_Inimigo_2_13"
+      rect:
+        serializedVersion: 2
+        x: 2
+        y: 111
+        width: 12
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6e8521bbbd86f5310800000000000000
+      internalID: 1395949702453811430
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Tripula\xE7\xE3o_Inimigo_2_14"
+      rect:
+        serializedVersion: 2
+        x: 19
+        y: 95
+        width: 11
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5ae79d4849feaad10800000000000000
+      internalID: 2137784394303766181
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Tripula\xE7\xE3o_Inimigo_2_15"
+      rect:
+        serializedVersion: 2
+        x: 34
+        y: 95
+        width: 11
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5ca9ea160ad0378a0800000000000000
+      internalID: -6308683670531171643
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Tripula\xE7\xE3o_Inimigo_2_16"
+      rect:
+        serializedVersion: 2
+        x: 50
+        y: 95
+        width: 12
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fbae2c98239edd5b0800000000000000
+      internalID: -5341857179722650945
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Tripula\xE7\xE3o_Inimigo_2_17"
+      rect:
+        serializedVersion: 2
+        x: 66
+        y: 111
+        width: 12
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 072261dea60d80450800000000000000
+      internalID: 6055318856662393456
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Tripula\xE7\xE3o_Inimigo_2_18"
+      rect:
+        serializedVersion: 2
+        x: 67
+        y: 95
+        width: 10
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 449b5433931f01b30800000000000000
+      internalID: 4256166875840756036
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Tripula\xE7\xE3o_Inimigo_2_19"
+      rect:
+        serializedVersion: 2
+        x: 82
+        y: 111
+        width: 12
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9c18c749c581c2860800000000000000
+      internalID: 7506401464827019721
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Tripula\xE7\xE3o_Inimigo_2_20"
+      rect:
+        serializedVersion: 2
+        x: 83
+        y: 95
+        width: 10
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7300ba8729577c3d0800000000000000
+      internalID: -3186448939391188937
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Tripula\xE7\xE3o_Inimigo_2_21"
+      rect:
+        serializedVersion: 2
+        x: 2
+        y: 95
+        width: 12
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e6bfb16bb7f292fe0800000000000000
+      internalID: -1213386416216867986
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Tripula\xE7\xE3o_Inimigo_2_22"
+      rect:
+        serializedVersion: 2
+        x: 101
+        y: 95
+        width: 9
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 852075cd1f943fa80800000000000000
+      internalID: -8434316374002171304
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Tripula\xE7\xE3o_Inimigo_2_23"
+      rect:
+        serializedVersion: 2
+        x: 114
+        y: 95
+        width: 10
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f756ff1b2913119d0800000000000000
+      internalID: -2805406586753817217
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Tripula\xE7\xE3o_Inimigo_2_24"
+      rect:
+        serializedVersion: 2
+        x: 67
+        y: 79
+        width: 10
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 92f5fa24a5a72f3b0800000000000000
+      internalID: -5480183268472037591
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Tripula\xE7\xE3o_Inimigo_2_25"
+      rect:
+        serializedVersion: 2
+        x: 84
+        y: 79
+        width: 9
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c18c655dcd392b200800000000000000
+      internalID: 194380310611675164
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      "Tripula\xE7\xE3o_Inimigo_2_0": 5518527895650817502
+      "Tripula\xE7\xE3o_Inimigo_2_1": 2954370288253278255
+      "Tripula\xE7\xE3o_Inimigo_2_10": 6179035393185289828
+      "Tripula\xE7\xE3o_Inimigo_2_11": 2554025586561201452
+      "Tripula\xE7\xE3o_Inimigo_2_12": 6103981271176929752
+      "Tripula\xE7\xE3o_Inimigo_2_13": 1395949702453811430
+      "Tripula\xE7\xE3o_Inimigo_2_14": 2137784394303766181
+      "Tripula\xE7\xE3o_Inimigo_2_15": -6308683670531171643
+      "Tripula\xE7\xE3o_Inimigo_2_16": -5341857179722650945
+      "Tripula\xE7\xE3o_Inimigo_2_17": 6055318856662393456
+      "Tripula\xE7\xE3o_Inimigo_2_18": 4256166875840756036
+      "Tripula\xE7\xE3o_Inimigo_2_19": 7506401464827019721
+      "Tripula\xE7\xE3o_Inimigo_2_2": 9096454689380813277
+      "Tripula\xE7\xE3o_Inimigo_2_20": -3186448939391188937
+      "Tripula\xE7\xE3o_Inimigo_2_21": -1213386416216867986
+      "Tripula\xE7\xE3o_Inimigo_2_22": -8434316374002171304
+      "Tripula\xE7\xE3o_Inimigo_2_23": -2805406586753817217
+      "Tripula\xE7\xE3o_Inimigo_2_24": -5480183268472037591
+      "Tripula\xE7\xE3o_Inimigo_2_25": 194380310611675164
+      "Tripula\xE7\xE3o_Inimigo_2_3": 2685471116841464777
+      "Tripula\xE7\xE3o_Inimigo_2_4": 4646042815355632348
+      "Tripula\xE7\xE3o_Inimigo_2_5": -1182851071116872846
+      "Tripula\xE7\xE3o_Inimigo_2_6": 1546818680582270429
+      "Tripula\xE7\xE3o_Inimigo_2_7": 7690633921681791388
+      "Tripula\xE7\xE3o_Inimigo_2_8": 2220551686342327975
+      "Tripula\xE7\xE3o_Inimigo_2_9": 4913941493713234935
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

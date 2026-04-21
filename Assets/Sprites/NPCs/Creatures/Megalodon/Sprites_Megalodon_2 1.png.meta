@@ -1,0 +1,475 @@
+fileFormatVersion: 2
+guid: 31a5ddca9cb14354cbd9d722c6ea2e2b
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 351613987630161717
+    second: Sprites_Megalodon_2_0
+  - first:
+      213: -9140254951276404543
+    second: Sprites_Megalodon_2_1
+  - first:
+      213: 6225596677194597251
+    second: Sprites_Megalodon_2_2
+  - first:
+      213: -6339663482008091744
+    second: Sprites_Megalodon_2_3
+  - first:
+      213: 6182048678828809176
+    second: Sprites_Megalodon_2_4
+  - first:
+      213: 6274664891637310138
+    second: Sprites_Megalodon_2_5
+  - first:
+      213: 870909443008513378
+    second: Sprites_Megalodon_2_6
+  - first:
+      213: -3558410620557197139
+    second: Sprites_Megalodon_2_7
+  - first:
+      213: -8653023143142040141
+    second: Sprites_Megalodon_2_8
+  - first:
+      213: 9082024206815888294
+    second: Sprites_Megalodon_2_9
+  - first:
+      213: -5677367859202562204
+    second: Sprites_Megalodon_2_10
+  - first:
+      213: -5700502737490320448
+    second: Sprites_Megalodon_2_11
+  - first:
+      213: -4432388109411191207
+    second: Sprites_Megalodon_2_12
+  - first:
+      213: -7993314909548935659
+    second: Sprites_Megalodon_2_13
+  - first:
+      213: 2569870407235929463
+    second: Sprites_Megalodon_2_14
+  - first:
+      213: 3513950081988792218
+    second: Sprites_Megalodon_2_15
+  - first:
+      213: 5810624069147875109
+    second: Sprites_Megalodon_2_16
+  - first:
+      213: -4899482684213288084
+    second: Sprites_Megalodon_2_17
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: Sprites_Megalodon_2_0
+      rect:
+        serializedVersion: 2
+        x: 127
+        y: 120
+        width: 33
+        height: 15
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 53f11ce0f0f21e400800000000000000
+      internalID: 351613987630161717
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Sprites_Megalodon_2_1
+      rect:
+        serializedVersion: 2
+        x: 95
+        y: 120
+        width: 34
+        height: 15
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1c02aa88c8a472180800000000000000
+      internalID: -9140254951276404543
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Sprites_Megalodon_2_2
+      rect:
+        serializedVersion: 2
+        x: 63
+        y: 120
+        width: 34
+        height: 15
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 383490b7133c56650800000000000000
+      internalID: 6225596677194597251
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Sprites_Megalodon_2_3
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 88
+        width: 33
+        height: 15
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0a3446fe6adf408a0800000000000000
+      internalID: -6339663482008091744
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Sprites_Megalodon_2_4
+      rect:
+        serializedVersion: 2
+        x: 96
+        y: 88
+        width: 33
+        height: 14
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8db93cdf48c0bc550800000000000000
+      internalID: 6182048678828809176
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Sprites_Megalodon_2_5
+      rect:
+        serializedVersion: 2
+        x: 63
+        y: 88
+        width: 34
+        height: 15
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ab228ae6976141750800000000000000
+      internalID: 6274664891637310138
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Sprites_Megalodon_2_6
+      rect:
+        serializedVersion: 2
+        x: 31
+        y: 88
+        width: 34
+        height: 15
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 1, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2654e0e2687161c00800000000000000
+      internalID: 870909443008513378
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Sprites_Megalodon_2_7
+      rect:
+        serializedVersion: 2
+        x: 127
+        y: 87
+        width: 33
+        height: 16
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: da006b4d46cfd9ec0800000000000000
+      internalID: -3558410620557197139
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Sprites_Megalodon_2_13
+      rect:
+        serializedVersion: 2
+        x: 136
+        y: 16
+        width: 24
+        height: 24
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 516808ea07a021190800000000000000
+      internalID: -7993314909548935659
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Sprites_Megalodon_2_14
+      rect:
+        serializedVersion: 2
+        x: 98
+        y: 16
+        width: 28
+        height: 24
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 775061605830aa320800000000000000
+      internalID: 2569870407235929463
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Sprites_Megalodon_2_15
+      rect:
+        serializedVersion: 2
+        x: 63
+        y: 18
+        width: 30
+        height: 21
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a9f856b5bfe04c030800000000000000
+      internalID: 3513950081988792218
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Sprites_Megalodon_2_16
+      rect:
+        serializedVersion: 2
+        x: 33
+        y: 21
+        width: 30
+        height: 18
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 527d4ec0ecb73a050800000000000000
+      internalID: 5810624069147875109
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Sprites_Megalodon_2_17
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 22
+        width: 29
+        height: 17
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c632a40157a810cb0800000000000000
+      internalID: -4899482684213288084
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: de6fbaeedcffaa441a2f08484b7fcc3f
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      Sprites_Megalodon_2_0: 351613987630161717
+      Sprites_Megalodon_2_1: -9140254951276404543
+      Sprites_Megalodon_2_10: -5677367859202562204
+      Sprites_Megalodon_2_11: -5700502737490320448
+      Sprites_Megalodon_2_12: -4432388109411191207
+      Sprites_Megalodon_2_13: -7993314909548935659
+      Sprites_Megalodon_2_14: 2569870407235929463
+      Sprites_Megalodon_2_15: 3513950081988792218
+      Sprites_Megalodon_2_16: 5810624069147875109
+      Sprites_Megalodon_2_17: -4899482684213288084
+      Sprites_Megalodon_2_2: 6225596677194597251
+      Sprites_Megalodon_2_3: -6339663482008091744
+      Sprites_Megalodon_2_4: 6182048678828809176
+      Sprites_Megalodon_2_5: 6274664891637310138
+      Sprites_Megalodon_2_6: 870909443008513378
+      Sprites_Megalodon_2_7: -3558410620557197139
+      Sprites_Megalodon_2_8: -8653023143142040141
+      Sprites_Megalodon_2_9: 9082024206815888294
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

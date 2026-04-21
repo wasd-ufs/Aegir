@@ -1,0 +1,299 @@
+fileFormatVersion: 2
+guid: 307193ad29ed5cf43ac0e6a37d5c521e
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -1073891284429726797
+    second: Sprites_Megalodon_2 - Copia (3)_0
+  - first:
+      213: 2646835927172064296
+    second: Sprites_Megalodon_2 - Copia (3)_1
+  - first:
+      213: -2441203985071023325
+    second: Sprites_Megalodon_2 - Copia (3)_2
+  - first:
+      213: 1502545998246921958
+    second: Sprites_Megalodon_2 - Copia (3)_3
+  - first:
+      213: -3134855135358626633
+    second: Sprites_Megalodon_2 - Copia (3)_4
+  - first:
+      213: -5474792017955111847
+    second: Sprites_Megalodon_2 - Copia (3)_5
+  - first:
+      213: 1970549653033088850
+    second: Sprites_Megalodon_2 - Copia (3)_6
+  - first:
+      213: 8646279401854893799
+    second: Sprites_Megalodon_2 - Copia (3)_7
+  - first:
+      213: 6136423287187339161
+    second: Sprites_Megalodon_2 - Copia (3)_8
+  - first:
+      213: -8680865818206272291
+    second: Sprites_Megalodon_2 - Copia (3)_9
+  - first:
+      213: 6504571642983000892
+    second: Sprites_Megalodon_2 - Copia (3)_10
+  - first:
+      213: 4649083718680733916
+    second: Sprites_Megalodon_2 - Copia (3)_11
+  - first:
+      213: 3974504031860278090
+    second: Sprites_Megalodon_2 - Copia (3)_12
+  - first:
+      213: -9103005120428340179
+    second: Sprites_Megalodon_2 - Copia (3)_13
+  - first:
+      213: 469725111341296024
+    second: Sprites_Megalodon_2 - Copia (3)_14
+  - first:
+      213: 8610934739142689355
+    second: Sprites_Megalodon_2 - Copia (3)_15
+  - first:
+      213: -8755460631001489832
+    second: Sprites_Megalodon_2 - Copia (3)_16
+  - first:
+      213: -4550122800454337993
+    second: Sprites_Megalodon_2 - Copia (3)_17
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: Sprites_Megalodon_2 - Copia (3)_2
+      rect:
+        serializedVersion: 2
+        x: 105
+        y: 131
+        width: 17
+        height: 29
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 32bd29dd8e91f1ed0800000000000000
+      internalID: -2441203985071023325
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Sprites_Megalodon_2 - Copia (3)_5
+      rect:
+        serializedVersion: 2
+        x: 105
+        y: 99
+        width: 18
+        height: 30
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 95c34a69aa1a504b0800000000000000
+      internalID: -5474792017955111847
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Sprites_Megalodon_2 - Copia (3)_9
+      rect:
+        serializedVersion: 2
+        x: 105
+        y: 67
+        width: 21
+        height: 30
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dd40cf2188e578780800000000000000
+      internalID: -8680865818206272291
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Sprites_Megalodon_2 - Copia (3)_13
+      rect:
+        serializedVersion: 2
+        x: 105
+        y: 34
+        width: 24
+        height: 28
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d2c8e40a211aba180800000000000000
+      internalID: -9103005120428340179
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Sprites_Megalodon_2 - Copia (3)_17
+      rect:
+        serializedVersion: 2
+        x: 105
+        y: 2
+        width: 24
+        height: 24
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 73a738aab67bad0c0800000000000000
+      internalID: -4550122800454337993
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 2a331d8f266fe4047b238339d43bb7a9
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      Sprites_Megalodon_2 - Copia (3)_0: -1073891284429726797
+      Sprites_Megalodon_2 - Copia (3)_1: 2646835927172064296
+      Sprites_Megalodon_2 - Copia (3)_10: 6504571642983000892
+      Sprites_Megalodon_2 - Copia (3)_11: 4649083718680733916
+      Sprites_Megalodon_2 - Copia (3)_12: 3974504031860278090
+      Sprites_Megalodon_2 - Copia (3)_13: -9103005120428340179
+      Sprites_Megalodon_2 - Copia (3)_14: 469725111341296024
+      Sprites_Megalodon_2 - Copia (3)_15: 8610934739142689355
+      Sprites_Megalodon_2 - Copia (3)_16: -8755460631001489832
+      Sprites_Megalodon_2 - Copia (3)_17: -4550122800454337993
+      Sprites_Megalodon_2 - Copia (3)_2: -2441203985071023325
+      Sprites_Megalodon_2 - Copia (3)_3: 1502545998246921958
+      Sprites_Megalodon_2 - Copia (3)_4: -3134855135358626633
+      Sprites_Megalodon_2 - Copia (3)_5: -5474792017955111847
+      Sprites_Megalodon_2 - Copia (3)_6: 1970549653033088850
+      Sprites_Megalodon_2 - Copia (3)_7: 8646279401854893799
+      Sprites_Megalodon_2 - Copia (3)_8: 6136423287187339161
+      Sprites_Megalodon_2 - Copia (3)_9: -8680865818206272291
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

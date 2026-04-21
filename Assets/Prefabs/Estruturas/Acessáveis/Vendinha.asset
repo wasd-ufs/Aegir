@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6431e4df66678924180ab026ce2d9ff0, type: 3}
+  m_Name: Vendinha
+  m_EditorClassIdentifier: Assembly-CSharp::StructureData
+  structureName: Vendinha
+  structureDimensions: {x: 8, y: 8}
+  structurePrefab: {fileID: 4540174133025460802, guid: 645a1d9fe47d31844878a80d0c92e622, type: 3}
+  spawnChance: 0.3
+  validBaseLayers: 020000000300000004000000
+  raioDeIsolamento: 5
+  layerOverrides: []
