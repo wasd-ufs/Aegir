@@ -1,0 +1,44 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &1
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a5e6fedc2472449cead18ef23b5cb30d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.2D.Animation.Runtime::UnityEngine.U2D.Animation.SpriteLibrarySourceAsset
+  m_Library:
+  - m_Name: Up
+    m_Hash: 370199250
+    m_CategoryList: []
+    m_OverrideEntries:
+    - m_Name: navio inimigo2_sprite_3
+      m_Hash: 373492755
+      m_Sprite: {fileID: -4973401346865013824, guid: 8551ba396e2089a4da54bd262c1ed4da, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: -4973401346865013824, guid: 8551ba396e2089a4da54bd262c1ed4da, type: 3}
+    - m_Name: navio inimigo2_sprite_3_0
+      m_Hash: 846870578
+      m_Sprite: {fileID: 4417354360995719495, guid: 64b4a7217f9d4ef4a89d783c8b5b3841, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: 4417354360995719495, guid: 64b4a7217f9d4ef4a89d783c8b5b3841, type: 3}
+    - m_Name: GamebordaFiltro3_0
+      m_Hash: 942217885
+      m_Sprite: {fileID: -4317844271388982521, guid: 26530cd478dbf4245aca25f4e42af9ed, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: -4317844271388982521, guid: 26530cd478dbf4245aca25f4e42af9ed, type: 3}
+    - m_Name: GamebordaFiltro4_0
+      m_Hash: 1030097944
+      m_Sprite: {fileID: -6550236174804595555, guid: 37c471e4fbfc9a04ebc34200d154df18, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: -6550236174804595555, guid: 37c471e4fbfc9a04ebc34200d154df18, type: 3}
+    m_FromMain: 0
+    m_EntryOverrideCount: 4
+  m_PrimaryLibraryGUID: 
+  m_ModificationHash: 639087878433492966
+  m_Version: 1

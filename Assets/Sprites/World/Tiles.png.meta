@@ -1,0 +1,1384 @@
+fileFormatVersion: 2
+guid: f9e7c3dc32ba5a647bc0bd3163bbdc9b
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 4233334240812917329
+    second: Ground_Sprite_0
+  - first:
+      213: 6914792317610424611
+    second: Ground_Sprite_1
+  - first:
+      213: 2640431084354437435
+    second: Ground_Sprite_2
+  - first:
+      213: -2619106252476608725
+    second: Ground_Sprite_3
+  - first:
+      213: 7068382006210554302
+    second: Ground_Sprite_4
+  - first:
+      213: 7607260665593264412
+    second: Ground_Sprite_5
+  - first:
+      213: 3427306745214464076
+    second: Ground_Sprite_6
+  - first:
+      213: 3542436521195294395
+    second: Ground_Sprite_7
+  - first:
+      213: 6208846978902692890
+    second: Ground_Sprite_8
+  - first:
+      213: -60300588693796388
+    second: Ground_Sprite_9
+  - first:
+      213: 2200055926369198620
+    second: Ground_Sprite_10
+  - first:
+      213: 6095341465111279042
+    second: Ground_Sprite_11
+  - first:
+      213: -3539089424760063601
+    second: Ground_Sprite_12
+  - first:
+      213: -1138351798926021318
+    second: Ground_Sprite_13
+  - first:
+      213: -956851181563552294
+    second: Ground_Sprite_14
+  - first:
+      213: 1176504744233455503
+    second: Ground_Sprite_15
+  - first:
+      213: 6073838581822154676
+    second: Ground_Sprite_16
+  - first:
+      213: 207638435987448069
+    second: Ground_Sprite_17
+  - first:
+      213: 7397455797046593480
+    second: Ground_Sprite_18
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 2
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 25
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: AA Interna NO
+      rect:
+        serializedVersion: 2
+        x: 1
+        y: 125
+        width: 18
+        height: 18
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 152e6271013dfba30800000000000000
+      internalID: 4233334240812917329
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AA Interna NE
+      rect:
+        serializedVersion: 2
+        x: 21
+        y: 125
+        width: 18
+        height: 18
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 329f4ca0af646ff50800000000000000
+      internalID: 6914792317610424611
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AA Costa S
+      rect:
+        serializedVersion: 2
+        x: 41
+        y: 125
+        width: 18
+        height: 18
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b3188d4e412b4a420800000000000000
+      internalID: 2640431084354437435
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AA Costa N
+      rect:
+        serializedVersion: 2
+        x: 61
+        y: 125
+        width: 18
+        height: 18
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b2f80207db017abd0800000000000000
+      internalID: -2619106252476608725
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AA Quina SE
+      rect:
+        serializedVersion: 2
+        x: 81
+        y: 125
+        width: 18
+        height: 18
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: eb961f81cffe71260800000000000000
+      internalID: 7068382006210554302
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AA Quina SO
+      rect:
+        serializedVersion: 2
+        x: 101
+        y: 125
+        width: 18
+        height: 18
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c19fc76354b629960800000000000000
+      internalID: 7607260665593264412
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Agua
+      rect:
+        serializedVersion: 2
+        x: 121
+        y: 125
+        width: 18
+        height: 18
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c40fecc735d309f20800000000000000
+      internalID: 3427306745214464076
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AA Interna SO
+      rect:
+        serializedVersion: 2
+        x: 1
+        y: 105
+        width: 18
+        height: 18
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bbe47355f33492130800000000000000
+      internalID: 3542436521195294395
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AA Interna SE
+      rect:
+        serializedVersion: 2
+        x: 21
+        y: 105
+        width: 18
+        height: 18
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a1490427e614a2650800000000000000
+      internalID: 6208846978902692890
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AA Costa L
+      rect:
+        serializedVersion: 2
+        x: 41
+        y: 105
+        width: 18
+        height: 18
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cd9c82f1fe4c92ff0800000000000000
+      internalID: -60300588693796388
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AA Costa O
+      rect:
+        serializedVersion: 2
+        x: 61
+        y: 105
+        width: 18
+        height: 18
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c12aa39653b288e10800000000000000
+      internalID: 2200055926369198620
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AA Interna SO 1
+      rect:
+        serializedVersion: 2
+        x: 1
+        y: 65
+        width: 18
+        height: 18
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2c5baac94c0079450800000000000000
+      internalID: 6095341465111279042
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AA Interna SE 1
+      rect:
+        serializedVersion: 2
+        x: 21
+        y: 65
+        width: 18
+        height: 18
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f89b5d84be0a2eec0800000000000000
+      internalID: -3539089424760063601
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AA Costa L 1
+      rect:
+        serializedVersion: 2
+        x: 41
+        y: 65
+        width: 18
+        height: 18
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a3d6693f113c330f0800000000000000
+      internalID: -1138351798926021318
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AA Costa O 1
+      rect:
+        serializedVersion: 2
+        x: 61
+        y: 65
+        width: 18
+        height: 18
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: addddf38be498b2f0800000000000000
+      internalID: -956851181563552294
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AA Quina NE 1
+      rect:
+        serializedVersion: 2
+        x: 81
+        y: 65
+        width: 18
+        height: 18
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f8fc89cd4d8c35010800000000000000
+      internalID: 1176504744233455503
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AA Quina NO 1
+      rect:
+        serializedVersion: 2
+        x: 101
+        y: 65
+        width: 18
+        height: 18
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4b76294720c9a4450800000000000000
+      internalID: 6073838581822154676
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Agua 3
+      rect:
+        serializedVersion: 2
+        x: 121
+        y: 65
+        width: 18
+        height: 18
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 501efb2be0ea1e200800000000000000
+      internalID: 207638435987448069
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Terra 2
+      rect:
+        serializedVersion: 2
+        x: 141
+        y: 45
+        width: 18
+        height: 18
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8c7cd90aada09a660800000000000000
+      internalID: 7397455797046593480
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AA Quina NE
+      rect:
+        serializedVersion: 2
+        x: 81
+        y: 105
+        width: 18
+        height: 18
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: fc8c87a2735924d4bac5022c42883f62
+      internalID: -62857369
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AA Quina NO
+      rect:
+        serializedVersion: 2
+        x: 101
+        y: 105
+        width: 18
+        height: 18
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 45ba8c8835708c042ab9fa1f435af229
+      internalID: -906224959
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Agua 1
+      rect:
+        serializedVersion: 2
+        x: 121
+        y: 105
+        width: 18
+        height: 18
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: be2f17750b912894c9509ed544c0162a
+      internalID: -330804281
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AA Interna NO 1
+      rect:
+        serializedVersion: 2
+        x: 1
+        y: 85
+        width: 18
+        height: 18
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ad39cb435ce7b934a87d926f24b23b8f
+      internalID: 1315697839
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AA Interna NE 1
+      rect:
+        serializedVersion: 2
+        x: 21
+        y: 85
+        width: 18
+        height: 18
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ebc391bbbc9ca3644967018805a71810
+      internalID: 218530601
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AA Costa S 1
+      rect:
+        serializedVersion: 2
+        x: 41
+        y: 85
+        width: 18
+        height: 18
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e81eabae8671d0041904c4cac362abaf
+      internalID: 1407883223
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AA Costa N 1
+      rect:
+        serializedVersion: 2
+        x: 61
+        y: 85
+        width: 18
+        height: 18
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 006d556d2f76ca74986ad5a384da4ab3
+      internalID: -1622586065
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AA Quina SE 1
+      rect:
+        serializedVersion: 2
+        x: 81
+        y: 85
+        width: 18
+        height: 18
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c776cdcf369447c49b4ef6e80979c4ee
+      internalID: 802872834
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AA Quina SO 1
+      rect:
+        serializedVersion: 2
+        x: 101
+        y: 85
+        width: 18
+        height: 18
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 779088f412cb61140a764ff98d4457df
+      internalID: 1622339266
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Agua 2
+      rect:
+        serializedVersion: 2
+        x: 121
+        y: 85
+        width: 18
+        height: 18
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c7c2d667b37b7fb46be1addfb8b588fc
+      internalID: -2075625454
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Terra 1
+      rect:
+        serializedVersion: 2
+        x: 121
+        y: 45
+        width: 18
+        height: 18
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 89edd17bf31155f40973c8f8998cbe37
+      internalID: -1517223850
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AT Quina SO
+      rect:
+        serializedVersion: 2
+        x: 101
+        y: 45
+        width: 18
+        height: 18
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5e2727c6fac3f484497dddeb0e40cae6
+      internalID: 79238618
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AT Quina SE
+      rect:
+        serializedVersion: 2
+        x: 81
+        y: 45
+        width: 18
+        height: 18
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e23492e4631e72649931ab64ad3b6621
+      internalID: 1950669951
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AT Costa O
+      rect:
+        serializedVersion: 2
+        x: 61
+        y: 45
+        width: 18
+        height: 18
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 949d3defa55b3b5488f951d7b758bfca
+      internalID: 321069140
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AT Costa L
+      rect:
+        serializedVersion: 2
+        x: 41
+        y: 45
+        width: 18
+        height: 18
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 063a838f8f855d84ca68eda4d7066236
+      internalID: -1398552583
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Areia 3
+      rect:
+        serializedVersion: 2
+        x: 141
+        y: 65
+        width: 18
+        height: 18
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: efe8bcd8f4c8f0b46b6244e3b27ae069
+      internalID: -786572052
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Areia 1
+      rect:
+        serializedVersion: 2
+        x: 141
+        y: 105
+        width: 18
+        height: 18
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1f33ddd605ed05340ad3a7893728e36c
+      internalID: 122622438
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Areia
+      rect:
+        serializedVersion: 2
+        x: 141
+        y: 125
+        width: 18
+        height: 18
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 41c1328263fbecc459e498c661f94b53
+      internalID: -1538393083
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Areia 2
+      rect:
+        serializedVersion: 2
+        x: 141
+        y: 85
+        width: 18
+        height: 18
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 008e3d9624677634198116afdd557df5
+      internalID: -2093061358
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AT Costa N
+      rect:
+        serializedVersion: 2
+        x: 41
+        y: 25
+        width: 18
+        height: 18
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1cccba607d955d0498109383064fba2a
+      internalID: 1233537663
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AT Costa S
+      rect:
+        serializedVersion: 2
+        x: 61
+        y: 25
+        width: 18
+        height: 18
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 74e3c73c1e98b524590c1f2ff6d27ad2
+      internalID: -856890092
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AT Quina NE
+      rect:
+        serializedVersion: 2
+        x: 81
+        y: 25
+        width: 18
+        height: 18
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c4f266f17f2d0294dab32fe2270236b7
+      internalID: 934860392
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AT Quina NO
+      rect:
+        serializedVersion: 2
+        x: 101
+        y: 25
+        width: 18
+        height: 18
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: dd3df031b5455564687bfa655e011b72
+      internalID: -387261911
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Terra 3
+      rect:
+        serializedVersion: 2
+        x: 121
+        y: 25
+        width: 18
+        height: 18
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6be64faae1fa0fe48a15447766cd9440
+      internalID: -1827520242
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Terra 4
+      rect:
+        serializedVersion: 2
+        x: 141
+        y: 25
+        width: 18
+        height: 18
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6f7525f194de5664d8ebaebc54572293
+      internalID: -179024309
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Areia 4
+      rect:
+        serializedVersion: 2
+        x: 21
+        y: 5
+        width: 18
+        height: 18
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a9b1db44775355a47bb6cac7840a6118
+      internalID: -1081544426
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Terra
+      rect:
+        serializedVersion: 2
+        x: 1
+        y: 5
+        width: 18
+        height: 18
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 91c378932e472944b988af0b548450da
+      internalID: 508493093
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AT Interna NO
+      rect:
+        serializedVersion: 2
+        x: 41
+        y: 5
+        width: 18
+        height: 18
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 644f1d20cb5065c4095f61fcac768114
+      internalID: 95121560
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AT Interna NE
+      rect:
+        serializedVersion: 2
+        x: 61
+        y: 5
+        width: 18
+        height: 18
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f4d375b2016fef9478949f3a8fe01247
+      internalID: 1133779016
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AT Interna SO
+      rect:
+        serializedVersion: 2
+        x: 81
+        y: 5
+        width: 18
+        height: 18
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b68a3dbaed62b2c4b997accc937e8b71
+      internalID: 1519125015
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AT Interna SE
+      rect:
+        serializedVersion: 2
+        x: 101
+        y: 5
+        width: 18
+        height: 18
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5d345f1694e76dd4dac0a8911d7de1d2
+      internalID: -42603328
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Terra 5
+      rect:
+        serializedVersion: 2
+        x: 121
+        y: 5
+        width: 18
+        height: 18
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 669a8205f8a27584c8212b8b14c19375
+      internalID: 1227387756
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Terra 6
+      rect:
+        serializedVersion: 2
+        x: 141
+        y: 5
+        width: 18
+        height: 18
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 248eae5cb168e0142ab43666396c15cd
+      internalID: -1229758032
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: a80ca6664ebfeac4ab352bf4dd4d4e40
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      AA Costa L: -60300588693796388
+      AA Costa L 1: -1138351798926021318
+      AA Costa N: -2619106252476608725
+      AA Costa N 1: -1622586065
+      AA Costa O: 2200055926369198620
+      AA Costa O 1: -956851181563552294
+      AA Costa S: 2640431084354437435
+      AA Costa S 1: 1407883223
+      AA Interna NE: 6914792317610424611
+      AA Interna NE 1: 218530601
+      AA Interna NO: 4233334240812917329
+      AA Interna NO 1: 1315697839
+      AA Interna SE: 6208846978902692890
+      AA Interna SE 1: -3539089424760063601
+      AA Interna SO: 3542436521195294395
+      AA Interna SO 1: 6095341465111279042
+      AA Quina NE: -62857369
+      AA Quina NE 1: 1176504744233455503
+      AA Quina NO: -906224959
+      AA Quina NO 1: 6073838581822154676
+      AA Quina SE: 7068382006210554302
+      AA Quina SE 1: 802872834
+      AA Quina SO: 7607260665593264412
+      AA Quina SO 1: 1622339266
+      AT Costa L: -1398552583
+      AT Costa N: 1233537663
+      AT Costa O: 321069140
+      AT Costa S: -856890092
+      AT Interna NE: 1133779016
+      AT Interna NO: 95121560
+      AT Interna SE: -42603328
+      AT Interna SO: 1519125015
+      AT Quina NE: 934860392
+      AT Quina NO: -387261911
+      AT Quina SE: 1950669951
+      AT Quina SO: 79238618
+      Agua: 3427306745214464076
+      Agua 1: -330804281
+      Agua 2: -2075625454
+      Agua 3: 207638435987448069
+      Areia: -1538393083
+      Areia 1: 122622438
+      Areia 2: -2093061358
+      Areia 3: -786572052
+      Areia 4: -1081544426
+      Ground_Sprite_53: -1129181428
+      Terra: 508493093
+      Terra 1: -1517223850
+      Terra 2: 7397455797046593480
+      Terra 3: -1827520242
+      Terra 4: -179024309
+      Terra 5: 1227387756
+      Terra 6: -1229758032
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

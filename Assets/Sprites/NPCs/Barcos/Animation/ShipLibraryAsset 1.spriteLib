@@ -1,0 +1,146 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &1
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a5e6fedc2472449cead18ef23b5cb30d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.2D.Animation.Runtime::UnityEngine.U2D.Animation.SpriteLibrarySourceAsset
+  m_Library:
+  - m_Name: Up
+    m_Hash: 370199250
+    m_CategoryList: []
+    m_OverrideEntries:
+    - m_Name: navio inimigo2_sprite_3
+      m_Hash: 373492755
+      m_Sprite: {fileID: 6275679993955694656, guid: e6bef177fec2aef44b0b3f3ba18fe11f, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: 6275679993955694656, guid: e6bef177fec2aef44b0b3f3ba18fe11f, type: 3}
+    - m_Name: navio inimigo2_sprite_3_0
+      m_Hash: 846870578
+      m_Sprite: {fileID: 6275679993955694656, guid: d473cd315074d874faf8f4e5e71c4b80, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: 6275679993955694656, guid: d473cd315074d874faf8f4e5e71c4b80, type: 3}
+    m_FromMain: 0
+    m_EntryOverrideCount: 2
+  - m_Name: Down
+    m_Hash: 1020083973
+    m_CategoryList: []
+    m_OverrideEntries:
+    - m_Name: navio inimigo2_sprite_4
+      m_Hash: 136812976
+      m_Sprite: {fileID: 6678089796542125466, guid: e6bef177fec2aef44b0b3f3ba18fe11f, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: 6678089796542125466, guid: e6bef177fec2aef44b0b3f3ba18fe11f, type: 3}
+    - m_Name: navio inimigo2_sprite_4_0
+      m_Hash: 926232247
+      m_Sprite: {fileID: 6678089796542125466, guid: d473cd315074d874faf8f4e5e71c4b80, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: 6678089796542125466, guid: d473cd315074d874faf8f4e5e71c4b80, type: 3}
+    m_FromMain: 0
+    m_EntryOverrideCount: 2
+  - m_Name: Left
+    m_Hash: 441796694
+    m_CategoryList: []
+    m_OverrideEntries:
+    - m_Name: navio inimigo2_sprite_0
+      m_Hash: 256531881
+      m_Sprite: {fileID: -5200276363723793080, guid: e6bef177fec2aef44b0b3f3ba18fe11f, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: -5200276363723793080, guid: e6bef177fec2aef44b0b3f3ba18fe11f, type: 3}
+    - m_Name: navio inimigo2_sprite_0_0
+      m_Hash: 809272939
+      m_Sprite: {fileID: -5200276363723793080, guid: d473cd315074d874faf8f4e5e71c4b80, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: -5200276363723793080, guid: d473cd315074d874faf8f4e5e71c4b80, type: 3}
+    m_FromMain: 0
+    m_EntryOverrideCount: 2
+  - m_Name: Right
+    m_Hash: 889936400
+    m_CategoryList: []
+    m_OverrideEntries:
+    - m_Name: navio inimigo2_sprite_7
+      m_Hash: 288278538
+      m_Sprite: {fileID: -2106182968, guid: e6bef177fec2aef44b0b3f3ba18fe11f, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: -2106182968, guid: e6bef177fec2aef44b0b3f3ba18fe11f, type: 3}
+    - m_Name: navio inimigo2_sprite_7_0
+      m_Hash: 896766190
+      m_Sprite: {fileID: -2106182968, guid: d473cd315074d874faf8f4e5e71c4b80, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: -2106182968, guid: d473cd315074d874faf8f4e5e71c4b80, type: 3}
+    m_FromMain: 0
+    m_EntryOverrideCount: 2
+  - m_Name: NE
+    m_Hash: 697681259
+    m_CategoryList: []
+    m_OverrideEntries:
+    - m_Name: navio inimigo2_sprite_2
+      m_Hash: 558120069
+      m_Sprite: {fileID: 2160360949802902592, guid: e6bef177fec2aef44b0b3f3ba18fe11f, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: 2160360949802902592, guid: e6bef177fec2aef44b0b3f3ba18fe11f, type: 3}
+    - m_Name: navio inimigo2_sprite_2_0
+      m_Hash: 867717637
+      m_Sprite: {fileID: 2160360949802902592, guid: d473cd315074d874faf8f4e5e71c4b80, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: 2160360949802902592, guid: d473cd315074d874faf8f4e5e71c4b80, type: 3}
+    m_FromMain: 0
+    m_EntryOverrideCount: 2
+  - m_Name: NO
+    m_Hash: 155200629
+    m_CategoryList: []
+    m_OverrideEntries:
+    - m_Name: navio inimigo2_sprite_1
+      m_Hash: 944598335
+      m_Sprite: {fileID: -7138107186685749764, guid: e6bef177fec2aef44b0b3f3ba18fe11f, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: -7138107186685749764, guid: e6bef177fec2aef44b0b3f3ba18fe11f, type: 3}
+    - m_Name: navio inimigo2_sprite_1_0
+      m_Hash: 838790236
+      m_Sprite: {fileID: -7138107186685749764, guid: d473cd315074d874faf8f4e5e71c4b80, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: -7138107186685749764, guid: d473cd315074d874faf8f4e5e71c4b80, type: 3}
+    m_FromMain: 0
+    m_EntryOverrideCount: 2
+  - m_Name: SE
+    m_Hash: 385460599
+    m_CategoryList: []
+    m_OverrideEntries:
+    - m_Name: navio inimigo2_sprite_5
+      m_Hash: 1059105062
+      m_Sprite: {fileID: -553630165974094782, guid: e6bef177fec2aef44b0b3f3ba18fe11f, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: -553630165974094782, guid: e6bef177fec2aef44b0b3f3ba18fe11f, type: 3}
+    - m_Name: navio inimigo2_sprite_5_0
+      m_Hash: 922174592
+      m_Sprite: {fileID: -553630165974094782, guid: d473cd315074d874faf8f4e5e71c4b80, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: -553630165974094782, guid: d473cd315074d874faf8f4e5e71c4b80, type: 3}
+    m_FromMain: 0
+    m_EntryOverrideCount: 2
+  - m_Name: SO
+    m_Hash: 908869737
+    m_CategoryList: []
+    m_OverrideEntries:
+    - m_Name: navio inimigo2_sprite_6
+      m_Hash: 640284828
+      m_Sprite: {fileID: 7164417556176092132, guid: e6bef177fec2aef44b0b3f3ba18fe11f, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: 7164417556176092132, guid: e6bef177fec2aef44b0b3f3ba18fe11f, type: 3}
+    - m_Name: navio inimigo2_sprite_6_0
+      m_Hash: 884079321
+      m_Sprite: {fileID: 7164417556176092132, guid: d473cd315074d874faf8f4e5e71c4b80, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: 7164417556176092132, guid: d473cd315074d874faf8f4e5e71c4b80, type: 3}
+    m_FromMain: 0
+    m_EntryOverrideCount: 2
+  m_PrimaryLibraryGUID: 
+  m_ModificationHash: 639087464964327440
+  m_Version: 1

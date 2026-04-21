@@ -1,0 +1,793 @@
+fileFormatVersion: 2
+guid: 149fa3756a9edb04694adca529ecfeb4
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 4925330109352483629
+    second: "Tripula\xE7\xE3o_Jogador_0"
+  - first:
+      213: 1111940224145449238
+    second: "Tripula\xE7\xE3o_Jogador_1"
+  - first:
+      213: 4310937474268299489
+    second: "Tripula\xE7\xE3o_Jogador_2"
+  - first:
+      213: 2378786805275669143
+    second: "Tripula\xE7\xE3o_Jogador_3"
+  - first:
+      213: -3130214048342885826
+    second: "Tripula\xE7\xE3o_Jogador_4"
+  - first:
+      213: -3662836592069570173
+    second: "Tripula\xE7\xE3o_Jogador_5"
+  - first:
+      213: 5620741653514812894
+    second: "Tripula\xE7\xE3o_Jogador_6"
+  - first:
+      213: -6544292327312319572
+    second: "Tripula\xE7\xE3o_Jogador_7"
+  - first:
+      213: 9112418987068043526
+    second: "Tripula\xE7\xE3o_Jogador_8"
+  - first:
+      213: -6613723727304620084
+    second: "Tripula\xE7\xE3o_Jogador_9"
+  - first:
+      213: -8341571457160734070
+    second: "Tripula\xE7\xE3o_Jogador_10"
+  - first:
+      213: -8837045305689882600
+    second: "Tripula\xE7\xE3o_Jogador_11"
+  - first:
+      213: 8512953510293537940
+    second: "Tripula\xE7\xE3o_Jogador_12"
+  - first:
+      213: 6745841072315204122
+    second: "Tripula\xE7\xE3o_Jogador_13"
+  - first:
+      213: 3925654392252255481
+    second: "Tripula\xE7\xE3o_Jogador_14"
+  - first:
+      213: 6422893397665126773
+    second: "Tripula\xE7\xE3o_Jogador_15"
+  - first:
+      213: 7006173896662878408
+    second: "Tripula\xE7\xE3o_Jogador_16"
+  - first:
+      213: -5820688037617401031
+    second: "Tripula\xE7\xE3o_Jogador_17"
+  - first:
+      213: -6850479478143220463
+    second: "Tripula\xE7\xE3o_Jogador_18"
+  - first:
+      213: 340016345160268052
+    second: "Tripula\xE7\xE3o_Jogador_19"
+  - first:
+      213: 2917766003260384161
+    second: "Tripula\xE7\xE3o_Jogador_20"
+  - first:
+      213: -5714328950754669140
+    second: "Tripula\xE7\xE3o_Jogador_21"
+  - first:
+      213: 7186973544695816772
+    second: "Tripula\xE7\xE3o_Jogador_22"
+  - first:
+      213: 8006813496859782558
+    second: "Tripula\xE7\xE3o_Jogador_23"
+  - first:
+      213: -2250490017308976584
+    second: "Tripula\xE7\xE3o_Jogador_24"
+  - first:
+      213: -2837885466713987746
+    second: "Tripula\xE7\xE3o_Jogador_25"
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: "Tripula\xE7\xE3o_Jogador_0"
+      rect:
+        serializedVersion: 2
+        x: 2
+        y: 127
+        width: 12
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d2b9d7193a94a5440800000000000000
+      internalID: 4925330109352483629
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Tripula\xE7\xE3o_Jogador_1"
+      rect:
+        serializedVersion: 2
+        x: 19
+        y: 127
+        width: 12
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 61168a71eb76e6f00800000000000000
+      internalID: 1111940224145449238
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Tripula\xE7\xE3o_Jogador_2"
+      rect:
+        serializedVersion: 2
+        x: 20
+        y: 111
+        width: 10
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1e08ea2eac683db30800000000000000
+      internalID: 4310937474268299489
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Tripula\xE7\xE3o_Jogador_3"
+      rect:
+        serializedVersion: 2
+        x: 33
+        y: 127
+        width: 12
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 792b7dcfef5230120800000000000000
+      internalID: 2378786805275669143
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Tripula\xE7\xE3o_Jogador_4"
+      rect:
+        serializedVersion: 2
+        x: 34
+        y: 111
+        width: 10
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e3ab59958ee3f84d0800000000000000
+      internalID: -3130214048342885826
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Tripula\xE7\xE3o_Jogador_5"
+      rect:
+        serializedVersion: 2
+        x: 50
+        y: 127
+        width: 12
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 381146ba68dfa2dc0800000000000000
+      internalID: -3662836592069570173
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Tripula\xE7\xE3o_Jogador_6"
+      rect:
+        serializedVersion: 2
+        x: 50
+        y: 111
+        width: 12
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: eddfdfff0c2e00e40800000000000000
+      internalID: 5620741653514812894
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Tripula\xE7\xE3o_Jogador_7"
+      rect:
+        serializedVersion: 2
+        x: 66
+        y: 127
+        width: 11
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cab1c3c2dc00e25a0800000000000000
+      internalID: -6544292327312319572
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Tripula\xE7\xE3o_Jogador_8"
+      rect:
+        serializedVersion: 2
+        x: 83
+        y: 127
+        width: 11
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 60137b00ac0d57e70800000000000000
+      internalID: 9112418987068043526
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Tripula\xE7\xE3o_Jogador_9"
+      rect:
+        serializedVersion: 2
+        x: 99
+        y: 127
+        width: 12
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cc78f6f9f455734a0800000000000000
+      internalID: -6613723727304620084
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Tripula\xE7\xE3o_Jogador_10"
+      rect:
+        serializedVersion: 2
+        x: 100
+        y: 111
+        width: 10
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a8a956b84f8cc3c80800000000000000
+      internalID: -8341571457160734070
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Tripula\xE7\xE3o_Jogador_11"
+      rect:
+        serializedVersion: 2
+        x: 113
+        y: 127
+        width: 12
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 810425a7d128c5580800000000000000
+      internalID: -8837045305689882600
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Tripula\xE7\xE3o_Jogador_12"
+      rect:
+        serializedVersion: 2
+        x: 114
+        y: 111
+        width: 10
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 49406723d16142670800000000000000
+      internalID: 8512953510293537940
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Tripula\xE7\xE3o_Jogador_13"
+      rect:
+        serializedVersion: 2
+        x: 2
+        y: 111
+        width: 12
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a12869ad6ba0e9d50800000000000000
+      internalID: 6745841072315204122
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Tripula\xE7\xE3o_Jogador_14"
+      rect:
+        serializedVersion: 2
+        x: 19
+        y: 95
+        width: 11
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9fcc529eed9ba7630800000000000000
+      internalID: 3925654392252255481
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Tripula\xE7\xE3o_Jogador_15"
+      rect:
+        serializedVersion: 2
+        x: 34
+        y: 95
+        width: 11
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5791806e383b22950800000000000000
+      internalID: 6422893397665126773
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Tripula\xE7\xE3o_Jogador_16"
+      rect:
+        serializedVersion: 2
+        x: 50
+        y: 95
+        width: 12
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8c88439e90eea3160800000000000000
+      internalID: 7006173896662878408
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Tripula\xE7\xE3o_Jogador_17"
+      rect:
+        serializedVersion: 2
+        x: 66
+        y: 111
+        width: 12
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9330371b113c83fa0800000000000000
+      internalID: -5820688037617401031
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Tripula\xE7\xE3o_Jogador_18"
+      rect:
+        serializedVersion: 2
+        x: 67
+        y: 95
+        width: 10
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1158b24c5353ee0a0800000000000000
+      internalID: -6850479478143220463
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Tripula\xE7\xE3o_Jogador_19"
+      rect:
+        serializedVersion: 2
+        x: 82
+        y: 111
+        width: 12
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 419ba1f701bf7b400800000000000000
+      internalID: 340016345160268052
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Tripula\xE7\xE3o_Jogador_20"
+      rect:
+        serializedVersion: 2
+        x: 83
+        y: 95
+        width: 10
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1a3eb0298bcfd7820800000000000000
+      internalID: 2917766003260384161
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Tripula\xE7\xE3o_Jogador_21"
+      rect:
+        serializedVersion: 2
+        x: 2
+        y: 95
+        width: 12
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cad89885810a2b0b0800000000000000
+      internalID: -5714328950754669140
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Tripula\xE7\xE3o_Jogador_22"
+      rect:
+        serializedVersion: 2
+        x: 101
+        y: 95
+        width: 9
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 44269b55c524db360800000000000000
+      internalID: 7186973544695816772
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Tripula\xE7\xE3o_Jogador_23"
+      rect:
+        serializedVersion: 2
+        x: 114
+        y: 95
+        width: 10
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e9d6127147aed1f60800000000000000
+      internalID: 8006813496859782558
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Tripula\xE7\xE3o_Jogador_24"
+      rect:
+        serializedVersion: 2
+        x: 67
+        y: 79
+        width: 10
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 83a5cbbb047a4c0e0800000000000000
+      internalID: -2250490017308976584
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Tripula\xE7\xE3o_Jogador_25"
+      rect:
+        serializedVersion: 2
+        x: 84
+        y: 79
+        width: 9
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e55e44b243ecd98d0800000000000000
+      internalID: -2837885466713987746
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      "Tripula\xE7\xE3o_Jogador_0": 4925330109352483629
+      "Tripula\xE7\xE3o_Jogador_1": 1111940224145449238
+      "Tripula\xE7\xE3o_Jogador_10": -8341571457160734070
+      "Tripula\xE7\xE3o_Jogador_11": -8837045305689882600
+      "Tripula\xE7\xE3o_Jogador_12": 8512953510293537940
+      "Tripula\xE7\xE3o_Jogador_13": 6745841072315204122
+      "Tripula\xE7\xE3o_Jogador_14": 3925654392252255481
+      "Tripula\xE7\xE3o_Jogador_15": 6422893397665126773
+      "Tripula\xE7\xE3o_Jogador_16": 7006173896662878408
+      "Tripula\xE7\xE3o_Jogador_17": -5820688037617401031
+      "Tripula\xE7\xE3o_Jogador_18": -6850479478143220463
+      "Tripula\xE7\xE3o_Jogador_19": 340016345160268052
+      "Tripula\xE7\xE3o_Jogador_2": 4310937474268299489
+      "Tripula\xE7\xE3o_Jogador_20": 2917766003260384161
+      "Tripula\xE7\xE3o_Jogador_21": -5714328950754669140
+      "Tripula\xE7\xE3o_Jogador_22": 7186973544695816772
+      "Tripula\xE7\xE3o_Jogador_23": 8006813496859782558
+      "Tripula\xE7\xE3o_Jogador_24": -2250490017308976584
+      "Tripula\xE7\xE3o_Jogador_25": -2837885466713987746
+      "Tripula\xE7\xE3o_Jogador_3": 2378786805275669143
+      "Tripula\xE7\xE3o_Jogador_4": -3130214048342885826
+      "Tripula\xE7\xE3o_Jogador_5": -3662836592069570173
+      "Tripula\xE7\xE3o_Jogador_6": 5620741653514812894
+      "Tripula\xE7\xE3o_Jogador_7": -6544292327312319572
+      "Tripula\xE7\xE3o_Jogador_8": 9112418987068043526
+      "Tripula\xE7\xE3o_Jogador_9": -6613723727304620084
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
