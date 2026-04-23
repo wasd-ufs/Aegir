@@ -3,16 +3,29 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+/// Gerencia os elementos visuais de fundo e as transições de estado para a entrada
+/// e saída do modo de Batalha (tela dedicada a combate).
+/// </summary>
 public class BattleData : MonoBehaviour
 {
+    #region Referências Visuais e de UI
+    [Header("Imagens e Painéis")]
     public Image background, enemy, player;
     public Sprite pl;
     public GameObject battle, gameOverPanel;
+    
+    [Header("Gerenciadores Relacionados")]
     public BattleManager battleManager;
     public CrewUI playerCrewUI;
     public CrewUI enemyCrewUI;
-    private GameBoyTransition transition;
+    #endregion
 
+    #region Estado Interno
+    private GameBoyTransition transition;
+    #endregion
+
+    #region Ciclo de Vida (Unity)
     void Awake()
     {
         transition = FindFirstObjectByType<GameBoyTransition>();
@@ -25,7 +38,15 @@ public class BattleData : MonoBehaviour
         battle.SetActive(false);
         GameState.IsInBattle = false;
     }
+    #endregion
 
+    #region Controle de Fluxo da Batalha
+    /// <summary>
+    /// Configura a UI de combate e diz ao BattleManager para iniciar os turnos.
+    /// </summary>
+    /// <param name="bg">Sprite do background do cenário atual.</param>
+    /// <param name="en">Sprite principal representando o inimigo.</param>
+    /// <param name="enemyCrew">Estrutura de dados da equipe adversária.</param>
     public void StartFight(Sprite bg, Sprite en, CrewData enemyCrew)
     {
         background.sprite = bg;
@@ -39,6 +60,14 @@ public class BattleData : MonoBehaviour
         battleManager.IniciarBatalha(enemyCrew);
     }
 
+    /// <summary>
+    /// Finaliza o embate, gerenciando a transição de volta ao mapa, o som,
+    /// a cura pós-combate e a penalidade/vitória.
+    /// </summary>
+    /// <param name="playerVenceu">True se o inimigo foi derrotado, False se a equipe foi aniquilada.</param>
+    /// <param name="playerCrew">Referência da tripulação do jogador.</param>
+    /// <param name="enemyCrew">Referência da tripulação do inimigo.</param>
+    /// <param name="textoLog">Texto contendo o loot gerado em caso de vitória.</param>
     public void EndFight(bool playerVenceu, CrewData playerCrew, CrewData enemyCrew, string textoLog = "")
     {
         GameState.ChasersCount = 0;
@@ -52,7 +81,8 @@ public class BattleData : MonoBehaviour
                 enemyCrewUI?.LimparUI();
                 battle.SetActive(false);
                 battleManager.LimparBotões();
-                GameState.IsInBattle = !playerVenceu;
+                
+                GameState.IsInBattle = !playerVenceu; // Mantém travado se for Game Over
                 gameOverPanel.SetActive(!playerVenceu); 
                 
             }, onCompleteCallback: () =>
@@ -67,10 +97,10 @@ public class BattleData : MonoBehaviour
                     if (enemyCrew != null)
                         StartCoroutine(FadeEDestruirCrew(enemyCrew)); 
                 }
-
                 else
                 {
                     SFXManager.Instance?.TocarDerrota();
+                    // Revive tripulantes e inimigos
                     foreach (GameObject npc in playerCrew.crew)
                     {
                         NPCsData data = npc.GetComponent<NPCsData>();
@@ -88,7 +118,7 @@ public class BattleData : MonoBehaviour
                     }
                     enemyCrewUI?.LimparUI();
                     if (enemyCrewUI != null)
-                    enemyCrewUI.gameObject.SetActive(false);
+                        enemyCrewUI.gameObject.SetActive(false);
                 }
             });
         }
@@ -99,6 +129,9 @@ public class BattleData : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Utilizado pelo botão do painel de Game Over para retornar a exploração normal.
+    /// </summary>
     public void RetornarAoMundo()
     {
         transition.StartTransition(onMidpointCallback: () =>
@@ -109,7 +142,12 @@ public class BattleData : MonoBehaviour
             playerCrewUI?.ReativarComoPlayer();
         });
     }
+    #endregion
 
+    #region Helpers e Animações
+    /// <summary>
+    /// Executa um fade-out no inimigo derrotado antes de destruí-lo de forma permanente no mapa.
+    /// </summary>
     private IEnumerator FadeEDestruirCrew(CrewData crew)
     {
         List<SpriteRenderer> renderers = new();
@@ -138,4 +176,5 @@ public class BattleData : MonoBehaviour
 
         Destroy(crew.gameObject);
     }
+    #endregion
 }

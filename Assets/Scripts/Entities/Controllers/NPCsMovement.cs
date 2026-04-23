@@ -1,6 +1,12 @@
 using Unity.VisualScripting;
 using UnityEngine;
 
+/// <summary>
+/// A Máquina de Estados de IA responsável pela movimentação de todos os NPCs do jogo.
+/// Controla comportamentos como: Wandering (andar a esmo), Perseguição (Agro),
+/// Fuga das fronteiras de colisão (Evitar ir pra terra sendo peixe e vice versa) 
+/// e embarque em navios (recrutados).
+/// </summary>
 [RequireComponent(typeof(Animator))]
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(CircleCollider2D))]
@@ -8,6 +14,7 @@ using UnityEngine;
 [RequireComponent(typeof(SpriteRenderer))]
 public class NPCsMovement : MonoBehaviour
 {
+    #region Configurações de IA
     [Header("Settings")]
     public float moveSpeed = 2.8f;
     public float timeUntilAggressive = 4f;
@@ -16,11 +23,13 @@ public class NPCsMovement : MonoBehaviour
     public float maxTimeUntilChangingDirection = 5f;
     public float viewRadius = 1f;
     public bool isMaritime = true;
+    #endregion
 
+    #region Estado Interno e Componentes
     [Header("References")]
     private WorldGenerator worldGenerator;
 
-    // Internal State
+    // Estado Interno
     private GameObject Presa = null;
     private Vector2 direction = Vector2.zero;
     private Vector3 lastValidPosition;
@@ -36,14 +45,16 @@ public class NPCsMovement : MonoBehaviour
     private bool indoParaOBarco = false;
     private Transform alvoBarco = null;
 
-    // Components
+    // Componentes Acoplados
     private Rigidbody2D rb;
     private NPCsData nPCs;
     private Animator animator;
     private CircleCollider2D circleCollider2D;
     private Vector2Int currentChunk;
     private SpriteRenderer spriteRenderer;
+    #endregion
 
+    #region Ciclo de Vida (Unity)
     void Awake()
     {
         animator = GetComponent<Animator>();
@@ -52,14 +63,8 @@ public class NPCsMovement : MonoBehaviour
         circleCollider2D = GetComponent<CircleCollider2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
 
-        if (isAgressive)
-        {
-            gameObject.tag = "AggresiveCreature";
-        }
-        else
-        {
-            gameObject.tag = "PassiveCreature";
-        }
+        if (isAgressive) gameObject.tag = "AggresiveCreature";
+        else gameObject.tag = "PassiveCreature";
         
         rb.gravityScale = 0;
         rb.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
@@ -74,11 +79,18 @@ public class NPCsMovement : MonoBehaviour
         timeUntilChangeDirection = Random.Range(0, maxTimeUntilChangingDirection);
     }
 
+    public void Setup(GameObject player, WorldGenerator worldGenerator)
+    {
+        this.worldGenerator = worldGenerator;
+        lastValidPosition = transform.position;
+        currentChunk = worldGenerator.GetChunkPosFromWorld(transform.position);
+    }
+
     void Update()
     {
         if (GameState.IsInBattle|| !GameState.isGameStarted) return;
 
-        // Tick do cooldown de borda
+        // Tick do cooldown de borda (impedido de dar agro caso ele acabe de fugir de uma fronteira que não pode atravessar)
         if (hasBorderCooldown)
         {
             borderCooldownTimer -= Time.deltaTime;
@@ -89,18 +101,10 @@ public class NPCsMovement : MonoBehaviour
             }
         }
 
-        if (indoParaOBarco && alvoBarco != null)
-        {
-            HandleGoingToShip();
-        }
-        else if (Presa != null)
-        {
-            HandleChasing();
-        }
-        else
-        {
-            HandleWandering();
-        }
+        // Hierarquia de Comportamento
+        if (indoParaOBarco && alvoBarco != null) HandleGoingToShip();
+        else if (Presa != null) HandleChasing();
+        else HandleWandering();
 
         if (StopAgressivity)
         {
@@ -112,13 +116,44 @@ public class NPCsMovement : MonoBehaviour
             }
         }
     }
-    public void Setup(GameObject player, WorldGenerator worldGenerator)
-    {
-        this.worldGenerator = worldGenerator;
-        lastValidPosition = transform.position;
-        currentChunk = worldGenerator.GetChunkPosFromWorld(transform.position);
-    }
 
+    void FixedUpdate()
+    {
+        if (GameState.IsInBattle || !GameState.isGameStarted)
+        {
+            rb.linearVelocity = Vector2.zero;
+            return; // ← trava física completamente em combates
+        }
+        
+        if (worldGenerator == null) return;
+        
+        ApplyMovement();
+        UpdateAnimations();
+
+        if (!indoParaOBarco)
+        {
+            boundaryCheckTimer += Time.fixedDeltaTime;
+            if (boundaryCheckTimer >= BoundaryCheckInterval)
+            {
+                boundaryCheckTimer = 0;
+                CheckWorldBoundaries();
+                CheckDespawn();
+            }
+        }
+    }
+    
+    void OnDestroy()
+    {
+        if (Presa != null && Presa.CompareTag("Player"))
+            GameState.ChasersCount--;
+    }
+    #endregion
+
+    #region Comportamentos Principais
+    /// <summary>
+    /// Comportamento adotado assim que um RecruitableNPC é contratado, fazendo com
+    /// que ele marche em direção ao barco e suma visualmente.
+    /// </summary>
     public void IrParaOBarco(Transform navio)
     {
         alvoBarco = navio;
@@ -140,7 +175,6 @@ public class NPCsMovement : MonoBehaviour
         {
             Color corTemp = spriteRenderer.color;
             corTemp.a = Mathf.MoveTowards(corTemp.a, 0f, Time.fixedDeltaTime);
-            
             spriteRenderer.color = corTemp;
             
             if (spriteRenderer.color.a <= 0)
@@ -151,31 +185,9 @@ public class NPCsMovement : MonoBehaviour
         }
     }
 
-    void FixedUpdate()
-    {
-        if (GameState.IsInBattle || !GameState.isGameStarted)
-        {
-            rb.linearVelocity = Vector2.zero;
-            return; // ← trava física completamente
-        }
-        
-        if (worldGenerator == null) return;
-        ApplyMovement();
-        UpdateAnimations();
-
-        if (!indoParaOBarco)
-        {
-            boundaryCheckTimer += Time.fixedDeltaTime;
-            if (boundaryCheckTimer >= BoundaryCheckInterval)
-            {
-                boundaryCheckTimer = 0;
-                CheckWorldBoundaries();
-                CheckDespawn();
-            }
-        }
-    }
-
-
+    /// <summary>
+    /// Rotina de Perseguição à Presa. Caso fuja, a presa é esquecida baseada no maxChaseTime.
+    /// </summary>
     private void HandleChasing()
     {
         if (Presa == null || Presa.Equals(null)) 
@@ -195,10 +207,8 @@ public class NPCsMovement : MonoBehaviour
             direction = distanceToCreature.normalized;        
         }
         chaseTimer += Time.deltaTime;
-        if (chaseTimer >= maxChaseTime)
-        {
-            StopChasing();
-        }
+        
+        if (chaseTimer >= maxChaseTime) StopChasing();
     }
 
     private void HandleWandering()
@@ -224,16 +234,21 @@ public class NPCsMovement : MonoBehaviour
     {
         direction = new Vector2(Random.Range(-1f, 1f), Random.Range(-1f, 1f)).normalized;
     }
+    #endregion
 
+    #region Movimento e Animação
     private void ApplyMovement()
     {
+        // Criaturas passivas sendo perseguidas ganham um boost de velocidade na fuga
         float realSpeed = (!isAgressive && Presa != null)? moveSpeed * 1.4f: moveSpeed;
+        
         if (!isAlert)
         {
             rb.linearVelocity = Vector2.Lerp(rb.linearVelocity, direction * realSpeed, Time.fixedDeltaTime);
         }
         else
         {
+            // Fica parado "alertado" analisando a situação antes de iniciar perseguição
             rb.linearVelocity = Vector2.Lerp(rb.linearVelocity, Vector2.zero, Time.fixedDeltaTime);
         }
     }
@@ -253,7 +268,13 @@ public class NPCsMovement : MonoBehaviour
             animator.SetFloat("MoveSpeed", rb.linearVelocity.sqrMagnitude);
         }
     }
+    #endregion
 
+    #region Validação de Limites (World Boundaries)
+    /// <summary>
+    /// Verifica se o NPC "Marítimo" tocou num tile de "Terra" e vice versa.
+    /// Se entrou em terreno proibido, força o retorno à última posição válida e desarma o Agro.
+    /// </summary>
     private void CheckWorldBoundaries()
     {
         Tile actualTile = worldGenerator.GetTileAtWorldPosition(transform.position);
@@ -275,7 +296,6 @@ public class NPCsMovement : MonoBehaviour
             StopAgressivity = false;
             agressionTimer = 0;
 
-            // Aplica cooldown apenas para carnívoros/agressivos
             if (isAgressive)
             {
                 hasBorderCooldown = true;
@@ -289,9 +309,10 @@ public class NPCsMovement : MonoBehaviour
             lastValidPosition = transform.position;
         }
     }
+    
     private Vector2 GetEscapeDirection()
     {
-        // Testa as 8 direções e escolhe a que leva ao tile válido mais próximo
+        // Testa as 8 direções e escolhe a que leva ao tile válido mais próximo do "bump"
         Vector2[] candidates = {
             Vector2.up, Vector2.down, Vector2.left, Vector2.right,
             new Vector2(1,1).normalized, new Vector2(-1,1).normalized,
@@ -314,31 +335,28 @@ public class NPCsMovement : MonoBehaviour
             if (isValid) return dir;
         }
 
-        // Fallback: direção aleatória
         return new Vector2(Random.Range(-1f, 1f), Random.Range(-1f, 1f)).normalized;
     }
+
+    /// <summary>
+    /// Exclui o NPC se a Chunk onde ele se encontra foi apagada (Despawn).
+    /// </summary>
     private void CheckDespawn()
     {
         Vector2Int newChunk = worldGenerator.GetChunkPosFromWorld(transform.position);
 
-        // Atualiza a chunk atual se o NPC se moveu
-        if (newChunk != currentChunk)
-        {
-            currentChunk = newChunk;
-        }
-
-        // Destrói se a chunk atual não estiver mais ativa
-        if (!worldGenerator.IsChunkActive(currentChunk))
-        {
-            Destroy(gameObject);
-        }
+        if (newChunk != currentChunk) currentChunk = newChunk;
+        if (!worldGenerator.IsChunkActive(currentChunk)) Destroy(gameObject);
     }
+    #endregion
 
+    #region Detecção de Triggers (Agro)
     void OnTriggerEnter2D(Collider2D collider)
     {
         PlayerMovement playerMovement = collider.GetComponent<PlayerMovement>();
         if (playerMovement != null)
         {
+            // Inicia o estado de Alerta no Player
             if (collider.gameObject.CompareTag("Player") && isAgressive && playerMovement.isOnWater)
             {
                 isAlert = true;
@@ -348,14 +366,15 @@ public class NPCsMovement : MonoBehaviour
                 return;
             }
         }
-
         else if ((collider.gameObject.CompareTag("AgressiveCreature" ) && !isAgressive && Presa == null) ||
             (nPCs.creatureType == NPCsData.Type.Animal || nPCs.creatureType == NPCsData.Type.Monstro) && collider.gameObject.CompareTag("PassiveCreature") && isAgressive && Presa == null)
         {
+            // Inicia Alerta entre ecossistema (carnívoros vs passivos)
             isAlert = true;
             StopAgressivity = false;
         }
     }
+    
     void OnTriggerStay2D(Collider2D collider)
     {
         if (collider.gameObject.CompareTag("Player") && isAgressive)
@@ -368,6 +387,7 @@ public class NPCsMovement : MonoBehaviour
                 direction = Vector2.Lerp(direction, distanceToPlayer.normalized, Time.fixedDeltaTime);
             }
             
+            // Fixa a presa caso o timer de alerta termine
             if (agressionTimer >= timeUntilAggressive && hasBorderCooldown == false)
             {
                 isAlert = false;
@@ -408,10 +428,5 @@ public class NPCsMovement : MonoBehaviour
             isAlert = false;
         }
     }
-
-    void OnDestroy()
-    {
-        if (Presa != null && Presa.CompareTag("Player"))
-            GameState.ChasersCount--;
-    }
+    #endregion
 }

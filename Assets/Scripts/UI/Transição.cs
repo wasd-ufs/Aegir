@@ -5,21 +5,11 @@ using UnityEngine.Events;
 using UnityEngine.UI;
 
 /// <summary>
-/// Transição estilo Game Boy com dois modos sorteados aleatoriamente a cada chamada:
-///
-/// MODO A — "Encontro": barras vêm da esquerda E da direita e se encontram no centro.
-/// MODO B — "Veneziana": cada barra cobre a tela inteira, alternando direção
-///           (par → direita, ímpar → esquerda), com stagger entre elas.
-///
-/// SETUP:
-/// 1. Canvas (Screen Space - Overlay, Sort Order alto, ex: 100)
-/// 2. GameObject filho do Canvas com este script
-/// 3. Panel filho do Canvas (stretch em tudo) → arraste em transitionContainer
-///    (remova ou zere o alpha da Image do Panel)
-/// 4. Configure onMidpoint no Inspector para ativar seu BattleScene
+/// Transição estilo Game Boy com dois modos sorteados aleatoriamente a cada chamada.
 /// </summary>
 public class GameBoyTransition : MonoBehaviour
 {
+    #region Referências e Configurações
     [Header("Referências")]
     [Tooltip("Panel que cobre a tela toda — serve de container para as barras")]
     public RectTransform transitionContainer;
@@ -32,10 +22,8 @@ public class GameBoyTransition : MonoBehaviour
     [Header("Timing")]
     public float closeDuration = 0.5f;
     public float openDuration  = 0.5f;
-
     [Tooltip("Pausa com a tela completamente fechada")]
     public float holdDuration  = 0.15f;
-
     [Tooltip("Atraso escalonado entre cada barra")]
     [Range(0f, 0.1f)]
     public float staggerDelay  = 0.03f;
@@ -43,31 +31,39 @@ public class GameBoyTransition : MonoBehaviour
     [Header("Curva de Animação")]
     public AnimationCurve easeCurve = AnimationCurve.EaseInOut(0f, 0f, 1f, 1f);
 
-    [Header("Eventos")]
+    [Header("Eventos e Sons")]
     [Tooltip("Chamado quando a tela está totalmente coberta")]
     public UnityEvent onMidpoint;
-
     [Tooltip("Chamado quando a transição termina por completo")]
     public UnityEvent onComplete;
-
-    // -----------------------------------------------------------------------
-
+    public AudioClip somAbertura;
+    
+    private AudioSource audioSource;
     private enum TransitionMode { Encontro, Veneziana }
-
-    // Barras do modo Encontro (esquerda + direita por faixa)
     private RectTransform[] leftBars;
     private RectTransform[] rightBars;
-
-    // Barras do modo Veneziana (uma barra larga por faixa)
     private RectTransform[] fullBars;
-
     private float screenWidth, screenHeight, barHeight;
     private bool isTransitioning = false;
+    #endregion
 
-    [Header("Sons")]
-    public AudioClip somAbertura;
-    private AudioSource audioSource;
+    #region Inicialização
+    private void Awake()
+    {
+        if (transitionContainer == null)
+        {
+            Debug.LogError("[GameBoyTransition] Atribua o transitionContainer no Inspector!");
+            return;
+        }
+        transitionContainer.gameObject.SetActive(false);
+        audioSource = GetComponent<AudioSource>();
+        if (audioSource == null)
+            audioSource = gameObject.AddComponent<AudioSource>();
+        audioSource.playOnAwake = false;
+    }
+    #endregion
 
+    #region API Pública e Corrotinas
     public void StartTransition(Action onMidpointCallback = null, Action onCompleteCallback = null)
     {
         if (isTransitioning)
@@ -83,29 +79,11 @@ public class GameBoyTransition : MonoBehaviour
         StartCoroutine(RunTransition(mode, onMidpointCallback, onCompleteCallback));
     }
 
-    // Versão sem parâmetros — para botões e UnityEvents no Inspector
     public void StartTransition() => StartTransition(null, null);
-
-    private void Awake()
-    {
-        if (transitionContainer == null)
-        {
-            Debug.LogError("[GameBoyTransition] Atribua o transitionContainer no Inspector!");
-            return;
-        }
-        transitionContainer.gameObject.SetActive(false);
-        audioSource = GetComponent<AudioSource>();
-        if (audioSource == null)
-            audioSource = gameObject.AddComponent<AudioSource>();
-        audioSource.playOnAwake = false;
-    }
-
-    // Corrotina Principal
 
     private IEnumerator RunTransition(TransitionMode mode, Action onMidpointCallback, Action onCompleteCallback)
     {
         isTransitioning = true;
-
         MeasureScreen();
 
         if (somAbertura != null) audioSource.PlayOneShot(somAbertura);
@@ -123,7 +101,6 @@ public class GameBoyTransition : MonoBehaviour
             yield return AnimateVeneziana(closing: true);
         }
 
-        // Tela totalmente coberta
         onMidpoint?.Invoke();
         onMidpointCallback?.Invoke();
 
@@ -136,17 +113,14 @@ public class GameBoyTransition : MonoBehaviour
 
         DestroyBars();
         transitionContainer.gameObject.SetActive(false);
-
         isTransitioning = false;
-
+        
         onComplete?.Invoke();
         onCompleteCallback?.Invoke();
     }
+    #endregion
 
-    // Modo A - Encontro
-    // Barras vêm da esquerda e da direita, se encontram no centro.
-
-
+    #region Modo A - Encontro
     private void BuildBarsEncontro()
     {
         leftBars  = new RectTransform[barCount];
@@ -201,12 +175,9 @@ public class GameBoyTransition : MonoBehaviour
             rightBars[i].anchoredPosition = new Vector2(closing ? rightIn : rightOut, yCenter);
         }
     }
+    #endregion
 
-
-    // Modo B - Veneziana
-    // Cada barra cobre a tela inteira e desliza horizontalmente.
-    // Pares entram pela direita, ímpares pela esquerda (alternado).
-
+    #region Modo B - Veneziana
     private void BuildBarsVeneziana()
     {
         fullBars = new RectTransform[barCount];
@@ -225,7 +196,7 @@ public class GameBoyTransition : MonoBehaviour
         float totalDuration = duration + staggerDelay * (barCount - 1);
         float elapsed       = 0f;
 
-        float centerX = screenWidth / 2f; // pivot no centro da barra larga
+        float centerX = screenWidth / 2f; 
 
         while (elapsed < totalDuration)
         {
@@ -257,17 +228,16 @@ public class GameBoyTransition : MonoBehaviour
     private float VenezianaOutX(int i, bool entering)
     {
         bool goesRight = (i % 2 == 0);
-        float offscreen = screenWidth / 2f + 1f; // distância do pivot ao lado da tela
+        float offscreen = screenWidth / 2f + 1f; 
 
         if (entering)
             return goesRight ? screenWidth + offscreen : -offscreen;
         else
             return goesRight ? -offscreen : screenWidth + offscreen;
     }
+    #endregion
 
-
-    // Helpers
-
+    #region Helpers
     private void MeasureScreen()
     {
         var canvasRect = transitionContainer.GetComponentInParent<Canvas>().GetComponent<RectTransform>();
@@ -302,9 +272,5 @@ public class GameBoyTransition : MonoBehaviour
         if (fullBars  != null) foreach (var b in fullBars)  if (b) Destroy(b.gameObject);
         leftBars = rightBars = fullBars = null;
     }
-
-#if UNITY_EDITOR
-    [ContextMenu("Testar Transição (Play Mode)")]
-    private void TestTransition() => StartTransition();
-#endif
+    #endregion
 }

@@ -2,14 +2,30 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Realiza a geração procedural inicial de um NPC/Inimigo que acaba de ser instanciado no mundo,
+/// definindo seus limites de vida, força, custo baseados nos parâmetros estipulados e sorteando seu nome e classe.
+/// </summary>
 [RequireComponent(typeof(NPCsData))]
 public class NPC_Randomizer : MonoBehaviour
 {
-    public float minVida, maxVida, minForça, maxForça, minCusto, maxCusto;
+    #region Configurações de Randomização
+    [Header("Limites de Atributos")]
+    public float minVida;
+    public float maxVida;
+    public float minForça;
+    public float maxForça;
+    public float minCusto;
+    public float maxCusto;
 
-    public bool randomizarClasse, randomizarNome;
-    private NPCsData nPCs;
+    [Header("Opções de Sorteio")]
+    public bool randomizarClasse;
+    public bool randomizarNome;
     
+    private NPCsData nPCs;
+    #endregion
+
+    #region Listas de Nomes
     private string[] nomesIniciais = {
         "Jack", "Anne", "Edward", "Will", "Elizabeth", "Henry",
         "Charles", "Mary", "Samuel", "Thomas", "Francis", "Grace",
@@ -50,20 +66,26 @@ public class NPC_Randomizer : MonoBehaviour
         "Chumbo Grosso", "o Traidor", "Barba de Aco", "o Sombrio", "Espinha de Peixe",
         "o Miseravel", "Velas Negras", "a Impiedosa", "Cano Curto", "o Execrado"
     };
+    #endregion
 
+    #region Inicialização
     void Awake()
     {
         nPCs = GetComponent<NPCsData>();
+        
+        // Sorteia Atributos Básicos
         nPCs.vidaMáxima = UnityEngine.Random.Range(minVida, maxVida);
         nPCs.força = UnityEngine.Random.Range(minForça, maxForça);
         nPCs.custo = UnityEngine.Random.Range(minCusto, maxCusto);
         nPCs.Heal(nPCs.vidaMáxima);
 
+        // Define Títulos
         if (randomizarNome)
         {
             nPCs.NPC_Name = nomesIniciais[UnityEngine.Random.Range(0, nomesIniciais.Length)] + " " + nomesFinais[UnityEngine.Random.Range(0, nomesFinais.Length)];
         }
 
+        // Define a ocupação do NPC para combate excluindo a entidade "Barco" da roleta
         if (randomizarClasse)
         {
             Array valoresClasse = Enum.GetValues(typeof(NPCsData.Class));
@@ -76,4 +98,5 @@ public class NPC_Randomizer : MonoBehaviour
             nPCs.creatureClass = classes[UnityEngine.Random.Range(0, classes.Count)];
         }
     }
+    #endregion
 }

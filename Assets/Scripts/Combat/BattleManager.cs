@@ -6,20 +6,32 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+/// Máquina de estados principal do fluxo de Batalha.
+/// Coordena os turnos, a UI de ações do jogador, escolhas de IA inimigas, 
+/// processamento de efeitos ao longo do tempo e checagens de vitória/derrota.
+/// Implementado como Singleton para facilitar acesso por outros scripts.
+/// </summary>
 public class BattleManager : MonoBehaviour
 {
+    #region Singleton e Variáveis Estáticas
     private static WaitForSeconds _waitForSeconds1_5 = new WaitForSeconds(1.5f);
-
     public static BattleManager Instance { get; private set; }
+    #endregion
 
+    #region Dados das Equipes
     [Header("Crews")]
     public CrewData playerCrew;
     [HideInInspector] public CrewData enemyCrew;
+    #endregion
 
+    #region Referências de Lógica
     [Header("Combat Scripts")]
     public CrewAttacks ataquesPlayer;
     private CrewAttacks ataquesInimigo;
+    #endregion
 
+    #region Referências de UI
     [Header("Canvas e Botões de Ação")]
     public Transform actionButtonContainer;
     public GameObject actionButtonPrefab;
@@ -28,24 +40,26 @@ public class BattleManager : MonoBehaviour
     public Button botaoPassarTurno;
     public TextMeshProUGUI textoDoLog;
 
-    [Header("UI")]
+    [Header("UI e Feedback Visual")]
     public CrewUI enemyCrewUI;
     public BattleData battleData;
     public TextMeshProUGUI textoDeAcaoDaBatalha;
     public float velocidadeDoFade;
+    #endregion
 
-    [Header("Estado")]
-    public bool batalhaAtiva = false, passarTurno = false;
-    public bool exibindoMensagem = false, exibindoMensagemLog = false;
+    #region Estado de Batalha
+    [Header("Estado Interno")]
+    public bool batalhaAtiva = false;
+    public bool passarTurno = false;
+    public bool exibindoMensagem = false;
+    public bool exibindoMensagemLog = false;
     private GameObject atorSelecionado;
     private Coroutine fadeCoroutine, fadeLogCoroutine;
     private List<GameObject> alvosDoPlayer = new();
     private PlayerInputActions inputActions;
+    #endregion
 
-    // -------------------------------------------------------------------------
-    // Unity Lifecycle
-    // -------------------------------------------------------------------------
-
+    #region Unity Lifecycle
     void Awake()
     {
         if (Instance != null && Instance != this) { Destroy(gameObject); return; }
@@ -68,11 +82,13 @@ public class BattleManager : MonoBehaviour
     {
         inputActions.Disable();
     }
+    #endregion
 
-    // -------------------------------------------------------------------------
-    // Inicialização
-    // -------------------------------------------------------------------------
-
+    #region Inicialização
+    /// <summary>
+    /// Configura os dados do inimigo e inicializa a corrotina do loop de combate.
+    /// </summary>
+    /// <param name="inimigos">O CrewData representante da equipe inimiga gerada no embate.</param>
     public void IniciarBatalha(CrewData inimigos)
     {
         enemyCrew    = inimigos;
@@ -89,17 +105,19 @@ public class BattleManager : MonoBehaviour
 
         StartCoroutine(LoopDeBatalha());
     }
+    #endregion
 
-    // -------------------------------------------------------------------------
-    // Loop principal
-    // -------------------------------------------------------------------------
-
+    #region Loop Principal
+    /// <summary>
+    /// Controla a sequência em que o combate ocorre: Turno Player -> Efeitos -> Checa Morte -> Turno Inimigo -> Efeitos -> Checa Morte.
+    /// </summary>
     private IEnumerator LoopDeBatalha()
     {
         yield return null;
 
         while (batalhaAtiva)
         {
+            // Reseta ações da tripulação do jogador
             foreach (GameObject npc in playerCrew.crew)
                 npc.GetComponent<NPCsData>().ResetarAcoes();
 
@@ -108,29 +126,34 @@ public class BattleManager : MonoBehaviour
             HabilitarBotões(true);
             GerarBotoesDaTripulacao();
 
+            // Espera até que o jogador finalize o turno (manualmente ou ficando sem ações)
             yield return new WaitUntil(() => passarTurno || !EquipeTemAções(playerCrew));
             yield return new WaitWhile(() => exibindoMensagem);
 
             HabilitarBotões(false);
 
+            // Ticks de efeitos após o turno aliado
             TickTodosEfeitos(playerCrew);
             TickTodosEfeitos(enemyCrew);
 
             if (VerificarFimDeBatalha()) yield break;
 
+            // Turno dos inimigos
             yield return StartCoroutine(TurnoInimigos());
 
+            // Ticks de efeitos após o turno inimigo
             TickTodosEfeitos(playerCrew);
             TickTodosEfeitos(enemyCrew);
 
             if (VerificarFimDeBatalha()) yield break;
         }
     }
+    #endregion
 
-    // -------------------------------------------------------------------------
-    // Turno dos inimigos
-    // -------------------------------------------------------------------------
-
+    #region Inteligência Inimiga (IA)
+    /// <summary>
+    /// Gerencia as ações tomadas pelos oponentes iterando pelas ações disponíveis até não restar nenhuma.
+    /// </summary>
     private IEnumerator TurnoInimigos()
     {
         foreach (GameObject npc in enemyCrew.crew)
@@ -144,6 +167,7 @@ public class BattleManager : MonoBehaviour
             CombatBase.Actions açãoEscolhida = new();
             GameObject ator = null;
 
+            // Tenta sortear uma ação válida para algum inimigo que ainda possa agir
             for (int i = 0; i < 10; i++)
             {
                 açãoEscolhida = EscolheAção();
@@ -169,6 +193,10 @@ public class BattleManager : MonoBehaviour
         yield return new WaitForSeconds(0.8f);
     }
 
+    /// <summary>
+    /// Seleciona os alvos adequados baseados nos tipos alvejáveis da ação inimiga.
+    /// Mistura a lista para dar aleatoriedade aos ataques.
+    /// </summary>
     private List<GameObject> EscolheAlvosNPC(CombatBase.Actions ação)
     {
         bool afetaInimigos = ação.timesAlvos.Contains(CombatBase.TimeAlvo.Inimigo);
@@ -191,6 +219,9 @@ public class BattleManager : MonoBehaviour
         return alvos;
     }
 
+    /// <summary>
+    /// Seleciona uma ação aleatória do rol de ações usando uma roleta baseada nos 'pesos' configurados.
+    /// </summary>
     public CombatBase.Actions EscolheAção()
     {
         float pesoTotal = 0;
@@ -212,11 +243,13 @@ public class BattleManager : MonoBehaviour
 
         return açãoEscolhida;
     }
+    #endregion
 
-    // -------------------------------------------------------------------------
-    // Ações do Player
-    // -------------------------------------------------------------------------
-
+    #region Ações do Jogador
+    /// <summary>
+    /// Recebe o clique da UI de ações e executa a lógica em cima do alvo selecionado/randômico.
+    /// </summary>
+    /// <param name="ação">A ação clicada pelo jogador na interface.</param>
     public void ExecutarAçãoPlayer(CombatBase.Actions ação)
     {
         GameObject ator = atorSelecionado;
@@ -226,6 +259,7 @@ public class BattleManager : MonoBehaviour
             return;
         }
 
+        // Caso o jogador não tenha mirado explicitamente, define todos os possíveis
         if (alvosDoPlayer.Count == 0)
         {
             if (ação.timesAlvos.Contains(CombatBase.TimeAlvo.Inimigo))
@@ -246,6 +280,9 @@ public class BattleManager : MonoBehaviour
         GerarBotoesDaTripulacao();
     }
 
+    /// <summary>
+    /// Escolhe qual tripulante executará a ação gerada pela IA, restrito a quem ainda tem Ações Restantes e classe compatível.
+    /// </summary>
     private GameObject SortearAtor(CombatBase.Actions ação, CrewData crew)
     {
         bool semRestrição = ação.classesPermitidas == null || ação.classesPermitidas.Count == 0;
@@ -270,6 +307,9 @@ public class BattleManager : MonoBehaviour
 
     public void LimparAlvos() => alvosDoPlayer.Clear();
 
+    /// <summary>
+    /// Seleciona o membro da tripulação aliado para que seus botões de ações fiquem visíveis.
+    /// </summary>
     public void SelecionarAtor(GameObject tripulanteClicado)
     {
         if (passarTurno || !batalhaAtiva) return;
@@ -307,11 +347,13 @@ public class BattleManager : MonoBehaviour
         foreach (Transform filho in crewButtonContainer) 
             Destroy(filho.gameObject);
     }
+    #endregion
 
-    // -------------------------------------------------------------------------
-    // Geração de Botões
-    // -------------------------------------------------------------------------
-
+    #region Gerenciamento da Interface Dinâmica (Botões)
+    /// <summary>
+    /// Instancia e popula os botões de ação para o tripulante recém selecionado.
+    /// Filtra as ações que a classe do ator não pode executar.
+    /// </summary>
     private void GerarBotõesDeAção()
     {
         if (atorSelecionado == null) return;
@@ -333,6 +375,9 @@ public class BattleManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Lista os tripulantes aliados vivos e com ações disponíveis.
+    /// </summary>
     private void GerarBotoesDaTripulacao()
     {
         foreach (Transform filho in crewButtonContainer)
@@ -374,11 +419,12 @@ public class BattleManager : MonoBehaviour
         foreach (Transform filho in actionButtonContainer)
             Destroy(filho.gameObject);
     }
+    #endregion
 
-    // -------------------------------------------------------------------------
-    // Tick de Efeitos e Fim de Batalha
-    // -------------------------------------------------------------------------
-
+    #region Ticks e Fim de Batalha
+    /// <summary>
+    /// Reduz a duração (em turnos) de todos os efeitos temporais na equipe.
+    /// </summary>
     private void TickTodosEfeitos(CrewData crew)
     {
         for (int i = crew.crew.Count - 1; i >= 0; i--)
@@ -388,6 +434,9 @@ public class BattleManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Confirma se ainda há membros vivos que não usaram suas ações no turno corrente.
+    /// </summary>
     private bool EquipeTemAções(CrewData crew)
     {
         foreach (GameObject npc in crew.crew)
@@ -395,6 +444,12 @@ public class BattleManager : MonoBehaviour
         return false;
     }
 
+    /// <summary>
+    /// Analisa se as condições de Game Over (Barco morto / toda tripulação aniquilada)
+    /// ou de Vitória (Todos inimigos derrotados) foram atingidas, finalizando a fase.
+    /// Efetua cálculo de espólios/saque em caso de sucesso.
+    /// </summary>
+    /// <returns>True se a batalha chegou ao fim e não deve continuar o loop.</returns>
     private bool VerificarFimDeBatalha()
     {
         bool playerDerrotado  = playerCrew.crew.Any(g => g.GetComponent<NPCsData>()?.creatureClass == NPCsData.Class.Barco && g.GetComponent<NPCsData>()?.isAlive == false)
@@ -443,11 +498,9 @@ public class BattleManager : MonoBehaviour
 
         return false;
     }
+    #endregion
 
-    // -------------------------------------------------------------------------
-    // Exibição de Mensagens
-    // -------------------------------------------------------------------------
-
+    #region Exibição de Mensagens (Fade UI)
     public void ExibirMensagem(string mensagem)
     {
         textoDeAcaoDaBatalha.alpha = 0;
@@ -501,11 +554,13 @@ public class BattleManager : MonoBehaviour
         }
         exibindoMensagemLog = false;
     }
+    #endregion
 
-    // -------------------------------------------------------------------------
-    // Helpers
-    // -------------------------------------------------------------------------
-
+    #region Helpers e Funções Utilitárias
+    /// <summary>
+    /// Embaralha uma lista utilizando o algoritmo Fisher-Yates shuffle.
+    /// Muito útil para criar alvos aleatórios para os inimigos e jogadores que selecionam ações amplas.
+    /// </summary>
     public List<GameObject> Shuffle(List<GameObject> list)
     {
         int n = list.Count;
@@ -520,4 +575,5 @@ public class BattleManager : MonoBehaviour
         }
         return listCopy;
     }
+    #endregion
 }

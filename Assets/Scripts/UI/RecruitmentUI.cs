@@ -2,14 +2,26 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+/// Interface para o sistema de recrutamento de NPCs.
+/// Exibe atributos aleatórios gerados pelo NPC_Randomizer e processa a contratação.
+/// </summary>
 public class RecruitmentUI : MonoBehaviour
 {
+    #region Referências de UI e Dados
+    [Header("Entradas e Dados")]
     public PlayerInputActions inputActions;
-    public RectTransform Fundo, Textos, Botões;
-    public TextMeshProUGUI Vida, Classe, Tipo, Nome, Força, Custo, Level;
     private RecruitableNPC recruitableNPC;
     public CrewData playerCrew;
 
+    [Header("Painéis")]
+    public RectTransform Fundo, Textos, Botões;
+    
+    [Header("Textos")]
+    public TextMeshProUGUI Vida, Classe, Tipo, Nome, Força, Custo, Level;
+    #endregion
+
+    #region Inicialização e Ciclo de Vida
     void Awake()
     {
         inputActions = new();
@@ -24,6 +36,21 @@ public class RecruitmentUI : MonoBehaviour
         }
     }
 
+    void OnEnable()
+    {
+        inputActions.Enable();
+    }
+
+    void OnDisable()
+    {
+        inputActions.Disable();
+    }
+    #endregion
+
+    #region Lógica de Negócio (UI)
+    /// <summary>
+    /// Preenche os campos de texto com os dados do NPC e abre o painel de recrutamento.
+    /// </summary>
     public void AbrirTela(RecruitableNPC npcSelecionado, NPCsData dadosDoNPC)
     {
         recruitableNPC = npcSelecionado;
@@ -35,7 +62,8 @@ public class RecruitmentUI : MonoBehaviour
         Custo.text = "Custo: " + $"{dadosDoNPC.custo:F2}";
         Level.text = "Level: " + dadosDoNPC.level;
 
-        Button b1 = Botões.GetChild(0).GetComponent<Button>(), b2 = Botões.GetChild(1).GetComponent<Button>();
+        Button b1 = Botões.GetChild(0).GetComponent<Button>();
+        Button b2 = Botões.GetChild(1).GetComponent<Button>();
 
         b1.onClick.RemoveAllListeners();
         b1.onClick.AddListener(() => Contratar(true));
@@ -49,11 +77,14 @@ public class RecruitmentUI : MonoBehaviour
 
     public void FecharTela()
     {
-        Botões.gameObject.SetActive(!true);
-        Fundo.gameObject.SetActive(!true);
-        Textos.gameObject.SetActive(!true);
+        Botões.gameObject.SetActive(false);
+        Fundo.gameObject.SetActive(false);
+        Textos.gameObject.SetActive(false);
     }
 
+    /// <summary>
+    /// Processa a decisão do jogador sobre a contratação.
+    /// </summary>
     public void Contratar(bool resposta)
     {
         if (resposta)
@@ -68,15 +99,5 @@ public class RecruitmentUI : MonoBehaviour
             FecharTela();
         }
     }
-
-    void OnEnable()
-    {
-        inputActions.Enable();
-    }
-
-    void OnDisable()
-    {
-        inputActions.Disable();
-    }
-
+    #endregion
 }

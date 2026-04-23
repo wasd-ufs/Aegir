@@ -2,19 +2,28 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Máquina de estados musical e gerenciador de trilha sonora do jogo (Singleton).
+/// Controla as playlists de acordo com o GameState atual (Exploração, Batalha, Perseguição, etc.),
+/// gerenciando intervalos dinâmicos entre músicas e som ambiente do mar.
+/// </summary>
 public class MusicManager : MonoBehaviour
 {
+    #region Singleton e Enumerações
     public static MusicManager Instance { get; private set; }
-
     public enum MusicState { Exploracao, Perseguicao, TerraFirme, Batalha, Menu }
+    #endregion
 
+    #region Listas de Reprodutibilidade (Playlists)
     [Header("Listas de Músicas")]
     public List<AudioClip> musicasExploracao;
     public List<AudioClip> musicasPerseguicao;
     public List<AudioClip> musicasTerraFirme;
     public List<AudioClip> musicasBatalha;
     public List<AudioClip> musicasStart;
+    #endregion
 
+    #region Configurações Dinâmicas e Ambiente
     [Header("Som Ambiente")]
     public AudioClip somDoMar;
     [Range(0f, 1f)] public float volumeAmbiente = 0.4f;
@@ -25,11 +34,14 @@ public class MusicManager : MonoBehaviour
 
     [Header("Configuração")]
     public float fadeDuration = 1f;
+    #endregion
 
+    #region Estado Interno e Componentes
     private AudioSource sourcMusica;
     private AudioSource sourceAmbiente;
     private MusicState estadoAtual;
 
+    // Listas mapeadas para evitar repetições contínuas da mesma faixa
     private Dictionary<MusicState, List<AudioClip>> playlists;
     private Dictionary<MusicState, List<int>> indicesRestantes;
 
@@ -37,16 +49,17 @@ public class MusicManager : MonoBehaviour
     private Coroutine fadeAmbienteCoroutine;
     private Coroutine aguardarProximaCoroutine;
     private bool emIntervalo = false;
-
     private bool musicaMutada = false;
+    #endregion
 
-
+    #region Inicialização e Ciclo de Vida
     void Awake()
     {
         if (Instance != null && Instance != this) { Destroy(gameObject); return; }
         Instance = this;
         DontDestroyOnLoad(gameObject);
 
+        // Inicialização de fontes de áudio dinâmicas
         sourcMusica = gameObject.AddComponent<AudioSource>();
         sourcMusica.loop = false;
 
@@ -55,6 +68,7 @@ public class MusicManager : MonoBehaviour
         sourceAmbiente.clip = somDoMar;
         sourceAmbiente.volume = 0f;
 
+        // Mapeia listas do inspector para dicionários a fim de facilitar os sorteios em modo "shuffle"
         playlists = new Dictionary<MusicState, List<AudioClip>>
         {
             { MusicState.Exploracao,  musicasExploracao  },
@@ -80,6 +94,7 @@ public class MusicManager : MonoBehaviour
     {
         MusicState novoEstado = ResolverEstado();
 
+        // Se a situação global do jogo mudou, atualiza toda a rádio e os sons ambientes
         if (novoEstado != estadoAtual)
         {
             estadoAtual = novoEstado;
@@ -87,13 +102,20 @@ public class MusicManager : MonoBehaviour
             TrocarMusica(estadoAtual);
         }
 
+        // Caso uma música termine e não haja silêncio programado ativado, agenda a próxima trilha
         if (!sourcMusica.isPlaying && !emIntervalo && !musicaMutada) 
         {
             if (aguardarProximaCoroutine != null) StopCoroutine(aguardarProximaCoroutine);
             aguardarProximaCoroutine = StartCoroutine(AguardarETocarProxima(estadoAtual));
         }
     }
+    #endregion
 
+    #region Lógica de Estado e Seleção Musical
+    /// <summary>
+    /// Consulta o GameState para determinar qual é o clima musical necessário no momento.
+    /// Prioriza sempre situações de urgência como a Batalha e a Perseguição.
+    /// </summary>
     private MusicState ResolverEstado()
     {
         if (!GameState.isGameStarted)  return MusicState.Menu;
@@ -103,6 +125,37 @@ public class MusicManager : MonoBehaviour
         return MusicState.Exploracao;
     }
 
+    /// <summary>
+    /// Escolhe a próxima música garantindo que ela não toque novamente até que toda
+    /// a playlist deste estado específico tenha sido percorrida (Sistema de "Saco" parecido com Tetris).
+    /// </summary>
+    private void TocarProxima(MusicState estado)
+    {
+        List<AudioClip> lista = playlists[estado];
+        if (lista == null || lista.Count == 0) return;
+
+        if (indicesRestantes[estado].Count == 0)
+            ResetarIndices(estado);
+
+        int sorteio = Random.Range(0, indicesRestantes[estado].Count);
+        int idx = indicesRestantes[estado][sorteio];
+        indicesRestantes[estado].RemoveAt(sorteio);
+
+        sourcMusica.clip = lista[idx];
+        sourcMusica.volume = 1f;
+        sourcMusica.Play();
+    }
+
+    private void ResetarIndices(MusicState estado)
+    {
+        List<int> indices = new();
+        for (int i = 0; i < playlists[estado].Count; i++)
+            indices.Add(i);
+        indicesRestantes[estado] = indices;
+    }
+    #endregion
+
+    #region Gerenciamento de Fades (Transições Suaves)
     private void AtualizarAmbiente(MusicState estado)
     {
         bool deveTocar = estado != MusicState.Batalha;
@@ -134,7 +187,7 @@ public class MusicManager : MonoBehaviour
         if (pararAoTerminar) sourceAmbiente.Stop();
     }
 
-   private void TrocarMusica(MusicState novoEstado)
+    private void TrocarMusica(MusicState novoEstado)
     {
         emIntervalo = false;
         if (aguardarProximaCoroutine != null) StopCoroutine(aguardarProximaCoroutine);
@@ -161,7 +214,7 @@ public class MusicManager : MonoBehaviour
         sourcMusica.volume = 0f;
         TocarProxima(novoEstado);
 
-        // Fade in
+        // Fade in da nova música
         float elapsedIn = 0f;
         while (elapsedIn < fadeDuration)
         {
@@ -171,6 +224,7 @@ public class MusicManager : MonoBehaviour
         }
         sourcMusica.volume = 1f;
     }
+
     private IEnumerator AguardarETocarProxima(MusicState estado)
     {
         emIntervalo = true;
@@ -180,32 +234,6 @@ public class MusicManager : MonoBehaviour
 
         if (estadoAtual == estado)
             TocarProxima(estado);
-    }
-
-
-    private void TocarProxima(MusicState estado)
-    {
-        List<AudioClip> lista = playlists[estado];
-        if (lista == null || lista.Count == 0) return;
-
-        if (indicesRestantes[estado].Count == 0)
-            ResetarIndices(estado);
-
-        int sorteio = Random.Range(0, indicesRestantes[estado].Count);
-        int idx = indicesRestantes[estado][sorteio];
-        indicesRestantes[estado].RemoveAt(sorteio);
-
-        sourcMusica.clip = lista[idx];
-        sourcMusica.volume = 1f;
-        sourcMusica.Play();
-    }
-
-    private void ResetarIndices(MusicState estado)
-    {
-        List<int> indices = new();
-        for (int i = 0; i < playlists[estado].Count; i++)
-            indices.Add(i);
-        indicesRestantes[estado] = indices;
     }
 
     public IEnumerator FadeOutMusica()
@@ -231,4 +259,5 @@ public class MusicManager : MonoBehaviour
         musicaMutada = false;
         TrocarMusica(estadoAtual);
     }
+    #endregion
 }

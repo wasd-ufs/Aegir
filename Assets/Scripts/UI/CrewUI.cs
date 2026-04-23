@@ -4,15 +4,37 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
+/// <summary>
+/// Gere a interface visual da tripulação (aliada e inimiga).
+/// Renderiza dinamicamente as barras de vida baseadas em corações (Capitão/Barco) 
+/// ou segmentos (NPCs) no Canvas.
+/// </summary>
 public class CrewUI : MonoBehaviour
 {
-    public Sprite captainHP, boatHP, startHPBar, bodyHP, endHPBar;
-    private float cHP, bHP;
-    private List<float> unitsHP = new List<float>();
-    public Vector3Int startCoordinates, segmentDistances;
-    public int heartDistance, verticalDistance, vidaPorCoração, vidaPorSegmento;
-    public GameObject image, player;
+    #region Configurações de Sprites
+    [Header("Sprites de Interface")]
+    public Sprite captainHP;
+    public Sprite boatHP;
+    public Sprite startHPBar;
+    public Sprite bodyHP;
+    public Sprite endHPBar;
+    #endregion
 
+    #region Layout e Posicionamento
+    [Header("Configurações de Layout")]
+    public Vector3Int startCoordinates;
+    public Vector3Int segmentDistances;
+    public int heartDistance;
+    public int verticalDistance;
+    public int vidaPorCoração;
+    public int vidaPorSegmento;
+    #endregion
+
+    #region Referências de Objetos
+    [Header("Referências")]
+    public GameObject image;
+    public GameObject player;
+    
     [Header("Canvas Root")]
     [Tooltip("Container dentro do Canvas onde todos os elementos de UI serão instanciados.")]
     public RectTransform canvasRoot;
@@ -25,57 +47,32 @@ public class CrewUI : MonoBehaviour
     [Header("Texto de HP")]
     public GameObject textoPrefab;
     public Vector2 textoOffset;
+    #endregion
 
+    #region Estado Interno
     [Header("Modo Inimigo")]
     public bool modoInimigo = false;
     private CrewData crewInimigo;
 
+    private float cHP, bHP;
     private float cMaxHP, bMaxHP;
+    private List<float> unitsHP = new List<float>();
     private List<float> unitsMaxHP = new List<float>();
+    
     private List<GameObject> spawnedObjects = new List<GameObject>();
     private float lastCHP, lastBHP;
     private List<float> lastUnitsHP = new List<float>();
+    
     private bool isValid = false;
     private bool inicializado = false;
+    #endregion
 
+    #region Ciclo de Vida (Unity)
     void Start()
     {
         if (modoInimigo) return;
         isValid = Validate();
         if (isValid) StartCoroutine(LateStart());
-    }
-
-    public void LimparUI()
-    {
-        ClearSpawned();
-        crewInimigo = null;
-        isValid = false;
-        inicializado = false;
-    }
-
-    public void ReativarComoPlayer()
-    {
-        isValid = true;
-    }
-
-    public void InicializarComoInimigo(CrewData crew)
-    {
-        ClearSpawned();
-        inicializado = false;
-        crewInimigo  = crew;
-        modoInimigo  = true;
-        isValid      = true;
-        StartCoroutine(LateStart());
-    }
-
-    private IEnumerator LateStart()
-    {
-        yield return null;
-        ClearSpawned();
-        FetchHP();
-        CacheHP();
-        InstantiateHP();
-        inicializado = true;
     }
 
     void Update()
@@ -87,7 +84,9 @@ public class CrewUI : MonoBehaviour
                 spawned.SetActive(false);
             return;
         }
+        
         if (!isValid || !inicializado) return;
+        
         FetchHP();
         if (HPChanged())
         {
@@ -96,7 +95,57 @@ public class CrewUI : MonoBehaviour
             InstantiateHP();
         }
     }
+    #endregion
 
+    #region API Pública
+    /// <summary>
+    /// Limpa todos os elementos visuais instanciados e reseta o estado do componente.
+    /// </summary>
+    public void LimparUI()
+    {
+        ClearSpawned();
+        crewInimigo = null;
+        isValid = false;
+        inicializado = false;
+    }
+
+    /// <summary>
+    /// Reativa a validação da UI para voltar a funcionar como tripulação do jogador.
+    /// Chamado pelo BattleData no fim do combate.
+    /// </summary>
+    public void ReativarComoPlayer()
+    {
+        isValid = true;
+    }
+
+    /// <summary>
+    /// Configura a UI para monitorar e exibir a tripulação inimiga durante o combate.
+    /// </summary>
+    public void InicializarComoInimigo(CrewData crew)
+    {
+        ClearSpawned();
+        inicializado = false;
+        crewInimigo  = crew;
+        modoInimigo  = true;
+        isValid      = true;
+        StartCoroutine(LateStart());
+    }
+    #endregion
+
+    #region Helpers de Inicialização
+    private IEnumerator LateStart()
+    {
+        yield return null;
+        ClearSpawned();
+        FetchHP();
+        CacheHP();
+        InstantiateHP();
+        inicializado = true;
+    }
+
+    /// <summary>
+    /// Verifica se todas as referências necessárias foram preenchidas no Inspector.
+    /// </summary>
     private bool Validate()
     {
         bool ok = true;
@@ -122,7 +171,9 @@ public class CrewUI : MonoBehaviour
 
         return ok;
     }
+    #endregion
 
+    #region Lógica de Cache e Atualização de HP
     private void FetchHP()
     {
         CrewData crew = modoInimigo ? crewInimigo : player.GetComponent<CrewData>();
@@ -179,7 +230,9 @@ public class CrewUI : MonoBehaviour
         lastCHP = cHP; lastBHP = bHP;
         lastUnitsHP = new List<float>(unitsHP);
     }
+    #endregion
 
+    #region Renderização
     private void ClearSpawned()
     {
         foreach (GameObject go in spawnedObjects)
@@ -236,8 +289,6 @@ public class CrewUI : MonoBehaviour
         RectTransform parent = ResolveParent(container);
         float yOffset = -row * verticalDistance;
 
-        // hp itera em unidades de HP (vidaPorSegmento)
-        // posição em pixels usa segmentDistances (x=offset inicial, y=largura por segmento, z=offset final)
         int índice = 0;
 
         if (modoInimigo)
@@ -301,4 +352,5 @@ public class CrewUI : MonoBehaviour
         go.GetComponent<TextMeshProUGUI>().text = $"{(int)hp}/{(int)maxHP}";
         spawnedObjects.Add(go);
     }
+    #endregion
 }

@@ -5,13 +5,23 @@ using System.Linq;
 using System.Security.Cryptography;
 using Unity.VisualScripting;
 
+/// <summary>
+/// O coração dos dados de qualquer entidade no jogo.
+/// Gerencia os atributos principais (vida, força, nível), os modificadores ativos (buffs/debuffs),
+/// os equipamentos, a tabela de resistências/fraquezas elementais e o sistema de espólios (loot).
+/// </summary>
 [DefaultExecutionOrder(-10)]
 public class NPCsData : MonoBehaviour
 {
+    #region Estruturas e Enumerações
     public enum Class { Navegador, Canhoneiro, Atirador, Guerreiro, Cozinheiro, Médico, Capitão, Barco }
     public enum Type { Animal, Humano, Fantasma, Esqueleto, Monstro, Estrutura }
     public enum DamageType { Físico, Mágico, Fogo, Gelo, Veneno, Sagrado, Amaldiçoado }
 
+    /// <summary>
+    /// Tabela global que define os multiplicadores de dano baseados no Tipo da criatura
+    /// cruzado com o Tipo de Dano recebido.
+    /// </summary>
     private static readonly Dictionary<Type, Dictionary<DamageType, float>> damageTable =
         new Dictionary<Type, Dictionary<DamageType, float>>()
         {
@@ -71,37 +81,6 @@ public class NPCsData : MonoBehaviour
             }},
         };
 
-    [Header("Identidade")]
-    public String NPC_Name;
-    public Type creatureType;
-    public Class creatureClass;
-    public WeaponData armaEquipada;
-    public ArmorData armaduraEquipada;
-    public int maxAcoesPorTurno = 1;
-    [HideInInspector] public int acoesRestantes;
-
-    [Range(0.0f, 1.0f)] public float chanceDeMortePermanente = 0.3f;
-
-    [Header("Status")]
-    public float vidaMáxima;
-    private float vidaAtual;
-    public float força;
-    public bool isAlive = true;
-    public int level = 1;
-    public float custo = 0;
-    public float currentXP = 0f;
-    public float xpToNextLevel = 100f;
-    public float xpReward = 20f;
-
-    /// <summary>
-    /// Disparado quando o NPC morre. CrewData escuta para remover e destruir.
-    /// </summary>
-    public event System.Action<NPCsData> OnMorte;
-    
-
-    [Header("Inventário e Drops")]
-    public List<PossibleDrop> possibleDrops = new();
-
     [Serializable]
     public struct PossibleDrop
     {
@@ -109,10 +88,6 @@ public class NPCsData : MonoBehaviour
         [Range(0.0f, 1.0f)] public float dropChance;
         public int maxDuantity;
     }
-
-
-    [Header("Efeitos Ativos")]
-    public List<ActiveEffect> activeEffects = new();
 
     [Serializable]
     public struct ActiveEffect
@@ -122,12 +97,64 @@ public class NPCsData : MonoBehaviour
         public int turnosRestantes;
         public DamageType damageType;
     }
+    #endregion
 
+    #region Identidade e Equipamento
+    [Header("Identidade")]
+    public String NPC_Name;
+    public Type creatureType;
+    public Class creatureClass;
+    public WeaponData armaEquipada;
+    public ArmorData armaduraEquipada;
+    
+    [Header("Ações de Combate")]
+    public int maxAcoesPorTurno = 1;
+    [HideInInspector] public int acoesRestantes;
+
+    [Range(0.0f, 1.0f)] public float chanceDeMortePermanente = 0.3f;
+    #endregion
+
+    #region Status e Experiência
+    [Header("Status")]
+    public float vidaMáxima;
+    private float vidaAtual;
+    public float força;
+    public bool isAlive = true;
+    
+    [Header("Evolução")]
+    public int level = 1;
+    public float custo = 0;
+    public float currentXP = 0f;
+    public float xpToNextLevel = 100f;
+    public float xpReward = 20f;
+    #endregion
+
+    #region Listas Dinâmicas (Efeitos e Drops)
+    [Header("Inventário e Drops")]
+    public List<PossibleDrop> possibleDrops = new();
+
+    [Header("Efeitos Ativos")]
+    public List<ActiveEffect> activeEffects = new();
+    #endregion
+
+    #region Eventos
+    /// <summary>
+    /// Disparado quando a vida do NPC chega a zero. CrewData escuta para processar a remoção.
+    /// </summary>
+    public event System.Action<NPCsData> OnMorte;
+    #endregion
+
+    #region Ciclo de Vida (Unity)
     void Awake()
     {
         vidaAtual = vidaMáxima;
     }
+    #endregion
 
+    #region Lógica de Vida e Dano
+    /// <summary>
+    /// Processa o recebimento de dano aplicando os devidos multiplicadores elementais e reduções por armadura.
+    /// </summary>
     public void TakeDamage(float dano, DamageType damageType)
     {
         if (!isAlive) return;
@@ -138,6 +165,7 @@ public class NPCsData : MonoBehaviour
 
         float damageReal = Mathf.Max(0, (armaduraEquipada != null)? dano * multiplier - armaduraEquipada.resistanceBaseValue: dano * multiplier);
         vidaAtual -= damageReal;
+        
         if (vidaAtual <= 0)
         {
             vidaAtual = 0;
@@ -152,20 +180,19 @@ public class NPCsData : MonoBehaviour
         vidaAtual = Mathf.Min(vidaMáxima, vidaAtual + healAmount);
     }
 
-    public float GetVidaAtual()
-    {
-        return vidaAtual;
-    }
-
+    public float GetVidaAtual() => vidaAtual;
     public float GetVidaMaxima() => vidaMáxima;
+    public void UpdateStrength(float strength) => força = strength;
+    #endregion
 
-    public void UpdateStrength(float strength)
+    #region Gerenciamento de Efeitos
+    /// <summary>
+    /// Adiciona um novo efeito passivo ou imediato a entidade (Buffs, Debuffs, Cura).
+    /// O efeito de força é acumulado se o tempo também acumular, caso contrário a intensidade é substituída.
+    /// </summary>
+    public void AddEffect(ActiveEffect newEffect)
     {
-        força = strength;
-    }
-
-public void AddEffect(ActiveEffect newEffect)
-    {
+        // Aplicação imediata no ato da adição para cura, dano ou aumento de força base
         if (newEffect.tipo == CombatBase.Efeito.Cura)
         {
             Heal(newEffect.intensidade);
@@ -179,7 +206,6 @@ public void AddEffect(ActiveEffect newEffect)
         else if (newEffect.tipo == CombatBase.Efeito.Força)
         {
             força += newEffect.intensidade;
-           
         }
 
         if (newEffect.turnosRestantes <= 0 && newEffect.tipo != CombatBase.Efeito.Força)
@@ -187,12 +213,14 @@ public void AddEffect(ActiveEffect newEffect)
             return; 
         }
 
+        // Procura se o efeito já existe para acumular ou sobrescrever
         for (int i = 0; i < activeEffects.Count; i++)
         {
             if (activeEffects[i].tipo == newEffect.tipo && activeEffects[i].damageType == newEffect.damageType)
             {
                 var existing = activeEffects[i];
 
+                // Retira a força anterior para aplicar a nova (Evita stack infinito)
                 if (newEffect.tipo == CombatBase.Efeito.Força)
                 {
                     força -= existing.intensidade; 
@@ -208,6 +236,10 @@ public void AddEffect(ActiveEffect newEffect)
         activeEffects.Add(newEffect);
     }
 
+    /// <summary>
+    /// Chamado ao final do turno pelo BattleManager. 
+    /// Executa efeitos periódicos (como veneno) e limpa efeitos expirados (devolvendo a Força ao normal).
+    /// </summary>
     public void TickEffects()
     {
         if (!isAlive) return;
@@ -247,7 +279,12 @@ public void AddEffect(ActiveEffect newEffect)
             }
         }
     }
+    #endregion
 
+    #region Loot e Equipamentos
+    /// <summary>
+    /// Sorteia os itens que a criatura dropará ao morrer, baseado nas chances de cada PossibleDrop.
+    /// </summary>
     public List<Inventory.Slot> GerarLoot()
     {
         List<Inventory.Slot> drops = new();
@@ -267,13 +304,9 @@ public void AddEffect(ActiveEffect newEffect)
     public float GetPoderDeAtaque()
     {
         if (armaEquipada != null)
-        {
             return força + armaEquipada.attackBaseValue;    
-        }
         else
-        {
             return força;    
-        }
     }
 
     public void AplicarConsumivel(ConsumableData consumable)
@@ -296,6 +329,7 @@ public void AddEffect(ActiveEffect newEffect)
                 break;
         }
     }
+
     public WeaponData EquiparArma(WeaponData novaArma)
     {
         WeaponData armaAntiga = armaEquipada;
@@ -309,7 +343,9 @@ public void AddEffect(ActiveEffect newEffect)
         armaduraEquipada = novaArmadura;
         return armaduraAntiga;
     }
+    #endregion
 
+    #region Sistema de XP e Evolução
     public void GanharXP(float quantidade)
     {
         currentXP += quantidade;
@@ -327,19 +363,11 @@ public void AddEffect(ActiveEffect newEffect)
             Heal(vidaMáxima);
         }
     }
+    #endregion
 
-    public void ResetarAcoes()
-    {
-        acoesRestantes = maxAcoesPorTurno;
-    }
-
-    public void ConsumirAcao()
-    {
-        acoesRestantes--;
-    }
-
-    public bool PodeAgir()
-    {
-        return acoesRestantes > 0;
-    }
+    #region Gerenciamento de Ações de Batalha
+    public void ResetarAcoes() => acoesRestantes = maxAcoesPorTurno;
+    public void ConsumirAcao() => acoesRestantes--;
+    public bool PodeAgir() => acoesRestantes > 0;
+    #endregion
 }

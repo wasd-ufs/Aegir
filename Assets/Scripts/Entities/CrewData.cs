@@ -1,19 +1,33 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Mantém o registro do coletivo da tripulação (seja a do jogador ou a de um grupo de inimigos).
+/// Ouve ativamente a morte das unidades e lida com sua exclusão do grupo ou desativação.
+/// Centraliza também o Inventário compartilhado daquele grupo.
+/// </summary>
 [RequireComponent(typeof(Inventory))]
 public class CrewData : MonoBehaviour
 {
+    #region Membros e Inventário
+    [Header("Membros da Tripulação")]
     public List<GameObject> crew = new();
     public int maxCrewLength;
+    
+    [HideInInspector]
     public Inventory inventory;
-
+    
     private bool inicializadoManualmente = false;
+    #endregion
 
+    #region Ciclo de Vida (Unity)
     void Awake()
     {
         if (inicializadoManualmente) return;
+        
         SubscreverEventosMorte();
+        
+        // Garante que todos da tripulação inicial comecem de vida cheia
         foreach(GameObject npc in crew)
         {
             NPCsData data = npc.GetComponent<NPCsData>();
@@ -24,11 +38,13 @@ public class CrewData : MonoBehaviour
 
     void Start()
     {
-        // Garante subscrição para membros adicionados manualmente via InicializarManualmente
+        // Garante subscrição para membros adicionados manualmente via script
         if (inicializadoManualmente)
             SubscreverEventosMorte();
     }
+    #endregion
 
+    #region Inicialização e Eventos
     private void SubscreverEventosMorte()
     {
         foreach (GameObject membro in crew)
@@ -39,6 +55,10 @@ public class CrewData : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Utilizado pela mecânica de "StartFight" caso uma criatura solitária precise
+    /// de um CrewData temporário em runtime para participar da batalha.
+    /// </summary>
     public void InicializarManualmente(GameObject membro)
     {
         inicializadoManualmente = true;
@@ -46,7 +66,9 @@ public class CrewData : MonoBehaviour
         crew.Clear();
         crew.Add(membro);
     }
+    #endregion
 
+    #region Gerenciamento de Dano e Cura Coletivos
     public List<float> GetCrewHP()
     {
         List<float> cHP = new();
@@ -55,22 +77,46 @@ public class CrewData : MonoBehaviour
         return cHP;
     }
 
+    /// <summary>
+    /// Distribui dano aleatoriamente a um determinado número máximo de alvos dentro desta tripulação.
+    /// </summary>
     public void DoDamage(List<GameObject> alvos, float dano, NPCsData.DamageType damageType, int qtdMaximaDeAlvos)
     {
         int qtdAlvos = Mathf.Min(crew.Count, Random.Range(0, qtdMaximaDeAlvos + 1));
         int alvosAcessados = 0;
 
         foreach (GameObject alvo in alvos)
+        {
+            if (crew.Contains(alvo))
             {
-                if (crew.Contains(alvo))
-                {
-                    alvo.GetComponent<NPCsData>().TakeDamage(dano, damageType);
-                    alvosAcessados++;
-                    if (alvosAcessados >= qtdAlvos) break;
-                }
+                alvo.GetComponent<NPCsData>().TakeDamage(dano, damageType);
+                alvosAcessados++;
+                if (alvosAcessados >= qtdAlvos) break;
             }
+        }
     }
 
+    /// <summary>
+    /// Distribui cura aleatoriamente a um determinado número máximo de alvos dentro desta tripulação.
+    /// </summary>
+    public void HealUnits(List<GameObject> alvos, float healAmount, int qtdMaximaDeAlvos)
+    {
+        int qtdAlvos = Mathf.Min(crew.Count, Random.Range(0, qtdMaximaDeAlvos + 1));
+        int alvosAcessados = 0;
+        
+        foreach (GameObject alvo in alvos)
+        {
+            if (crew.Contains(alvo))
+            {
+                alvo.GetComponent<NPCsData>().Heal(healAmount);
+                alvosAcessados++;
+                if (alvosAcessados >= qtdAlvos) break;
+            }
+        }
+    }
+    #endregion
+
+    #region Modificadores de Tripulação
     public void AddToCrew(GameObject NPC)
     {
         if (crew.Count >= maxCrewLength) return;
@@ -81,9 +127,19 @@ public class CrewData : MonoBehaviour
             npc.OnMorte += OnMembroMorreu;
     }
 
+    public void RemoveFromCrew(GameObject NPC)
+    {
+        crew.Remove(NPC);
+    }
+
+    /// <summary>
+    /// Lida com a decisão do que fazer com o GameObject de uma entidade ao ter seu HP zerado.
+    /// Unidades aliadas podem sofrer permadeath baseadas em sua "chanceDeMortePermanente",
+    /// enquanto o barco ou capitão apenas "desmaiam" (são desativados) aguardando o fim da batalha.
+    /// </summary>
     private void OnMembroMorreu(NPCsData npc)
     {
-        npc.OnMorte -= OnMembroMorreu;
+        npc.OnMorte -= OnMembroMorreu; // Evita memory leaks e chamadas duplas
         
         if (gameObject.CompareTag("Player"))
         {
@@ -109,23 +165,5 @@ public class CrewData : MonoBehaviour
             npc.GetComponent<NPCsData>().isAlive = false;
         }
     }
-
-    public void RemoveFromCrew(GameObject NPC)
-    {
-        crew.Remove(NPC);
-    }
-
-    public void HealUnits(List<GameObject> alvos, float healAmount, int qtdMaximaDeAlvos)
-    {
-        int qtdAlvos = Mathf.Min(crew.Count, Random.Range(0, qtdMaximaDeAlvos + 1));
-        int alvosAcessados = 0;
-        foreach (GameObject alvo in alvos)
-            if (crew.Contains(alvo))
-            {
-                alvo.GetComponent<NPCsData>().Heal(healAmount);
-                alvosAcessados++;
-                if (alvosAcessados >= qtdAlvos) break;
-            }
-    }
+    #endregion
 }
-
