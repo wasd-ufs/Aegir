@@ -597,7 +597,7 @@ public class MapGenerator : MonoBehaviour
                     0
                 );
 
-                GameObject go = Instantiate(entry.creature, finalPos, Quaternion.identity);
+                GameObject go = Instantiate(entry.creature, finalPos, Quaternion.identity, worldGenerator.creaturesContainer);
                 NPCsMovement mov = go.GetComponent<NPCsMovement>();
                 if (mov != null) mov.Setup(this.player, this.worldGenerator);
 
