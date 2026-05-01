@@ -1,184 +1,130 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
-/// <summary>
-/// ScriptableObject que representa um tile individual do WFC.
-/// Cada tile possui metadados de camada, tipo visual e direção, além de
-/// sockets de canto usados para verificar compatibilidade com vizinhos.
-/// </summary>
 [CreateAssetMenu(fileName = "New Tile", menuName = "WFC/Tile")]
 public class Tile : ScriptableObject
 {
-    // -------------------------------------------------------------------------
-    // Enumerações
-    // -------------------------------------------------------------------------
-
-    /// <summary>
-    /// Forma visual do tile. Determina como os sockets de canto são calculados.
-    /// </summary>
-    public enum Type : byte
+    public enum TileType : byte
     {
-        Bloco,          // Tile plano — todos os cantos com o mesmo valor de camada
-        Costa,          // Transição com uma borda inteira de água e a oposta de terra
-        Quina,          // Quina convexa — três cantos de água, um de terra
-        QuinaInterna    // Quina côncava — três cantos de terra, um de água
+        Block,
+        Coast,
+        Corner,
+        InnerCorner
     }
 
-    /// <summary>
-    /// Direção ou orientação do tile.
-    /// Usada em conjunto com <see cref="Type"/> para determinar os sockets.
-    /// </summary>
-    public enum Directions { N, S, O, L, NL, NO, SL, SO, None }
+    public enum TileDirection 
+    { 
+        North, 
+        South, 
+        West, 
+        East, 
+        NorthEast, 
+        NorthWest, 
+        SouthEast, 
+        SouthWest, 
+        None 
+    }
 
-    // -------------------------------------------------------------------------
-    // Structs
-    // -------------------------------------------------------------------------
-
-    /// <summary>
-    /// Os quatro cantos do tile, cada um armazenando o valor da camada adjacente.
-    /// Cantos compartilhados entre dois tiles vizinhos devem ser iguais para que
-    /// a conexão seja válida.
-    /// </summary>
     [Serializable]
     public struct CornerSockets
     {
-        public int NO; // Canto Noroeste
-        public int NE; // Canto Nordeste
-        public int SO; // Canto Sudoeste
-        public int SE; // Canto Sudeste
+        public int NorthWest;
+        public int NorthEast;
+        public int SouthWest;
+        public int SouthEast;
     }
 
-    /// <summary>
-    /// Define uma criatura que pode nascer sobre este tile, com quantidade e chance.
-    /// </summary>
     [Serializable]
-    public struct SpawnableCreatures
+    public struct SpawnableCreature
     {
-        public GameObject creature;
-        public int quantity;
-        [Range(0, 1f)] public float spawnChance;
+        [SerializeField] private GameObject _creaturePrefab;
+        [SerializeField] private int _quantity;
+        [SerializeField, Range(0, 1f)] private float _spawnChance;
+
+        public GameObject CreaturePrefab => _creaturePrefab;
+        public int Quantity => _quantity;
+        public float SpawnChance => _spawnChance;
     }
 
-    /// <summary>
-    /// Metadados que identificam o tile dentro do sistema WFC.
-    /// A camada indica o bioma (0 = Água, 1 = Costa, 2 = Terra);
-    /// <see cref="corners"/> é gerado automaticamente via <see cref="OnValidate"/>.
-    /// </summary>
     [Serializable]
     public struct TileMetadata
     {
-        public int camada;              // 0: Água | 1: Costa | 2: Terra
-        public Type type;
-        public Directions direction;
-        [HideInInspector] public CornerSockets corners; // Gerado automaticamente
+        [SerializeField] private int _layer;
+        [SerializeField] private TileType _type;
+        [SerializeField] private TileDirection _direction;
+
+        public CornerSockets Corners { get; set; }
+
+        public int Layer => _layer;
+        public TileType Type => _type;
+        public TileDirection Direction => _direction;
     }
 
-    // -------------------------------------------------------------------------
-    // Campos Públicos
-    // -------------------------------------------------------------------------
+    [SerializeField] private TileBase _tilemapTile;
+    [SerializeField] private float _weight = 1f;
+    [SerializeField] private List<SpawnableCreature> _spawnableCreaturesList;
+    [SerializeField] private TileMetadata _metadata;
 
-    public UnityEngine.Tilemaps.TileBase tilemapTile;
-    public float peso = 1f;
-    public List<SpawnableCreatures> spawnableCreatures;
-    public TileMetadata metadata;
+    public TileBase TilemapTile => _tilemapTile;
+    public float Weight => _weight;
+    public List<SpawnableCreature> SpawnableCreaturesList => _spawnableCreaturesList;
+    public TileMetadata Metadata => _metadata;
 
-    // -------------------------------------------------------------------------
-    // Unity Callbacks
-    // -------------------------------------------------------------------------
-
-    /// <summary>
-    /// Recalcula os sockets de canto sempre que o tile é editado no Inspector.
-    /// </summary>
     private void OnValidate()
     {
-        metadata.corners = GerarCorners(metadata.camada, metadata.type, metadata.direction);
+        CornerSockets generatedCorners = GenerateCorners(_metadata.Layer, _metadata.Type, _metadata.Direction);
+        _metadata.Corners = generatedCorners; 
     }
 
-    // -------------------------------------------------------------------------
-    // Lógica de Sockets
-    // -------------------------------------------------------------------------
-
-    /// <summary>
-    /// Gera os <see cref="CornerSockets"/> com base na camada, tipo e direção do tile.
-    /// <para>
-    /// Convenção de valores:
-    /// <list type="bullet">
-    ///   <item><c>a</c> = valor da própria camada</item>
-    ///   <item><c>i = a - 1</c> = camada inferior (ex.: água em relação à costa)</item>
-    ///   <item><c>s = a + 1</c> = camada superior (ex.: terra em relação à costa)</item>
-    /// </list>
-    /// </para>
-    /// </summary>
-    private CornerSockets GerarCorners(int a, Type type, Directions d)
+    private CornerSockets GenerateCorners(int baseLayer, TileType type, TileDirection direction)
     {
-        int i = a - 1; // camada inferior (ex: água)
-        int s = a + 1; // camada superior (ex: terra)
+        int lowerLayer = baseLayer - 1;
+        int upperLayer = baseLayer + 1;
 
-        // Bloco plano: todos os cantos com o mesmo valor
-        if (type == Type.Bloco)
-            return new CornerSockets { NO = a, NE = a, SO = a, SE = a };
-
-        return (type, d) switch
+        if (type == TileType.Block)
         {
-            // Costa: uma borda inteira é a camada inferior, a oposta é a camada superior
-            (Type.Costa, Directions.N)  => new CornerSockets { NO = i, NE = i, SO = s, SE = s },
-            (Type.Costa, Directions.S)  => new CornerSockets { NO = s, NE = s, SO = i, SE = i },
-            (Type.Costa, Directions.L)  => new CornerSockets { NO = s, NE = i, SO = s, SE = i },
-            (Type.Costa, Directions.O)  => new CornerSockets { NO = i, NE = s, SO = i, SE = s },
+            return new CornerSockets { NorthWest = baseLayer, NorthEast = baseLayer, SouthWest = baseLayer, SouthEast = baseLayer };
+        }
 
-            // Quina convexa: três cantos inferiores (água), um canto superior (terra)
-            (Type.Quina, Directions.NL) => new CornerSockets { NO = i, NE = i, SO = s, SE = i },
-            (Type.Quina, Directions.NO) => new CornerSockets { NO = i, NE = i, SO = i, SE = s },
-            (Type.Quina, Directions.SL) => new CornerSockets { NO = s, NE = i, SO = i, SE = i },
-            (Type.Quina, Directions.SO) => new CornerSockets { NO = i, NE = s, SO = i, SE = i },
+        return (type, direction) switch
+        {
+            (TileType.Coast, TileDirection.North) => new CornerSockets { NorthWest = lowerLayer, NorthEast = lowerLayer, SouthWest = upperLayer, SouthEast = upperLayer },
+            (TileType.Coast, TileDirection.South) => new CornerSockets { NorthWest = upperLayer, NorthEast = upperLayer, SouthWest = lowerLayer, SouthEast = lowerLayer },
+            (TileType.Coast, TileDirection.East) => new CornerSockets { NorthWest = upperLayer, NorthEast = lowerLayer, SouthWest = upperLayer, SouthEast = lowerLayer },
+            (TileType.Coast, TileDirection.West) => new CornerSockets { NorthWest = lowerLayer, NorthEast = upperLayer, SouthWest = lowerLayer, SouthEast = upperLayer },
 
-            // Quina interna côncava: três cantos superiores (terra), um canto inferior (água)
-            (Type.QuinaInterna, Directions.NL) => new CornerSockets { NO = s, NE = s, SO = i, SE = s },
-            (Type.QuinaInterna, Directions.NO) => new CornerSockets { NO = s, NE = s, SO = s, SE = i },
-            (Type.QuinaInterna, Directions.SL) => new CornerSockets { NO = i, NE = s, SO = s, SE = s },
-            (Type.QuinaInterna, Directions.SO) => new CornerSockets { NO = s, NE = i, SO = s, SE = s },
+            (TileType.Corner, TileDirection.NorthEast) => new CornerSockets { NorthWest = lowerLayer, NorthEast = lowerLayer, SouthWest = upperLayer, SouthEast = lowerLayer },
+            (TileType.Corner, TileDirection.NorthWest) => new CornerSockets { NorthWest = lowerLayer, NorthEast = lowerLayer, SouthWest = lowerLayer, SouthEast = upperLayer },
+            (TileType.Corner, TileDirection.SouthEast) => new CornerSockets { NorthWest = upperLayer, NorthEast = lowerLayer, SouthWest = lowerLayer, SouthEast = lowerLayer },
+            (TileType.Corner, TileDirection.SouthWest) => new CornerSockets { NorthWest = lowerLayer, NorthEast = upperLayer, SouthWest = lowerLayer, SouthEast = lowerLayer },
+
+            (TileType.InnerCorner, TileDirection.NorthEast) => new CornerSockets { NorthWest = upperLayer, NorthEast = upperLayer, SouthWest = lowerLayer, SouthEast = upperLayer },
+            (TileType.InnerCorner, TileDirection.NorthWest) => new CornerSockets { NorthWest = upperLayer, NorthEast = upperLayer, SouthWest = upperLayer, SouthEast = lowerLayer },
+            (TileType.InnerCorner, TileDirection.SouthEast) => new CornerSockets { NorthWest = lowerLayer, NorthEast = upperLayer, SouthWest = upperLayer, SouthEast = upperLayer },
+            (TileType.InnerCorner, TileDirection.SouthWest) => new CornerSockets { NorthWest = upperLayer, NorthEast = lowerLayer, SouthWest = upperLayer, SouthEast = upperLayer },
 
             _ => new CornerSockets()
         };
     }
 
-    // -------------------------------------------------------------------------
-    // Compatibilidade
-    // -------------------------------------------------------------------------
-
-    /// <summary>
-    /// Verifica se este tile é compatível com um vizinho em uma dada direção,
-    /// comparando os cantos compartilhados entre os dois tiles.
-    /// <para>
-    /// Cantos compartilhados por direção:
-    /// <list type="bullet">
-    ///   <item>Direita  → A.NE == B.NO  e  A.SE == B.SO</item>
-    ///   <item>Esquerda → A.NO == B.NE  e  A.SO == B.SE</item>
-    ///   <item>Acima    → A.NO == B.SO  e  A.NE == B.SE</item>
-    ///   <item>Abaixo   → A.SO == B.NO  e  A.SE == B.NE</item>
-    /// </list>
-    /// </para>
-    /// </summary>
-    /// <param name="neighbor">Tile vizinho a ser verificado.</param>
-    /// <param name="direction">Direção do vizinho em relação a este tile.</param>
-    /// <returns><c>true</c> se os cantos compartilhados coincidem.</returns>
-    public bool IsCompatibleWith(Tile neighbor, Vector2Int direction)
+    public bool IsCompatibleWith(Tile neighbor, Vector2Int offsetDirection)
     {
-        CornerSockets a = metadata.corners;
-        CornerSockets b = neighbor.metadata.corners;
+        CornerSockets thisCorners = _metadata.Corners;
+        CornerSockets neighborCorners = neighbor.Metadata.Corners;
 
-        if (direction == Vector2Int.right)
-            return a.NE == b.NO && a.SE == b.SO;
+        if (offsetDirection == Vector2Int.right)
+            return thisCorners.NorthEast == neighborCorners.NorthWest && thisCorners.SouthEast == neighborCorners.SouthWest;
 
-        if (direction == Vector2Int.left)
-            return a.NO == b.NE && a.SO == b.SE;
+        if (offsetDirection == Vector2Int.left)
+            return thisCorners.NorthWest == neighborCorners.NorthEast && thisCorners.SouthWest == neighborCorners.SouthEast;
 
-        if (direction == Vector2Int.up)
-            return a.NO == b.SO && a.NE == b.SE;
+        if (offsetDirection == Vector2Int.up)
+            return thisCorners.NorthWest == neighborCorners.SouthWest && thisCorners.NorthEast == neighborCorners.SouthEast;
 
-        if (direction == Vector2Int.down)
-            return a.SO == b.NO && a.SE == b.NE;
+        if (offsetDirection == Vector2Int.down)
+            return thisCorners.SouthWest == neighborCorners.NorthWest && thisCorners.SouthEast == neighborCorners.NorthEast;
 
         return false;
     }
