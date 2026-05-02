@@ -12,15 +12,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9951dcfcc219a8f4f934427ea152dbf9, type: 3}
   m_Name: AT Quina NE
   m_EditorClassIdentifier: Assembly-CSharp::Tile
-  tilemapTile: {fileID: 11400000, guid: 6c71e276390b338428826c105f8a15bd, type: 2}
-  peso: 500
-  spawnableCreatures: []
-  metadata:
-    camada: 3
-    type: 2
-    direction: 4
-    corners:
-      NO: 2
-      NE: 2
-      SO: 4
-      SE: 2
+  _tilemapTile: {fileID: 11400000, guid: 6c71e276390b338428826c105f8a15bd, type: 2}
+  _weight: 20
+  _spawnableCreaturesList:
+  - _creaturePrefab: {fileID: 3272998769555597944, guid: 0f058080e7d8f114b816287968fc81f0, type: 3}
+    _quantity: 1
+    _spawnChance: 0.0005
+  - _creaturePrefab: {fileID: 4928194280392494516, guid: 590734781d6bffc4da831e261601dc19, type: 3}
+    _quantity: 1
+    _spawnChance: 0.0005
+  _metadata:
+    _layer: 3
+    _type: 2
+    _direction: 4

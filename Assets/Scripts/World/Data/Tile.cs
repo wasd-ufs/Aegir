@@ -3,9 +3,16 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
+/// <summary>
+/// Objeto de dados principal que representa um bloco do mapa procedural.
+/// Armazena as referências visuais (TileBase), físicas (peso) e a lógica de compatibilidade (Metadata e Corners) para o WFC.
+/// </summary>
 [CreateAssetMenu(fileName = "New Tile", menuName = "WFC/Tile")]
 public class Tile : ScriptableObject
 {
+    /// <summary>
+    /// Define a categoria morfológica do tile, determinando como este se liga aos seus vizinhos (Ex: Bloco sólido, costa, quina).
+    /// </summary>
     public enum TileType : byte
     {
         Block,
@@ -14,6 +21,9 @@ public class Tile : ScriptableObject
         InnerCorner
     }
 
+    /// <summary>
+    /// Define a orientação espacial do tile, essencial para alinhar as texturas de transição (Ex: costas viradas a Norte).
+    /// </summary>
     public enum TileDirection 
     { 
         North, 
@@ -27,6 +37,10 @@ public class Tile : ScriptableObject
         None 
     }
 
+    /// <summary>
+    /// Armazena os valores das camadas nos quatro cantos do tile.
+    /// Utilizado pelo algoritmo WFC para validar se as bordas de dois tiles encaixam perfeitamente.
+    /// </summary>
     [Serializable]
     public struct CornerSockets
     {
@@ -36,6 +50,10 @@ public class Tile : ScriptableObject
         public int SouthEast;
     }
 
+    /// <summary>
+    /// Define uma entidade (criatura ou NPC) que pode ser instanciada sobre este tile, 
+    /// incluindo a sua probabilidade de spawn e a quantidade a ser gerada.
+    /// </summary>
     [Serializable]
     public struct SpawnableCreature
     {
@@ -48,6 +66,10 @@ public class Tile : ScriptableObject
         public float SpawnChance => _spawnChance;
     }
 
+    /// <summary>
+    /// Agrupa os dados lógicos e de regras do tile (camada, tipo e direção),
+    /// servindo de base para calcular a compatibilidade geométrica (CornerSockets).
+    /// </summary>
     [Serializable]
     public struct TileMetadata
     {

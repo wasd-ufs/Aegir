@@ -14,7 +14,7 @@ public class ChunkRenderer : MonoBehaviour
         {
             for (int y = 1; y <= chunkSize.y; y++)
             {
-                Cell cell = grid.Cells[x, y];
+                Cell cell = grid.CellsArray[x, y];
                 if (cell.IsCollapsed())
                 {
                     int tileIndex = cell.CollapsedIndex();

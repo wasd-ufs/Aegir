@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class CompatibilityCache
 {
-    private bool[,,] _cache;
+    private bool[,,] _compatibilityCacheArray;
     private RuleManager _ruleManager;
     private TilesetData _tilesetData;
 
@@ -14,7 +14,7 @@ public class CompatibilityCache
 
     public void BuildCache()
     {
-        if (_cache != null) return;
+        if (_compatibilityCacheArray != null) return;
 
         int tileCount = _tilesetData.TilesetList.Count;
         _compatibilityCacheArray = new bool[tileCount, tileCount, 4];
@@ -26,10 +26,10 @@ public class CompatibilityCache
                 Tile tileA = _tilesetData.TilesetList[a];
                 Tile tileB = _tilesetData.TilesetList[b];
                 
-                _cache[a, b, 0] = !_ruleManager.IsBlocked(tileA, tileB, Vector2Int.up);
-                _cache[a, b, 1] = !_ruleManager.IsBlocked(tileA, tileB, Vector2Int.down);
-                _cache[a, b, 2] = !_ruleManager.IsBlocked(tileA, tileB, Vector2Int.left);
-                _cache[a, b, 3] = !_ruleManager.IsBlocked(tileA, tileB, Vector2Int.right);
+                _compatibilityCacheArray[a, b, 0] = !_ruleManager.IsBlocked(tileA, tileB, Vector2Int.up);
+                _compatibilityCacheArray[a, b, 1] = !_ruleManager.IsBlocked(tileA, tileB, Vector2Int.down);
+                _compatibilityCacheArray[a, b, 2] = !_ruleManager.IsBlocked(tileA, tileB, Vector2Int.left);
+                _compatibilityCacheArray[a, b, 3] = !_ruleManager.IsBlocked(tileA, tileB, Vector2Int.right);
             }
         }
     }

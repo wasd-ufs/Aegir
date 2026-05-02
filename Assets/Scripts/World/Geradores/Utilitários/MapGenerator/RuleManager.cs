@@ -2,6 +2,10 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Processa as regras de bloqueio (quem não se pode ligar a quem) e gera regras espelhadas
+/// de compatibilidade rápida para o algoritmo WFC.
+/// </summary>
 public class RuleManager : MonoBehaviour
 {
     [Serializable]
@@ -56,22 +60,28 @@ public class RuleManager : MonoBehaviour
         BuildFastRules();
     }
 
+    /// <summary>
+    /// Lê as regras definidas no Inspector e cria automaticamente as regras inversas (ex: se o Tile A bloqueia o Tile B acima, então o Tile B bloqueia o Tile A abaixo).
+    /// </summary>
     private void MirrorRules()
     {
-        List<TileRule> mirroredRules = new List<TileRule>();
+        List<TileRule> mirroredRulesList = new List<TileRule>();
         TileRule[] originalsArray = _blockingRulesList.ToArray();
 
         foreach (var rule in originalsArray)
         {
-            AddMirrorRule(mirroredRules, rule.Origin, rule.BlockedAbove, "below");
-            AddMirrorRule(mirroredRules, rule.Origin, rule.BlockedBelow, "above");
-            AddMirrorRule(mirroredRules, rule.Origin, rule.BlockedLeft, "right");
-            AddMirrorRule(mirroredRules, rule.Origin, rule.BlockedRight, "left");
+            AddMirrorRule(mirroredRulesList, rule.Origin, rule.BlockedAbove, "below");
+            AddMirrorRule(mirroredRulesList, rule.Origin, rule.BlockedBelow, "above");
+            AddMirrorRule(mirroredRulesList, rule.Origin, rule.BlockedLeft, "right");
+            AddMirrorRule(mirroredRulesList, rule.Origin, rule.BlockedRight, "left");
         }
 
-        _blockingRulesList.AddRange(mirroredRules);
+        _blockingRulesList.AddRange(mirroredRulesList);
     }
 
+    /// <summary>
+    /// Converte a lista de regras para um Dicionário de HashSets, otimizando a velocidade de leitura para O(1) durante a execução do algoritmo de geração pesada.
+    /// </summary>
     private void BuildFastRules()
     {
         _fastRulesDictionary = new Dictionary<Tile, HashSet<Tile>[]>();
@@ -131,6 +141,9 @@ public class RuleManager : MonoBehaviour
             GetList(rule, direction).Exists(blocked => blocked.Type == blocksTile.Type && blocked.Direction == blocksTile.Direction));
     }
 
+    ///<summary>
+    /// Valida se dois tiles vizinhos estão a violar alguma das regras de adjacência estabelecidas
+    ///</summary>
     public bool IsBlocked(Tile current, Tile neighbor, Vector2Int direction)
     {
         if (!current.IsCompatibleWith(neighbor, direction)) return true;

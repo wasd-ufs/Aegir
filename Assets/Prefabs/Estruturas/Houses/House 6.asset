@@ -12,10 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6431e4df66678924180ab026ce2d9ff0, type: 3}
   m_Name: House 6
   m_EditorClassIdentifier: Assembly-CSharp::StructureData
-  structureName: House 6
-  structureDimensions: {x: 5, y: 5}
-  structurePrefab: {fileID: 6950969184573488497, guid: d68c9397722258c4cafef9ad075411ef, type: 3}
-  spawnChance: 0.15
-  validBaseLayers: 020000000300000004000000
-  raioDeIsolamento: 5
-  layerOverrides: []
+  _structureName: House
+  _structureDimensions: {x: 2, y: 3}
+  _structurePrefab: {fileID: 6950969184573488497, guid: d68c9397722258c4cafef9ad075411ef, type: 3}
+  _spawnChance: 0.1
+  _validBaseLayersList: 020000000300000004000000
+  _isolationRadius: 10
+  _layerOverridesList: []

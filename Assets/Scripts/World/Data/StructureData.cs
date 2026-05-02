@@ -2,6 +2,10 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Molde (Blueprint) utilizado para gerar estruturas e decorações maiores que 1x1 no mapa procedural.
+/// Define as dimensões, o prefab a instanciar, as regras de sobreposição e o raio de isolamento mínimo.
+/// </summary>
 [CreateAssetMenu(fileName = "StructureData", menuName = "Scriptable Objects/StructureData")]
 public class StructureData : ScriptableObject
 {
@@ -21,6 +25,10 @@ public class StructureData : ScriptableObject
     public float IsolationRadius => _isolationRadius;
     public List<LayerOverride> LayerOverridesList => _layerOverridesList;
 
+    /// <summary>
+    /// Estrutura que define exceções ou regras estritas para camadas específicas.
+    /// Permite forçar ou verificar se uma coordenada local da estrutura exige uma camada exata do terreno.
+    /// </summary>
     [Serializable]
     public struct LayerOverride
     {

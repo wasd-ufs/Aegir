@@ -2,6 +2,10 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Avalia a matriz colapsada e tenta instanciar "plantas" (blueprints) de estruturas
+/// respeitando raios de isolamento e sobreposições de camadas.
+/// </summary>
 public class StructureGenerator : MonoBehaviour
 {
     [SerializeField] private List<StructureData> _structuresList;
@@ -30,6 +34,11 @@ public class StructureGenerator : MonoBehaviour
         _cachedCellSize = cachedCellSize;
     }
 
+    ///<summary>
+    /// Ponto de entrada que verifica quais os chunks que já têm todos os vizinhos prontos 
+    /// para começarem a receber as decorações 
+    ///</summary>
+
     public void ProcessDecorations()
     {
         var waitingChunksList = _lifecycleManager.GetChunksWaitingForDecoration();
@@ -44,6 +53,9 @@ public class StructureGenerator : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Verifica se os 8 chunks adjacentes já terminaram de ser gerados para evitar que decorações sejam cortadas nas bordas.
+    /// </summary>
     private bool AreAllNeighborsReady(Vector2Int chunkPosition)
     {
         for (int x = -1; x <= 1; x++)
@@ -59,6 +71,9 @@ public class StructureGenerator : MonoBehaviour
         return true;
     }
 
+    /// <summary>
+    /// Percorre a grelha do chunk e tenta posicionar cada blueprint da lista, respeitando as probabilidades de spawn.
+    /// </summary>
     private void ScanAndGenerateStructures(Vector2Int chunkPosition)
     {
         foreach (StructureData blueprint in _structuresList)
@@ -87,6 +102,9 @@ public class StructureGenerator : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Garante que a estrutura cabe no local desejado, respeitando as camadas exigidas do chão e o raio de isolamento de outras estruturas.
+    /// </summary>
     private bool ValidateBlueprint(Vector3 initialWorldPosition, StructureData blueprint)
     {
         foreach (var savedStructure in SavedStructuresList)

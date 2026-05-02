@@ -1,10 +1,19 @@
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
+/// <summary>
+/// Responsável por ler as probabilidades de vida selvagem/NPCs de cada tile colapsado e 
+/// instanciar os prefabs correspondentes.
+/// </summary>
 public class EntitySpawner : MonoBehaviour
 {
     [SerializeField] private int _maxCreaturesPerChunk = 10;
     [SerializeField] private TilesetData _tilesetData;
 
+
+    ///<summary>
+    /// Itera sobre a matriz final já colapsada para invocar a criação das entidades correspondentes 
+    ///</summary>
     public void SpawnEntities(ChunkCellGrid grid, Vector2Int chunkSize, Tilemap tilemap, Transform creaturesContainer, GameObject player, WorldGenerator worldGenerator)
     {
         int totalSpawnedCount = 0;
@@ -15,15 +24,18 @@ public class EntitySpawner : MonoBehaviour
             {
                 if (totalSpawnedCount >= _maxCreaturesPerChunk) return;
                 
-                Cell cell = grid.Cells[x, y];
-                if (cell.IsCollapsed())
-                {
-                    InstantiateCreatureForCell(cell, x, y, tilemap, creaturesContainer, player, worldGenerator, ref totalSpawnedCount);
-                }
+                Cell cell = grid.CellsArray[x, y];
+                
+                if (!cell.IsCollapsed()) continue; 
+                
+                InstantiateCreatureForCell(cell, x, y, tilemap, creaturesContainer, player, worldGenerator, ref totalSpawnedCount);
             }
         }
     }
 
+    /// <summary>
+    /// Processa a lista de criaturas permitidas para o tile específico e as instancia no mundo, aplicando pequenas variações aleatórias na posição.
+    /// </summary>
     private void InstantiateCreatureForCell(Cell cell, int cellX, int cellY, Tilemap tilemap, Transform creaturesContainer, GameObject player, WorldGenerator worldGenerator, ref int spawnCount)
     {
         int tileIndex = cell.CollapsedIndex();

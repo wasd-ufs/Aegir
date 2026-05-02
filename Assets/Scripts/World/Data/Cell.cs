@@ -2,6 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Representa um espaço individual na grelha do algoritmo Wave Function Collapse (WFC).
+/// Controla os estados possíveis (entropia) de um tile nesta coordenada e verifica se o mesmo já colapsou.
+/// </summary>
 public class Cell
 {
     public BitArray PossibleBitsArray { get; private set; }

@@ -12,10 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6431e4df66678924180ab026ce2d9ff0, type: 3}
   m_Name: Hospital
   m_EditorClassIdentifier: Assembly-CSharp::StructureData
-  structureName: Hospital
-  structureDimensions: {x: 8, y: 8}
-  structurePrefab: {fileID: 2842499114943241122, guid: ad6a55233ae1fe3408bec17f5c9824b3, type: 3}
-  spawnChance: 0.3
-  validBaseLayers: 020000000300000004000000
-  raioDeIsolamento: 5
-  layerOverrides: []
+  _structureName: Hospital
+  _structureDimensions: {x: 3, y: 2}
+  _structurePrefab: {fileID: 2842499114943241122, guid: ad6a55233ae1fe3408bec17f5c9824b3, type: 3}
+  _spawnChance: 0.2
+  _validBaseLayersList: 020000000300000004000000
+  _isolationRadius: 30
+  _layerOverridesList: []

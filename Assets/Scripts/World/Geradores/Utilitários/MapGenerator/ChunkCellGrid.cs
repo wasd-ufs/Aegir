@@ -81,7 +81,7 @@ public class ChunkCellGrid
         {
             for (int y = 0; y < GridHeight; y++)
             {
-                CellsArray[x, y].PossibleBitsArray = new BitArray(_haloSnapshotArray[x, y]);
+                CellsArray[x, y].CopyFrom(_haloSnapshotArray[x, y]);
             }
         }
     }
