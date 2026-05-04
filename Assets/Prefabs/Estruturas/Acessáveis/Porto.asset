@@ -12,20 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6431e4df66678924180ab026ce2d9ff0, type: 3}
   m_Name: Porto
   m_EditorClassIdentifier: Assembly-CSharp::StructureData
-  structureName: Porto
-  structureDimensions: {x: 8, y: 8}
-  structurePrefab: {fileID: 4306527351568153791, guid: 9a8ca1d343fea6149a9b162feab2a042, type: 3}
-  spawnChance: 0.3
-  validBaseLayers: 01000000020000000300000004000000
-  raioDeIsolamento: 5
-  layerOverrides:
-  - localCoordinates:
-    - {x: 0, y: 0}
-    - {x: 0, y: 1}
-    - {x: 0, y: 2}
-    - {x: 0, y: 3}
-    - {x: 0, y: 4}
-    - {x: 0, y: 5}
-    - {x: 0, y: 6}
-    - {x: 0, y: 7}
-    layer: 0
+  _structureName: Porto
+  _structureDimensions: {x: 3, y: 2}
+  _structurePrefab: {fileID: 4306527351568153791, guid: 9a8ca1d343fea6149a9b162feab2a042, type: 3}
+  _spawnChance: 0.2
+  _validBaseLayersList: 020000000300000004000000
+  _isolationRadius: 30
+  _layerOverridesList: []

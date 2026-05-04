@@ -12109,7 +12109,7 @@ MonoBehaviour:
   musicasStart:
   - {fileID: 8300000, guid: d84d7dcb6aed87e4699520796ae6a27b, type: 3}
   somDoMar: {fileID: 8300000, guid: 6453971a4ae4d054bb85a4307270f905, type: 3}
-  volumeAmbiente: 0.3
+  volumeAmbiente: 0.15
   intervaloMinimo: 5
   intervaloMaximo: 20
   fadeDuration: 1
@@ -20176,6 +20176,9 @@ GameObject:
   - component: {fileID: 1829302570}
   - component: {fileID: 1829302569}
   - component: {fileID: 1829302568}
+  - component: {fileID: 1829302573}
+  - component: {fileID: 1829302572}
+  - component: {fileID: 1829302571}
   m_Layer: 0
   m_Name: WorldManager
   m_TagString: Untagged
@@ -20195,27 +20198,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2def785981daeb24d99d613e29c94358, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WorldManager
-  chunkPrefab: {fileID: 5338193686674964212, guid: cd206c9c86664ec4282e93eef468ae01, type: 3}
-  player: {fileID: 679149527}
-  viewDistance: 4
-  noiseScale: 100
-  structures:
-  - {fileID: 11400000, guid: 7fe182c9daae43a478db756205f1b0f8, type: 2}
-  - {fileID: 11400000, guid: e27f25eb46ecb52478726870f12cdd08, type: 2}
-  - {fileID: 11400000, guid: 9d39eecac8fc1da429b54511fc9756db, type: 2}
-  - {fileID: 11400000, guid: 5b5913d3a3ea33c40860d662279b3df6, type: 2}
-  - {fileID: 11400000, guid: 4b89597fd134c9544a6b872684fc9e2a, type: 2}
-  - {fileID: 11400000, guid: a00f0fc51b3374345977870083830d97, type: 2}
-  - {fileID: 11400000, guid: f09532d84aa4e9540a8c675f1bfadaf8, type: 2}
-  - {fileID: 11400000, guid: 0ef2012ef5546bd4196324d924336a52, type: 2}
-  - {fileID: 11400000, guid: 0c56a198774765e46911180371655cf1, type: 2}
-  - {fileID: 11400000, guid: 40a2edacc6eb6af4d944be1ca4a1c34d, type: 2}
-  - {fileID: 11400000, guid: c21472f30cfb8574891fb520b53aedbe, type: 2}
-  clearSaveOnStart: 1
-  creaturesContainer: {fileID: 344813211}
-  structuresContainer: {fileID: 2031006555}
-  mapContainer: {fileID: 2115451714}
-  savedStructures: []
+  _chunkPrefab: {fileID: 5338193686674964212, guid: cd206c9c86664ec4282e93eef468ae01, type: 3}
+  _playerTransform: {fileID: 679149527}
+  _viewDistance: 2
+  _tilesetData: {fileID: 11400000, guid: 6b5aba90c8cd3df43b4f44506abd15ea, type: 2}
+  _shouldClearSaveOnStart: 1
+  _creaturesContainer: {fileID: 344813211}
 --- !u!114 &1829302569
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -20228,8 +20216,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 17917c8ee9289ed4dada3826b5efa632, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RuleManager
-  regrasDeBloqueio: []
-  tilesetData: {fileID: 11400000, guid: 6b5aba90c8cd3df43b4f44506abd15ea, type: 2}
+  _blockingRulesList: []
+  _tilesetData: {fileID: 11400000, guid: 6b5aba90c8cd3df43b4f44506abd15ea, type: 2}
 --- !u!4 &1829302570
 Transform:
   m_ObjectHideFlags: 0
@@ -20245,6 +20233,58 @@ Transform:
   m_Children: []
   m_Father: {fileID: 267455798}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1829302571
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1829302567}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7806787167697124a90d79690a1e6677, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerTransitionController
+--- !u!114 &1829302572
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1829302567}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0d9c75041c6211d4bbe4d5be9b0ff904, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::StructureGenerator
+  _structuresList:
+  - {fileID: 11400000, guid: c21472f30cfb8574891fb520b53aedbe, type: 2}
+  - {fileID: 11400000, guid: 7fe182c9daae43a478db756205f1b0f8, type: 2}
+  - {fileID: 11400000, guid: e27f25eb46ecb52478726870f12cdd08, type: 2}
+  - {fileID: 11400000, guid: 9d39eecac8fc1da429b54511fc9756db, type: 2}
+  - {fileID: 11400000, guid: 5b5913d3a3ea33c40860d662279b3df6, type: 2}
+  - {fileID: 11400000, guid: 4b89597fd134c9544a6b872684fc9e2a, type: 2}
+  - {fileID: 11400000, guid: a00f0fc51b3374345977870083830d97, type: 2}
+  - {fileID: 11400000, guid: f09532d84aa4e9540a8c675f1bfadaf8, type: 2}
+  - {fileID: 11400000, guid: 0ef2012ef5546bd4196324d924336a52, type: 2}
+  - {fileID: 11400000, guid: 0c56a198774765e46911180371655cf1, type: 2}
+  - {fileID: 11400000, guid: 40a2edacc6eb6af4d944be1ca4a1c34d, type: 2}
+  _structuresContainer: {fileID: 2031006555}
+--- !u!114 &1829302573
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1829302567}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f17c225b9615f924fbf2118736e71223, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ChunkLifecycleManager
+  _chunkPrefab: {fileID: 5338193686674964212, guid: cd206c9c86664ec4282e93eef468ae01, type: 3}
+  _chunksContainer: {fileID: 2115451714}
+  _noiseScale: 0.05
 --- !u!1 &1840514984
 GameObject:
   m_ObjectHideFlags: 0
