@@ -54,6 +54,7 @@ public class WorldGenerator : MonoBehaviour
         public Vector3 structureWorldPosition;
         public float raioDeIsolamento;
     }
+    public Transform creaturesContainer, structuresContainer, mapContainer;
 
     // =========================================================================
     // Estado Interno
@@ -98,7 +99,8 @@ public class WorldGenerator : MonoBehaviour
     void Start()
     {
         // Cria um GameObject container para organizar os chunks na hierarquia
-        chunksContainer = new GameObject("Chunks").transform;
+        chunksContainer = new GameObject("-- Chunks --").transform;
+        chunksContainer.transform.SetParent(mapContainer);
 
         savePath = Application.persistentDataPath + "/map_data/";
         if (!Directory.Exists(savePath)) Directory.CreateDirectory(savePath);
@@ -421,7 +423,7 @@ public class WorldGenerator : MonoBehaviour
                         worldPos.x += (structure.structureDimensions.x - 1) * cachedCellSize / 2f;
                         worldPos.y += (structure.structureDimensions.y - 1) * cachedCellSize / 2f;
 
-                        Instantiate(structure.structurePrefab, worldPos, Quaternion.identity);
+                        Instantiate(structure.structurePrefab, worldPos, Quaternion.identity, structuresContainer);
                         RegistrarEstrutura(structure.structureName, worldPos, structure.raioDeIsolamento);
                         isGenerated = true;
                     }
