@@ -16,15 +16,16 @@ public class StartFight : MonoBehaviour
     #endregion
 
     #region Estado e Referências
-    private bool startingFight;
-    private GameBoyTransition transition;
+    private bool _isStartingFight;
+    private GameBoyTransition _transition;
     #endregion
 
     #region Ciclo de Vida (Unity)
-    void Awake()
+    private void Awake()
     {
-        transition = FindFirstObjectByType<GameBoyTransition>();
-        if (transition == null)
+        _transition = FindFirstObjectByType<GameBoyTransition>();
+
+        if (_transition == null)
             Debug.LogWarning("[StartFight] GameBoyTransition não encontrado na cena!", this);
     }
 
@@ -32,10 +33,14 @@ public class StartFight : MonoBehaviour
     /// Detecta a colisão do inimigo com o jogador. Garante que o jogador está no barco
     /// e que a transição ocorra apenas uma vez.
     /// </summary>
-    void OnCollisionEnter2D(Collision2D collision)
+    private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (!collision.gameObject.CompareTag("Player") || collision.gameObject.GetComponent<PlayerMovement>().isOnWater == false) return;
-        if (startingFight) return;
+        if (!collision.gameObject.CompareTag("Player")) return;
+
+        PlayerMovement playerMovement = collision.gameObject.GetComponent<PlayerMovement>();
+        if (playerMovement == null || playerMovement.isOnWater == false) return;
+
+        if (_isStartingFight) return;
 
         BattleData battleData = FindFirstObjectByType<BattleData>();
         if (battleData == null)
@@ -44,11 +49,12 @@ public class StartFight : MonoBehaviour
             return;
         }
 
-        CrewData crew = ResolverCrew();
-        
-        startingFight = true;
+        CrewData crew = SolveCrew();
+
+        _isStartingFight = true;
+
         // Inicia o efeito do GameBoy e só dispara o StartFight quando a tela estiver totalmente coberta
-        transition.StartTransition(
+        _transition.StartTransition(
             onMidpointCallback: () => battleData.StartFight(background, creature, crew)
         );
     }
@@ -59,14 +65,13 @@ public class StartFight : MonoBehaviour
     /// Se o inimigo já tem um CrewData, usa ele.
     /// Caso contrário, cria um CrewData temporário em runtime com a criatura sozinha.
     /// </summary>
-    /// <returns>O CrewData a ser utilizado no combate.</returns>
-    private CrewData ResolverCrew()
+    private CrewData SolveCrew()
     {
         if (enemyCrew != null) return enemyCrew;
 
         // Cria um GameObject temporário para hospedar o CrewData
-        GameObject tempObj = new GameObject($"[TempCrew] {gameObject.name}");
-        CrewData tempCrew  = tempObj.AddComponent<CrewData>();
+        GameObject tempObject = new GameObject($"[TempCrew] {gameObject.name}");
+        CrewData tempCrew = tempObject.AddComponent<CrewData>();
 
         // Inicializa antes do Awake rodar para evitar duplicatas na lista
         tempCrew.InicializarManualmente(gameObject);

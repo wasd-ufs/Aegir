@@ -20,43 +20,53 @@ public class BattleManager : MonoBehaviour
     #endregion
 
     #region Dados das Equipes
+
     [Header("Crews")]
-    public CrewData playerCrew;
-    [HideInInspector] public CrewData enemyCrew;
+    [SerializeField] private CrewData _playerCrew;
+    [HideInInspector] public CrewData _enemyCrew;
+
     #endregion
 
     #region Referências de Lógica
+
     [Header("Combat Scripts")]
-    public CrewAttacks ataquesPlayer;
-    private CrewAttacks ataquesInimigo;
+    [SerializeField] private CrewAttacks _playerAttacks;
+    private CrewAttacks _enemyAttacks;
+
     #endregion
 
     #region Referências de UI
+
     [Header("Canvas e Botões de Ação")]
-    public Transform actionButtonContainer;
-    public GameObject actionButtonPrefab;
-    public Transform crewButtonContainer;
-    public GameObject crewButtonPrefab;
-    public Button botaoPassarTurno;
-    public TextMeshProUGUI textoDoLog;
+    [SerializeField] private Transform _actionButtonContainer;
+    [SerializeField] private GameObject _actionButtonPrefab;
+    [SerializeField] private Transform _crewButtonContainer;
+    [SerializeField] private GameObject _crewButtonPrefab;
+    [SerializeField] private Button _skipTurnButton;
+    [SerializeField] private TextMeshProUGUI _logText;
 
     [Header("UI e Feedback Visual")]
-    public CrewUI enemyCrewUI;
-    public BattleData battleData;
-    public TextMeshProUGUI textoDeAcaoDaBatalha;
-    public float velocidadeDoFade;
+    [SerializeField] private CrewUI _enemyCrewUI;
+    [SerializeField] private BattleData _battleData;
+    [SerializeField] private TextMeshProUGUI _battleActionText;
+    [SerializeField] private float _fadeSpeed;
+
     #endregion
 
     #region Estado de Batalha
+
     [Header("Estado Interno")]
-    public bool batalhaAtiva = false;
-    public bool passarTurno = false;
-    public bool exibindoMensagem = false;
-    public bool exibindoMensagemLog = false;
-    private GameObject atorSelecionado;
-    private Coroutine fadeCoroutine, fadeLogCoroutine;
-    private List<GameObject> alvosDoPlayer = new();
-    private PlayerInputActions inputActions;
+    public bool isActiveBattle = false;
+    public bool shouldPassTurn = false;
+    public bool isShowingMessage = false;
+    public bool isShowingLogMessage = false;
+
+    private GameObject _selectedActor;
+    private Coroutine _fadeCoroutine;
+    private Coroutine _fadeLogCoroutine;
+    private List<GameObject> _playerTargets = new();
+    private PlayerInputActions _inputActions;
+
     #endregion
 
     #region Unity Lifecycle
@@ -64,23 +74,23 @@ public class BattleManager : MonoBehaviour
     {
         if (Instance != null && Instance != this) { Destroy(gameObject); return; }
         Instance = this;
-        inputActions = new();
+        _inputActions = new();
     }
 
     void Update()
     {
-        if (inputActions.Player.CancelarSeleção.WasPressedThisFrame())
-            CancelarAcao();
+        if (_inputActions.Player.CancelarSeleção.WasPressedThisFrame())
+            CancelAction();
     }
 
     void OnEnable()
     {
-        inputActions.Enable();
+        _inputActions.Enable();
     }
 
     void OnDisable()
     {
-        inputActions.Disable();
+        _inputActions.Disable();
     }
     #endregion
 
@@ -89,21 +99,21 @@ public class BattleManager : MonoBehaviour
     /// Configura os dados do inimigo e inicializa a corrotina do loop de combate.
     /// </summary>
     /// <param name="inimigos">O CrewData representante da equipe inimiga gerada no embate.</param>
-    public void IniciarBatalha(CrewData inimigos)
+    public void IniciateBattle(CrewData enemies)
     {
-        enemyCrew    = inimigos;
-        batalhaAtiva = true;
+        _enemyCrew    = enemies;
+        isActiveBattle = true;
 
-        ataquesInimigo = inimigos.GetComponent<CrewAttacks>();
-        if (ataquesInimigo == null)
-            Debug.LogWarning("[BattleManager] NPCAttacks não encontrado no GameObject do enemyCrew — inimigos não poderão agir.");
+        _enemyAttacks = enemies.GetComponent<CrewAttacks>();
+        if (_enemyAttacks == null)
+            Debug.LogWarning("[BattleManager] NPCAttacks não encontrado no GameObject do _enemyCrew — inimigos não poderão agir.");
 
-        if (enemyCrewUI != null)
-            enemyCrewUI.InicializarComoInimigo(inimigos);
+        if (_enemyCrewUI != null)
+            _enemyCrewUI.InicializarComoInimigo(enemies);
         else
-            Debug.LogWarning("[BattleManager] enemyCrewUI não atribuído — HP inimigo não será exibido.");
+            Debug.LogWarning("[BattleManager] _enemyCrewUI não atribuído — HP inimigo não será exibido.");
 
-        StartCoroutine(LoopDeBatalha());
+        StartCoroutine(BattleLoop());
     }
     #endregion
 
@@ -111,41 +121,41 @@ public class BattleManager : MonoBehaviour
     /// <summary>
     /// Controla a sequência em que o combate ocorre: Turno Player -> Efeitos -> Checa Morte -> Turno Inimigo -> Efeitos -> Checa Morte.
     /// </summary>
-    private IEnumerator LoopDeBatalha()
+    private IEnumerator BattleLoop()
     {
         yield return null;
 
-        while (batalhaAtiva)
+        while (isActiveBattle)
         {
             // Reseta ações da tripulação do jogador
-            foreach (GameObject npc in playerCrew.crew)
+            foreach (GameObject npc in _playerCrew.crew)
                 npc.GetComponent<NPCsData>().ResetarAcoes();
 
-            passarTurno = false;
+            shouldPassTurn = false;
 
-            HabilitarBotões(true);
-            GerarBotoesDaTripulacao();
+            EnableActionButtons(true);
+            GenerateCrewButtons();
 
             // Espera até que o jogador finalize o turno (manualmente ou ficando sem ações)
-            yield return new WaitUntil(() => passarTurno || !EquipeTemAções(playerCrew));
-            yield return new WaitWhile(() => exibindoMensagem);
+            yield return new WaitUntil(() => shouldPassTurn || !HasCrewActions(_playerCrew));
+            yield return new WaitWhile(() => isShowingMessage);
 
-            HabilitarBotões(false);
+            EnableActionButtons(false);
 
             // Ticks de efeitos após o turno aliado
-            TickTodosEfeitos(playerCrew);
-            TickTodosEfeitos(enemyCrew);
+            TicksFromAllEffects(_playerCrew);
+            TicksFromAllEffects(_enemyCrew);
 
-            if (VerificarFimDeBatalha()) yield break;
+            if (IsBattleOver()) yield break;
 
             // Turno dos inimigos
-            yield return StartCoroutine(TurnoInimigos());
+            yield return StartCoroutine(EnemyTurns());
 
             // Ticks de efeitos após o turno inimigo
-            TickTodosEfeitos(playerCrew);
-            TickTodosEfeitos(enemyCrew);
+            TicksFromAllEffects(_playerCrew);
+            TicksFromAllEffects(_enemyCrew);
 
-            if (VerificarFimDeBatalha()) yield break;
+            if (IsBattleOver()) yield break;
         }
     }
     #endregion
@@ -154,40 +164,40 @@ public class BattleManager : MonoBehaviour
     /// <summary>
     /// Gerencia as ações tomadas pelos oponentes iterando pelas ações disponíveis até não restar nenhuma.
     /// </summary>
-    private IEnumerator TurnoInimigos()
+    private IEnumerator EnemyTurns()
     {
-        foreach (GameObject npc in enemyCrew.crew)
+        foreach (GameObject npc in _enemyCrew.crew)
             npc.GetComponent<NPCsData>().ResetarAcoes();
 
         yield return _waitForSeconds1_5;
-        if (ataquesInimigo == null) yield break;
+        if (_enemyAttacks == null) yield break;
 
-        while (EquipeTemAções(enemyCrew))
+        while (HasCrewActions(_enemyCrew))
         {
-            CombatBase.Actions açãoEscolhida = new();
-            GameObject ator = null;
+            CombatBase.ActionData chosenAction = new();
+            GameObject actor = null;
 
             // Tenta sortear uma ação válida para algum inimigo que ainda possa agir
             for (int i = 0; i < 10; i++)
             {
-                açãoEscolhida = EscolheAção();
-                ator = SortearAtor(açãoEscolhida, enemyCrew);
-                if (ator != null) break;
+                chosenAction = ChooseAction();
+                actor = DrawActor(chosenAction, _enemyCrew);
+                if (actor != null) break;
             }
 
-            if (ator == null)
+            if (actor == null)
             {
                 Debug.LogWarning("[BattleManager] Inimigo tentou 10 vezes e não achou uma ação válida. Pulando o turno.");
                 yield break;
             }
 
-            List<GameObject> alvos = EscolheAlvosNPC(açãoEscolhida);
+            List<GameObject> targets = ChooseNpcTargets(chosenAction);
 
-            ataquesInimigo.aliados  = enemyCrew;
-            ataquesInimigo.inimigos = playerCrew;
-            ator.GetComponent<NPCsData>().ConsumirAcao();
-            ataquesInimigo.ExecutarAção(açãoEscolhida, alvos, ator);
-            yield return new WaitWhile(() => exibindoMensagem);
+            _enemyAttacks.allies  = _enemyCrew;
+            _enemyAttacks.enemies = _playerCrew;
+            actor.GetComponent<NPCsData>().ConsumirAcao();
+            _enemyAttacks.ExecuteAction(chosenAction, targets, actor);
+            yield return new WaitWhile(() => isShowingMessage);
         }
 
         yield return new WaitForSeconds(0.8f);
@@ -197,51 +207,51 @@ public class BattleManager : MonoBehaviour
     /// Seleciona os alvos adequados baseados nos tipos alvejáveis da ação inimiga.
     /// Mistura a lista para dar aleatoriedade aos ataques.
     /// </summary>
-    private List<GameObject> EscolheAlvosNPC(CombatBase.Actions ação)
+    private List<GameObject> ChooseNpcTargets(CombatBase.ActionData action)
     {
-        bool afetaInimigos = ação.timesAlvos.Contains(CombatBase.TimeAlvo.Inimigo);
-        bool afetaAliados  = ação.timesAlvos.Contains(CombatBase.TimeAlvo.Aliado);
+        bool canAffectEnemies = action.targetTeams.Contains(CombatBase.TargetTeam.Enemy);
+        bool canAffectAllies  = action.targetTeams.Contains(CombatBase.TargetTeam.Ally);
 
-        List<GameObject> alvos = new();
+        List<GameObject> targets = new();
 
-        if (afetaInimigos)
+        if (canAffectEnemies)
         {
-            var vivos = playerCrew.crew.Where(g => g.GetComponent<NPCsData>()?.isAlive == true).ToList();
-            if (vivos.Count > 0) alvos.AddRange(Shuffle(vivos));
+            var vivos = _playerCrew.crew.Where(g => g.GetComponent<NPCsData>()?.isAlive == true).ToList();
+            if (vivos.Count > 0) targets.AddRange(Shuffle(vivos));
         }
 
-        if (afetaAliados)
+        if (canAffectAllies)
         {
-            var vivos = enemyCrew.crew.Where(g => g.GetComponent<NPCsData>()?.isAlive == true).ToList();
-            if (vivos.Count > 0) alvos.AddRange(Shuffle(vivos));
+            var vivos = _enemyCrew.crew.Where(g => g.GetComponent<NPCsData>()?.isAlive == true).ToList();
+            if (vivos.Count > 0) targets.AddRange(Shuffle(vivos));
         }
 
-        return alvos;
+        return targets;
     }
 
     /// <summary>
     /// Seleciona uma ação aleatória do rol de ações usando uma roleta baseada nos 'pesos' configurados.
     /// </summary>
-    public CombatBase.Actions EscolheAção()
+    public CombatBase.ActionData ChooseAction()
     {
-        float pesoTotal = 0;
-        foreach (CombatBase.Actions ação in ataquesInimigo.actions)
-            pesoTotal += ação.peso;
+        float totalWeight = 0;
+        foreach (CombatBase.ActionData action in _enemyAttacks.Actions)
+            totalWeight += action.weight;
 
-        float entreLimites = Random.Range(0f, pesoTotal);
-        CombatBase.Actions açãoEscolhida = new();
+        float betweenLimits = Random.Range(0f, totalWeight);
+        CombatBase.ActionData chosenAction = new();
 
-        foreach (CombatBase.Actions ação in ataquesInimigo.actions)
+        foreach (CombatBase.ActionData action in _enemyAttacks.Actions)
         {
-            entreLimites -= ação.peso;
-            if (entreLimites <= 0)
+            betweenLimits -= action.weight;
+            if (betweenLimits <= 0)
             {
-                açãoEscolhida = ação;
+                chosenAction = action;
                 break;
             }
         }
 
-        return açãoEscolhida;
+        return chosenAction;
     }
     #endregion
 
@@ -249,103 +259,103 @@ public class BattleManager : MonoBehaviour
     /// <summary>
     /// Recebe o clique da UI de ações e executa a lógica em cima do alvo selecionado/randômico.
     /// </summary>
-    /// <param name="ação">A ação clicada pelo jogador na interface.</param>
-    public void ExecutarAçãoPlayer(CombatBase.Actions ação)
+    /// <param name="action">A ação clicada pelo jogador na interface.</param>
+    public void ExecutePlayerAction(CombatBase.ActionData action)
     {
-        GameObject ator = atorSelecionado;
-        if (ator == null)
+        GameObject actor = _selectedActor;
+        if (actor == null)
         {
-            Debug.LogWarning($"[BattleManager] Nenhum membro do crew pode executar a ação '{ação.nomeAção}'.");
+            Debug.LogWarning($"[BattleManager] Nenhum membro do crew pode executar a ação '{action.actionName}'.");
             return;
         }
 
         // Caso o jogador não tenha mirado explicitamente, define todos os possíveis
-        if (alvosDoPlayer.Count == 0)
+        if (_playerTargets.Count == 0)
         {
-            if (ação.timesAlvos.Contains(CombatBase.TimeAlvo.Inimigo))
-                alvosDoPlayer.AddRange(Shuffle(enemyCrew.crew.Where(g => g.GetComponent<NPCsData>()?.isAlive == true).ToList()));
+            if (action.targetTeams.Contains(CombatBase.TargetTeam.Enemy))
+                _playerTargets.AddRange(Shuffle(_enemyCrew.crew.Where(g => g.GetComponent<NPCsData>()?.isAlive == true).ToList()));
 
-            if (ação.timesAlvos.Contains(CombatBase.TimeAlvo.Aliado))
-                alvosDoPlayer.AddRange(Shuffle(playerCrew.crew.Where(g => g.GetComponent<NPCsData>()?.isAlive == true).ToList()));
+            if (action.targetTeams.Contains(CombatBase.TargetTeam.Ally))
+                _playerTargets.AddRange(Shuffle(_playerCrew.crew.Where(g => g.GetComponent<NPCsData>()?.isAlive == true).ToList()));
         }
 
-        ataquesPlayer.aliados  = playerCrew;
-        ataquesPlayer.inimigos = enemyCrew;
-        ator.GetComponent<NPCsData>().ConsumirAcao();
-        ataquesPlayer.ExecutarAção(ação, alvosDoPlayer, ator);
+        _playerAttacks.allies  = _playerCrew;
+        _playerAttacks.enemies = _enemyCrew;
+        actor.GetComponent<NPCsData>().ConsumirAcao();
+        _playerAttacks.ExecuteAction(action, _playerTargets, actor);
 
-        alvosDoPlayer.Clear();
-        atorSelecionado = null;
-        LimparBotões();
-        GerarBotoesDaTripulacao();
+        _playerTargets.Clear();
+        _selectedActor = null;
+        ClearActionButtons();
+        GenerateCrewButtons();
     }
 
     /// <summary>
     /// Escolhe qual tripulante executará a ação gerada pela IA, restrito a quem ainda tem Ações Restantes e classe compatível.
     /// </summary>
-    private GameObject SortearAtor(CombatBase.Actions ação, CrewData crew)
+    private GameObject DrawActor(CombatBase.ActionData action, CrewData crew)
     {
-        bool semRestrição = ação.classesPermitidas == null || ação.classesPermitidas.Count == 0;
+        bool hasNoRestrictions = action.allowedClasses == null || action.allowedClasses.Count == 0;
 
-        var elegíveis = crew.crew
+        var eligible = crew.crew
             .Where(g => {
                 NPCsData npc = g?.GetComponent<NPCsData>();
                 if (npc == null || !npc.isAlive || !npc.PodeAgir()) return false;
-                return semRestrição || ação.classesPermitidas.Contains(npc.creatureClass);
+                return hasNoRestrictions || action.allowedClasses.Contains(npc.creatureClass);
             })
             .ToList();
 
-        if (elegíveis.Count == 0) return null;
-        return elegíveis[Random.Range(0, elegíveis.Count)];
+        if (eligible.Count == 0) return null;
+        return eligible[Random.Range(0, eligible.Count)];
     }
 
-    public void SelecionarAlvo(GameObject alvo)
+    public void SelectTarget(GameObject alvo)
     {
-        if (!alvosDoPlayer.Contains(alvo))
-            alvosDoPlayer.Add(alvo);
+        if (!_playerTargets.Contains(alvo))
+            _playerTargets.Add(alvo);
     }
 
-    public void LimparAlvos() => alvosDoPlayer.Clear();
+    public void ClearTargets() => _playerTargets.Clear();
 
     /// <summary>
     /// Seleciona o membro da tripulação aliado para que seus botões de ações fiquem visíveis.
     /// </summary>
-    public void SelecionarAtor(GameObject tripulanteClicado)
+    public void SelectActor(GameObject clickedCrewMember)
     {
-        if (passarTurno || !batalhaAtiva) return;
+        if (shouldPassTurn || !isActiveBattle) return;
 
-        NPCsData nPCs = tripulanteClicado.GetComponent<NPCsData>();
+        NPCsData nPCs = clickedCrewMember.GetComponent<NPCsData>();
         if (!nPCs.isAlive || !nPCs.PodeAgir()) return;
 
-        atorSelecionado = tripulanteClicado;
+        _selectedActor = clickedCrewMember;
 
-        foreach (Transform filho in crewButtonContainer)
-            Destroy(filho.gameObject);
+        foreach (Transform child in _crewButtonContainer)
+            Destroy(child.gameObject);
 
-        GerarBotõesDeAção();
+        GenerateActionButtons();
     }
 
-    private void CancelarAcao()
+    private void CancelAction()
     {
-        if (atorSelecionado != null)
+        if (_selectedActor != null)
         {
-            atorSelecionado = null;
-            LimparBotões();
-            LimparAlvos();
+            _selectedActor = null;
+            ClearActionButtons();
+            ClearTargets();
 
-            GerarBotoesDaTripulacao();
+            GenerateCrewButtons();
         }
     }
 
-    public void PassarTurno()
+    public void PassTurn()
     {
-        atorSelecionado = null;
-        passarTurno = true;
-        LimparBotões();
-        LimparAlvos();
+        _selectedActor = null;
+        shouldPassTurn = true;
+        ClearActionButtons();
+        ClearTargets();
 
-        foreach (Transform filho in crewButtonContainer) 
-            Destroy(filho.gameObject);
+        foreach (Transform child in _crewButtonContainer) 
+            Destroy(child.gameObject);
     }
     #endregion
 
@@ -354,70 +364,70 @@ public class BattleManager : MonoBehaviour
     /// Instancia e popula os botões de ação para o tripulante recém selecionado.
     /// Filtra as ações que a classe do ator não pode executar.
     /// </summary>
-    private void GerarBotõesDeAção()
+    private void GenerateActionButtons()
     {
-        if (atorSelecionado == null) return;
-        NPCsData.Class classeDoAtor = atorSelecionado.GetComponent<NPCsData>().creatureClass;
+        if (_selectedActor == null) return;
+        NPCsData.Class classeDoAtor = _selectedActor.GetComponent<NPCsData>().creatureClass;
 
-        foreach (Transform filho in actionButtonContainer)
-            Destroy(filho.gameObject);
+        foreach (Transform child in _actionButtonContainer)
+            Destroy(child.gameObject);
 
-        foreach (CombatBase.Actions ação in ataquesPlayer.actions)
+        foreach (CombatBase.ActionData action in _playerAttacks.Actions)
         {
-            if (ação.classesPermitidas != null && ação.classesPermitidas.Count > 0 && !ação.classesPermitidas.Contains(classeDoAtor)) continue;
+            if (action.allowedClasses != null && action.allowedClasses.Count > 0 && !action.allowedClasses.Contains(classeDoAtor)) continue;
 
-            GameObject btnObj = Instantiate(actionButtonPrefab, actionButtonContainer);
-            btnObj.GetComponentInChildren<TextMeshProUGUI>().text = ação.nomeAção;
+            GameObject buttonObject = Instantiate(_actionButtonPrefab, _actionButtonContainer);
+            buttonObject.GetComponentInChildren<TextMeshProUGUI>().text = action.actionName;
 
-            Button btn = btnObj.GetComponent<Button>();
-            CombatBase.Actions açãoCapturada = ação;
-            btn.onClick.AddListener(() => ExecutarAçãoPlayer(açãoCapturada));
+            Button button = buttonObject.GetComponent<Button>();
+            CombatBase.ActionData capturedAction = action;
+            button.onClick.AddListener(() => ExecutePlayerAction(capturedAction));
         }
     }
 
     /// <summary>
     /// Lista os tripulantes aliados vivos e com ações disponíveis.
     /// </summary>
-    private void GerarBotoesDaTripulacao()
+    private void GenerateCrewButtons()
     {
-        foreach (Transform filho in crewButtonContainer)
-            Destroy(filho.gameObject);
+        foreach (Transform child in _crewButtonContainer)
+            Destroy(child.gameObject);
 
-        foreach (GameObject npcObj in playerCrew.crew)
+        foreach (GameObject npcObject in _playerCrew.crew)
         {
-            NPCsData nPCs = npcObj.GetComponent<NPCsData>();
+            NPCsData nPCs = npcObject.GetComponent<NPCsData>();
             if (!nPCs.isAlive || !nPCs.PodeAgir()) continue;
 
-            GameObject btnObj = Instantiate(crewButtonPrefab, crewButtonContainer);
-            btnObj.GetComponentInChildren<TextMeshProUGUI>().text = nPCs.NPC_Name;
+            GameObject buttonObject = Instantiate(_crewButtonPrefab, _crewButtonContainer);
+            buttonObject.GetComponentInChildren<TextMeshProUGUI>().text = nPCs.NPC_Name;
 
-            Button btn = btnObj.GetComponent<Button>();
-            GameObject npcCapturado = npcObj;
-            btn.onClick.AddListener(() => SelecionarAtor(npcCapturado));
+            Button button = buttonObject.GetComponent<Button>();
+            GameObject capturedNPC = npcObject;
+            button.onClick.AddListener(() => SelectActor(capturedNPC));
         }
     }
 
-    private void HabilitarBotões(bool estado)
+    private void EnableActionButtons(bool currentEstate)
     {
-        foreach (Transform filho in actionButtonContainer)
+        foreach (Transform child in _actionButtonContainer)
         {
-            Button btn = filho.GetComponent<Button>();
-            if (btn != null) btn.interactable = estado;
+            Button button = child.GetComponent<Button>();
+            if (button != null) button.interactable = currentEstate;
         }
 
-        foreach (Transform filho in crewButtonContainer)
+        foreach (Transform child in _crewButtonContainer)
         {
-            Button btn = filho.GetComponent<Button>();
-            if (btn != null) btn.interactable = estado;
+            Button button = child.GetComponent<Button>();
+            if (button != null) button.interactable = currentEstate;
         }
 
-        if (botaoPassarTurno != null) botaoPassarTurno.interactable = estado;
+        if (_skipTurnButton != null) _skipTurnButton.interactable = currentEstate;
     }
 
-    public void LimparBotões()
+    public void ClearActionButtons()
     {
-        foreach (Transform filho in actionButtonContainer)
-            Destroy(filho.gameObject);
+        foreach (Transform child in _actionButtonContainer)
+            Destroy(child.gameObject);
     }
     #endregion
 
@@ -425,7 +435,7 @@ public class BattleManager : MonoBehaviour
     /// <summary>
     /// Reduz a duração (em turnos) de todos os efeitos temporais na equipe.
     /// </summary>
-    private void TickTodosEfeitos(CrewData crew)
+    private void TicksFromAllEffects(CrewData crew)
     {
         for (int i = crew.crew.Count - 1; i >= 0; i--)
         {
@@ -437,7 +447,7 @@ public class BattleManager : MonoBehaviour
     /// <summary>
     /// Confirma se ainda há membros vivos que não usaram suas ações no turno corrente.
     /// </summary>
-    private bool EquipeTemAções(CrewData crew)
+    private bool HasCrewActions(CrewData crew)
     {
         foreach (GameObject npc in crew.crew)
             if (npc.GetComponent<NPCsData>().PodeAgir()) return true;
@@ -450,26 +460,26 @@ public class BattleManager : MonoBehaviour
     /// Efetua cálculo de espólios/saque em caso de sucesso.
     /// </summary>
     /// <returns>True se a batalha chegou ao fim e não deve continuar o loop.</returns>
-    private bool VerificarFimDeBatalha()
+    private bool IsBattleOver()
     {
-        bool playerDerrotado  = playerCrew.crew.Any(g => g.GetComponent<NPCsData>()?.creatureClass == NPCsData.Class.Barco && g.GetComponent<NPCsData>()?.isAlive == false)
-                             || playerCrew.crew.Where(g => g.GetComponent<NPCsData>().creatureClass != NPCsData.Class.Barco).All(g => g.GetComponent<NPCsData>().isAlive == false);
-        bool inimigoDerrotado = enemyCrew.crew.Any(g => g.GetComponent<NPCsData>()?.creatureClass == NPCsData.Class.Barco && g.GetComponent<NPCsData>()?.isAlive == false)
-                             || enemyCrew.crew.Where(g => g.GetComponent<NPCsData>().creatureClass != NPCsData.Class.Barco).All(g => g.GetComponent<NPCsData>().isAlive == false);
+        bool isPlayerDefeated = _playerCrew.crew.Any(g => g.GetComponent<NPCsData>()?.creatureClass == NPCsData.Class.Barco && g.GetComponent<NPCsData>()?.isAlive == false)
+                             || _playerCrew.crew.Where(g => g.GetComponent<NPCsData>().creatureClass != NPCsData.Class.Barco).All(g => g.GetComponent<NPCsData>().isAlive == false);
+        bool isEnemyDefeated = _enemyCrew.crew.Any(g => g.GetComponent<NPCsData>()?.creatureClass == NPCsData.Class.Barco && g.GetComponent<NPCsData>()?.isAlive == false)
+                             || _enemyCrew.crew.Where(g => g.GetComponent<NPCsData>().creatureClass != NPCsData.Class.Barco).All(g => g.GetComponent<NPCsData>().isAlive == false);
 
-        if (playerDerrotado)
+        if (isPlayerDefeated)
         {
-            batalhaAtiva = false;
+            isActiveBattle = false;
             Debug.Log("Derrota!");
-            playerCrew.gameObject.transform.position = Vector3.zero;
-            battleData?.EndFight(false, playerCrew, enemyCrew);
+            _playerCrew.gameObject.transform.position = Vector3.zero;
+            _battleData?.EndFight(false, _playerCrew, _enemyCrew);
             return true;
         }
 
-        if (inimigoDerrotado)
+        if (isEnemyDefeated)
         {
             Dictionary<string, int> itensSaqueados = new Dictionary<string, int>();
-            foreach (GameObject npc in enemyCrew.crew)
+            foreach (GameObject npc in _enemyCrew.crew)
             {
                 NPCsData data = npc.GetComponent<NPCsData>();
                 if (data != null)
@@ -477,7 +487,7 @@ public class BattleManager : MonoBehaviour
                     List<Inventory.Slot> drops = data.GerarLoot();
                     foreach (Inventory.Slot slot in drops)
                     {
-                        playerCrew.inventory.AdicionarItem(slot.item, slot.quantity);
+                        _playerCrew.inventory.AdicionarItem(slot.item, slot.quantity);
                         if (itensSaqueados.ContainsKey(slot.item.itemName))
                             itensSaqueados[slot.item.itemName] += slot.quantity;
                         else
@@ -490,9 +500,9 @@ public class BattleManager : MonoBehaviour
             foreach (string i in itensSaqueados.Keys)
                 messageLoot += itensSaqueados[i] + "x " + i + "\n";
 
-            batalhaAtiva = false;
+            isActiveBattle = false;
             Debug.Log("Vitória!");
-            battleData?.EndFight(true, playerCrew, enemyCrew, messageLoot);
+            _battleData?.EndFight(true, _playerCrew, _enemyCrew, messageLoot);
             return true;
         }
 
@@ -501,58 +511,58 @@ public class BattleManager : MonoBehaviour
     #endregion
 
     #region Exibição de Mensagens (Fade UI)
-    public void ExibirMensagem(string mensagem)
+    public void DisplayMessage(string message)
     {
-        textoDeAcaoDaBatalha.alpha = 0;
-        if (fadeCoroutine != null) StopCoroutine(fadeCoroutine);
-        fadeCoroutine = StartCoroutine(MostrarMensagem());
-        textoDeAcaoDaBatalha.text = mensagem;
+        _battleActionText.alpha = 0;
+        if (_fadeCoroutine != null) StopCoroutine(_fadeCoroutine);
+        _fadeCoroutine = StartCoroutine(ShowMessage());
+        _battleActionText.text = message;
     }
 
-    public IEnumerator MostrarMensagem()
+    public IEnumerator ShowMessage()
     {
-        exibindoMensagem = true;
-        while (textoDeAcaoDaBatalha.alpha < 1)
+        isShowingMessage = true;
+        while (_battleActionText.alpha < 1)
         {
-            textoDeAcaoDaBatalha.alpha += Time.deltaTime * velocidadeDoFade;
+            _battleActionText.alpha += Time.deltaTime * _fadeSpeed;
             yield return null;
         }
 
         yield return new WaitForSeconds(1f);
 
-        while (textoDeAcaoDaBatalha.alpha > 0)
+        while (_battleActionText.alpha > 0)
         {
-            textoDeAcaoDaBatalha.alpha -= Time.deltaTime * velocidadeDoFade;
+            _battleActionText.alpha -= Time.deltaTime * _fadeSpeed;
             yield return null;
         }
-        exibindoMensagem = false;
+        isShowingMessage = false;
     }
 
-    public void ExibirLog(string mensagem)
+    public void DisplayLog(string message)
     {
-        textoDoLog.alpha = 0;
-        if (fadeLogCoroutine != null) StopCoroutine(fadeLogCoroutine);
-        fadeLogCoroutine = StartCoroutine(MostrarLog());
-        textoDoLog.text = mensagem;
+        _logText.alpha = 0;
+        if (_fadeLogCoroutine != null) StopCoroutine(_fadeLogCoroutine);
+        _fadeLogCoroutine = StartCoroutine(ShowLog());
+        _logText.text = message;
     }
 
-    public IEnumerator MostrarLog()
+    public IEnumerator ShowLog()
     {
-        exibindoMensagemLog = true;
-        while (textoDoLog.alpha < 1)
+        isShowingLogMessage = true;
+        while (_logText.alpha < 1)
         {
-            textoDoLog.alpha += Time.deltaTime * velocidadeDoFade;
+            _logText.alpha += Time.deltaTime * _fadeSpeed;
             yield return null;
         }
 
         yield return new WaitForSeconds(4f);
 
-        while (textoDoLog.alpha > 0)
+        while (_logText.alpha > 0)
         {
-            textoDoLog.alpha -= Time.deltaTime * velocidadeDoFade;
+            _logText.alpha -= Time.deltaTime * _fadeSpeed;
             yield return null;
         }
-        exibindoMensagemLog = false;
+        isShowingLogMessage = false;
     }
     #endregion
 

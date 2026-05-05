@@ -6470,10 +6470,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMovement
   boatSpeed: 3
   captainSpeed: 1.5
-  isOnWater: 1
   amplitude: 0.1
   frequencia: 0.5
   tempoAteOVentoMudar: 10
+  isOnWater: 1
   "capit\xE3o": {fileID: 661309216}
   mainCamera: {fileID: 519420031}
   worldGenerator: {fileID: 1829302568}
@@ -6725,76 +6725,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5a45077a16ad65e46a6f1ce1117bb6b8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CrewAttacks
-  actions:
-  - "nomeA\xE7\xE3o": Tiro de Canhao
-    peso: 0
-    classesPermitidas: 0100000006000000
-    timesAlvos: 01000000
-    efeitos:
-    - efeito: 1
-      qtdMaximaDeAlvos: 3
-      intensidade: 2
-      "turnosDura\xE7\xE3o": 0
-      timesAlvos: 01000000
-      damageType: 0
-  - "nomeA\xE7\xE3o": Tiro com Arma
-    peso: 0
-    classesPermitidas: 0200000006000000
-    timesAlvos: 01000000
-    efeitos:
-    - efeito: 1
-      qtdMaximaDeAlvos: 1
-      intensidade: 1.5
-      "turnosDura\xE7\xE3o": 0
-      timesAlvos: 01000000
-      damageType: 0
-  - "nomeA\xE7\xE3o": 'Ataque a Curta Distancia '
-    peso: 0
-    classesPermitidas: 0300000002000000
-    timesAlvos: 0100000000000000
-    efeitos:
-    - efeito: 1
-      qtdMaximaDeAlvos: 3
-      intensidade: 1
-      "turnosDura\xE7\xE3o": 0
-      timesAlvos: 01000000
-      damageType: 0
-    - efeito: 1
-      qtdMaximaDeAlvos: 1
-      intensidade: 0.5
-      "turnosDura\xE7\xE3o": 0
-      timesAlvos: 00000000
-      damageType: 0
-  - "nomeA\xE7\xE3o": 'Bandagem '
-    peso: 0
-    classesPermitidas: 05000000
-    timesAlvos: 00000000
-    efeitos:
-    - efeito: 0
-      qtdMaximaDeAlvos: 3
-      intensidade: 1
-      "turnosDura\xE7\xE3o": 0
-      timesAlvos: 00000000
-      damageType: 0
-  - "nomeA\xE7\xE3o": "Refei\xE7\xE3o "
-    peso: 0
-    classesPermitidas: 04000000
-    timesAlvos: 00000000
-    efeitos:
-    - efeito: 0
-      qtdMaximaDeAlvos: 5
-      intensidade: 1
-      "turnosDura\xE7\xE3o": 0
-      timesAlvos: 00000000
-      damageType: 0
-    - efeito: 2
-      qtdMaximaDeAlvos: 5
-      intensidade: 1
-      "turnosDura\xE7\xE3o": 0
-      timesAlvos: 00000000
-      damageType: 0
-  aliados: {fileID: 679149529}
-  inimigos: {fileID: 0}
+  _actions: []
+  _allies: {fileID: 0}
+  _enemies: {fileID: 0}
 --- !u!1001 &688772078
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -10508,23 +10441,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 57d528fbb3fccba42926a4ca706543fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BattleManager
-  playerCrew: {fileID: 679149529}
-  enemyCrew: {fileID: 0}
-  ataquesPlayer: {fileID: 679149534}
-  actionButtonContainer: {fileID: 1947359843}
-  actionButtonPrefab: {fileID: 6554151866833297218, guid: cd2e05e8c1dca4f40bc574605dbaffdf, type: 3}
-  crewButtonContainer: {fileID: 1754807382}
-  crewButtonPrefab: {fileID: 6554151866833297218, guid: cd2e05e8c1dca4f40bc574605dbaffdf, type: 3}
-  botaoPassarTurno: {fileID: 1465264406}
-  textoDoLog: {fileID: 460286979}
-  enemyCrewUI: {fileID: 974054888}
-  battleData: {fileID: 1949619940}
-  textoDeAcaoDaBatalha: {fileID: 1939293824}
-  velocidadeDoFade: 1
-  batalhaAtiva: 0
-  passarTurno: 0
-  exibindoMensagem: 0
-  exibindoMensagemLog: 0
+  _playerCrew: {fileID: 0}
+  _enemyCrew: {fileID: 0}
+  _playerAttacks: {fileID: 0}
+  _actionButtonContainer: {fileID: 0}
+  _actionButtonPrefab: {fileID: 0}
+  _crewButtonContainer: {fileID: 0}
+  _crewButtonPrefab: {fileID: 0}
+  _skipTurnButton: {fileID: 0}
+  _logText: {fileID: 0}
+  _enemyCrewUI: {fileID: 0}
+  _battleData: {fileID: 0}
+  _battleActionText: {fileID: 0}
+  _fadeSpeed: 0
+  isActiveBattle: 0
+  shouldPassTurn: 0
+  isShowingMessage: 0
+  isShowingLogMessage: 0
 --- !u!114 &974054888
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12623,6 +12556,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 096b1efe456d55c41824f19a614d93a6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RecruitmentUI
+  playerCrew: {fileID: 679149529}
   Fundo: {fileID: 1092715642}
   Textos: {fileID: 43733851}
   "Bot\xF5es": {fileID: 942505748}
@@ -12633,7 +12567,6 @@ MonoBehaviour:
   "For\xE7a": {fileID: 2109309165}
   Custo: {fileID: 1772478904}
   Level: {fileID: 1814111655}
-  playerCrew: {fileID: 679149529}
 --- !u!114 &1147722770
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -15549,17 +15482,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1463493762}
   m_CullTransparentMesh: 1
---- !u!114 &1465264406 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 2290343093287686882, guid: cd2e05e8c1dca4f40bc574605dbaffdf, type: 3}
-  m_PrefabInstance: {fileID: 1987132920}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Button
 --- !u!224 &1465264409 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 4907373093793969132, guid: cd2e05e8c1dca4f40bc574605dbaffdf, type: 3}
@@ -20891,14 +20813,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 19cdd05f39d0ac24cbf478e7d2dc73de, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InventoryUI
-  inventory: {fileID: 679149533}
   container: {fileID: 969567413}
   crewContainer: {fileID: 136735900}
   fundo: {fileID: 237736701}
   title: {fileID: 860251126}
-  uiSprite: {fileID: 2139730355303104054, guid: 8aaa3ee35377bba4b94a49757676b6a3, type: 3}
   slot: {fileID: 5297864435218012094, guid: 959793bde8bc7f247a0643f09176dbb3, type: 3}
   button: {fileID: 6554151866833297218, guid: cd2e05e8c1dca4f40bc574605dbaffdf, type: 3}
+  uiSprite: {fileID: 2139730355303104054, guid: 8aaa3ee35377bba4b94a49757676b6a3, type: 3}
+  inventory: {fileID: 679149533}
 --- !u!1 &1946280751
 GameObject:
   m_ObjectHideFlags: 0
@@ -21201,15 +21123,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4a44f0f097076d54aad902a0fc70904a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  background: {fileID: 83699084}
-  enemy: {fileID: 1233522746}
-  player: {fileID: 1249750008}
-  pl: {fileID: 8734949147263098550, guid: e6d1a1edd56a6bb43b583203ea0cfcc7, type: 3}
-  battle: {fileID: 608892778}
-  gameOverPanel: {fileID: 1908804788}
-  battleManager: {fileID: 974054887}
-  playerCrewUI: {fileID: 0}
-  enemyCrewUI: {fileID: 0}
+  _background: {fileID: 83699084}
+  _enemy: {fileID: 1233522746}
+  _player: {fileID: 1249750008}
+  _playerSprite: {fileID: 8734949147263098550, guid: e6d1a1edd56a6bb43b583203ea0cfcc7, type: 3}
+  _battle: {fileID: 608892778}
+  _gameOverPanel: {fileID: 1908804788}
+  _battleManager: {fileID: 974054887}
+  _playerCrewUI: {fileID: 0}
+  _enemyCrewUI: {fileID: 0}
 --- !u!114 &1949619941
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -9,111 +9,113 @@ using UnityEngine;
 /// </summary>
 public abstract class CombatBase : MonoBehaviour
 {
-    #region Estruturas de Dados
-    public enum TimeAlvo { Aliado, Inimigo }
-    public enum Efeito { Cura, Dano, Força, Efeito }
+    #region Data Structures
+
+    public enum TargetTeam { Ally, Enemy }
+    public enum EffectType { Heal, Damage, Strength, Status }
 
     /// <summary>
     /// Estrutura que define um efeito aplicado durante o combate.
     /// </summary>
     [Serializable]
-    public struct Efeitos
+    public struct EffectData
     {
-        public Efeito efeito;
-        public int qtdMaximaDeAlvos;
-        public float intensidade;
-        public int turnosDuração;
-        public List<TimeAlvo> timesAlvos;
+        public EffectType effectType;
+        public int maxTargets;
+        public float intensity;
+        public int durationTurns;
+        public List<TargetTeam> targetTeams;
         public NPCsData.DamageType damageType;
     }
 
     /// <summary>
     /// Estrutura que define uma ação completa que um personagem pode realizar no turno.
-    /// Pode conter múltiplos efeitos (ex: causa dano ao inimigo e cura a si mesmo).
     /// </summary>
     [Serializable]
-    public struct Actions
+    public struct ActionData
     {
-        public string nomeAção;
-        public float peso;
-        public List<NPCsData.Class> classesPermitidas; // quais classes podem usar essa ação
-        public List<TimeAlvo> timesAlvos;
-        public List<Efeitos> efeitos;
+        public string actionName;
+        public float weight;
+        public List<NPCsData.Class> allowedClasses;
+        public List<TargetTeam> targetTeams;
+        public List<EffectData> effects;
     }
+
     #endregion
 
-    #region Campos
-    [Header("Ações Configuradas")]
+    #region Fields
+
+    [Header("Configured Actions")]
     [Tooltip("Lista de ações disponíveis para esta entidade ou equipe no combate.")]
-    public List<Actions> actions;
+    [SerializeField] private List<ActionData> _actions;
+
+    public List<ActionData> Actions => _actions;
+
     #endregion
 
-    #region Lógica Principal de Ações
+    #region Main Action Logic
+
     /// <summary>
-    /// Executa uma ação de combate, iterando sobre os alvos e aplicando os efeitos neles.
+    /// Executa uma ação de combate, iterando sobre os alvos e aplicando os efeitos.
     /// </summary>
-    /// <param name="action">A ação selecionada para execução.</param>
-    /// <param name="alvos">A lista de GameObjects alvos da ação.</param>
-    /// <param name="aliados">Dados da tripulação aliada.</param>
-    /// <param name="inimigos">Dados da tripulação inimiga.</param>
-    /// <param name="ator">O membro do crew que está executando a ação — sua força atua como multiplicador.</param>
-    public void DoAction(Actions action, List<GameObject> alvos, CrewData aliados, CrewData inimigos, GameObject ator)
+    public void DoAction(ActionData action, List<GameObject> targets, CrewData allies, CrewData enemies, GameObject actor)
     {
-        float força = ator?.GetComponent<NPCsData>()?.força ?? 1f;
+        float strength = actor?.GetComponent<NPCsData>()?.força ?? 1f;
 
-        foreach (TimeAlvo timeAlvo in action.timesAlvos)
+        foreach (TargetTeam targetTeam in action.targetTeams)
         {
-            CrewData crewAlvo = timeAlvo == TimeAlvo.Aliado ? aliados : inimigos;
-            
-            Debug.Log($"[CrewData] DoDamage chamado — alvos: {alvos.Count}, dano: {força}, crew: {crewAlvo.crew.Count}");
-            foreach (Efeitos efeito in action.efeitos)
+            CrewData targetCrew = targetTeam == TargetTeam.Ally ? allies : enemies;
+
+            Debug.Log($"[CrewData] DoDamage chamado — alvos: {targets.Count}, dano: {strength}, crew: {targetCrew.crew.Count}");
+
+            foreach (EffectData effect in action.effects)
             {
-                if (!efeito.timesAlvos.Contains(timeAlvo)) continue;
+                if (!effect.targetTeams.Contains(targetTeam)) continue;
 
-                switch (efeito.efeito)
+                switch (effect.effectType)
                 {
-                    case Efeito.Cura:
-                        crewAlvo.HealUnits(alvos, efeito.intensidade * força, efeito.qtdMaximaDeAlvos);
+                    case EffectType.Heal:
+                        targetCrew.HealUnits(targets, effect.intensity * strength, effect.maxTargets);
                         break;
 
-                    case Efeito.Dano:
-                        crewAlvo.DoDamage(alvos, efeito.intensidade * força, efeito.damageType, efeito.qtdMaximaDeAlvos);
+                    case EffectType.Damage:
+                        targetCrew.DoDamage(targets, effect.intensity * strength, effect.damageType, effect.maxTargets);
                         break;
 
-                    case Efeito.Força:
-                    case Efeito.Efeito:
-                        ApplyTimedEffect(alvos, crewAlvo, efeito);
+                    case EffectType.Strength:
+                    case EffectType.Status:
+                        ApplyTimedEffect(targets, targetCrew, effect);
                         break;
                 }
             }
         }
     }
+
     #endregion
 
-    #region Helpers de Efeitos Temporais
-    /// <summary>
-    /// Aplica efeitos que duram por múltiplos turnos (como buff de Força ou debuff) aos alvos.
-    /// </summary>
-    /// <param name="alvos">Lista de alvos que receberão o efeito.</param>
-    /// <param name="crew">O grupo de tripulação ao qual os alvos pertencem.</param>
-    /// <param name="efeito">As propriedades do efeito a ser aplicado.</param>
-    private void ApplyTimedEffect(List<GameObject> alvos, CrewData crew, Efeitos efeito)
-    {
-        foreach (GameObject alvo in alvos)
-        {
-            if (!crew.crew.Contains(alvo)) continue;
+    #region Timed Effects Helpers
 
-            NPCsData npc = alvo.GetComponent<NPCsData>();
+    /// <summary>
+    /// Aplica efeitos que duram múltiplos turnos (buff/debuff).
+    /// </summary>
+    private void ApplyTimedEffect(List<GameObject> targets, CrewData crew, EffectData effect)
+    {
+        foreach (GameObject target in targets)
+        {
+            if (!crew.crew.Contains(target)) continue;
+
+            NPCsData npc = target.GetComponent<NPCsData>();
             if (npc == null) continue;
 
             npc.AddEffect(new NPCsData.ActiveEffect
             {
-                tipo            = efeito.efeito,
-                intensidade     = efeito.intensidade,
-                turnosRestantes = efeito.turnosDuração,
-                damageType      = efeito.damageType
+                tipo = effect.effectType,
+                intensidade = effect.intensity,
+                turnosRestantes = effect.durationTurns,
+                damageType = effect.damageType
             });
         }
     }
+
     #endregion
 }
