@@ -91,7 +91,7 @@ public class RecruitmentUI : MonoBehaviour
         {
             recruitableNPC.GetComponent<NPCsMovement>().IrParaOBarco(playerCrew.transform);
             playerCrew.crew.Add(recruitableNPC.gameObject);
-            SFXManager.Instance?.TocarContrato();
+            SFXManager.Instance?.PlayContract();
             FecharTela();
         }
         else

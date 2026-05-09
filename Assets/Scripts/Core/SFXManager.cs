@@ -13,18 +13,18 @@ public class SFXManager : MonoBehaviour
 
     #region Clipes de Áudio
     [Header("Batalha")]
-    public AudioClip sfxVitoria;
-    public AudioClip sfxDerrota;
+    [SerializeField] private AudioClip _victorySfx;
+    [SerializeField] private AudioClip _defeatSfx;
 
     [Header("Inventário")]
-    public AudioClip sfxItemConsumido;
+    [SerializeField] private AudioClip _itemConsumedSfx;
 
     [Header("Recrutamento")]
-    public AudioClip sfxNPCContratado;
+    [SerializeField] private AudioClip _npcHiredSfx;
     #endregion
 
     #region Componentes
-    private AudioSource audioSource;
+    private AudioSource _audioSource;
     #endregion
 
     #region Inicialização
@@ -34,16 +34,16 @@ public class SFXManager : MonoBehaviour
         Instance = this;
         DontDestroyOnLoad(gameObject);
 
-        audioSource = gameObject.AddComponent<AudioSource>();
-        audioSource.loop = false;
+        _audioSource = gameObject.AddComponent<AudioSource>();
+        _audioSource.loop = false;
     }
     #endregion
 
     #region Reprodução de Efeitos
-    public void TocarVitoria()  => StartCoroutine(FadeETocar(sfxVitoria));
-    public void TocarDerrota()  => StartCoroutine(FadeETocar(sfxDerrota));
-    public void TocarItem()     => audioSource.PlayOneShot(sfxItemConsumido);
-    public void TocarContrato() => audioSource.PlayOneShot(sfxNPCContratado);
+    public void PlayVictory()  => StartCoroutine(FadeAndPlay(_victorySfx));
+    public void PlayDefeat()   => StartCoroutine(FadeAndPlay(_defeatSfx));
+    public void PlayItem()     => _audioSource.PlayOneShot(_itemConsumedSfx);
+    public void PlayContract() => _audioSource.PlayOneShot(_npcHiredSfx);
     #endregion
 
     #region Corrotinas
@@ -52,12 +52,12 @@ public class SFXManager : MonoBehaviour
     /// Utilizado principalmente para dar destaque sonoro aos resultados de fim de batalha.
     /// </summary>
     /// <param name="clip">O clipe de áudio (vitória/derrota) a ser executado.</param>
-    private System.Collections.IEnumerator FadeETocar(AudioClip clip)
+    private System.Collections.IEnumerator FadeAndPlay(AudioClip clip)
     {
         if (MusicManager.Instance != null)
-            yield return StartCoroutine(MusicManager.Instance.FadeOutMusica());
+            yield return StartCoroutine(MusicManager.Instance.FadeOutMusic());
 
-        audioSource.PlayOneShot(clip);
+        _audioSource.PlayOneShot(clip);
     }
     #endregion
 }

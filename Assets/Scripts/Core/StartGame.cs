@@ -8,15 +8,17 @@ using UnityEngine.UI;
 public class StartGame : MonoBehaviour
 {
     #region Referências Visuais e de Transição
-    public Button StartBtn, OptionsBtn;
-    public GameObject startScreen;
-    public GameBoyTransition transition;
+    [SerializeField] private Button _startButton;
+    [SerializeField] private Button _optionsButton;
+
+    [SerializeField] private GameObject _startScreen;
+    [SerializeField] private GameBoyTransition _transition;
     #endregion
 
     #region Inicialização
     void Awake()
     {
-        StartBtn.onClick.AddListener(() => StartG());
+        _startButton.onClick.AddListener(() => StartGameAction());
     }
     #endregion
 
@@ -26,14 +28,14 @@ public class StartGame : MonoBehaviour
     /// No "ponto médio" da animação (tela totalmente coberta), desativa a tela de título
     /// e libera os sistemas de jogo alterando o GameState.
     /// </summary>
-    public void StartG()
+    public void StartGameAction()
     {
-        if (transition != null)
+        if (_transition != null)
         {
-            transition.StartTransition(onMidpointCallback: () => 
+            _transition.StartTransition(onMidpointCallback: () => 
             {
-                startScreen.SetActive(false);
-                GameState.isGameStarted = true;
+                _startScreen.SetActive(false);
+                GameState.IsGameStarted = true;
             });
         }
     }

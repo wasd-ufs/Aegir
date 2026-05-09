@@ -7,7 +7,7 @@ public static class GameState
 {
     #region Flags de Estado Global
     /// <summary>Indica se a tela inicial já foi passada e o jogador está explorando o mundo.</summary>
-    public static bool isGameStarted = false;
+    public static bool IsGameStarted = false;
     
     /// <summary>Indica se o jogador está ativamente dentro da tela de combate por turnos.</summary>
     public static bool IsInBattle = false;

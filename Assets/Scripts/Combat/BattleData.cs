@@ -101,11 +101,11 @@ public class BattleData : MonoBehaviour
                 },
                 onCompleteCallback: () =>
                 {
-                    MusicManager.Instance.RetomarMusica();
+                    MusicManager.Instance.ResumeMusic();
 
                     if (playerWon)
                     {
-                        SFXManager.Instance?.TocarVitoria();
+                        SFXManager.Instance?.PlayVictory();
                         _battleManager.DisplayMessage("Vitoria!!");
                         _battleManager.DisplayLog(textoLog);
 
@@ -114,7 +114,7 @@ public class BattleData : MonoBehaviour
                     }
                     else
                     {
-                        SFXManager.Instance?.TocarDerrota();
+                        SFXManager.Instance?.PlayDefeat();
 
                         foreach (GameObject npc in playerCrew.crew)
                         {

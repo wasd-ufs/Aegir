@@ -149,7 +149,7 @@ public class InventoryUI : MonoBehaviour
         {
             alvo.AplicarConsumivel(consumable);
             inventory.RemoverItem(itemPendente, 1);
-            SFXManager.Instance?.TocarItem();
+            SFXManager.Instance?.PlayItem();
         }
         else if (itemPendente is WeaponData weaponData)
         {
@@ -157,7 +157,7 @@ public class InventoryUI : MonoBehaviour
             inventory.RemoverItem(itemPendente, 1);
             if (armaAntiga != null)
                 inventory.AdicionarItem(armaAntiga, 1);
-            SFXManager.Instance?.TocarItem();
+            SFXManager.Instance?.PlayItem();
         }
         else if (itemPendente is ArmorData armorData)
         {
@@ -165,7 +165,7 @@ public class InventoryUI : MonoBehaviour
             inventory.RemoverItem(itemPendente, 1);
             if (armaduraAntiga != null)
                 inventory.AdicionarItem(armaduraAntiga, 1);
-            SFXManager.Instance?.TocarItem();
+            SFXManager.Instance?.PlayItem();
         }
 
         esperandoAlvo = false;

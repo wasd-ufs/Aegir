@@ -61,7 +61,7 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
-        if (GameState.IsInBattle || !GameState.isGameStarted) return; 
+        if (GameState.IsInBattle || !GameState.IsGameStarted) return; 
         
         moveInput = inputActions.Player.Move.ReadValue<Vector2>();
 
@@ -79,7 +79,7 @@ public class PlayerMovement : MonoBehaviour
     void FixedUpdate()
     {
         // Trava física completamente em combate ou menus
-        if (GameState.IsInBattle || !GameState.isGameStarted)
+        if (GameState.IsInBattle || !GameState.IsGameStarted)
         {
             rb.linearVelocity = Vector2.zero;
             crb.linearVelocity = Vector2.zero;

@@ -88,7 +88,7 @@ public class NPCsMovement : MonoBehaviour
 
     void Update()
     {
-        if (GameState.IsInBattle|| !GameState.isGameStarted) return;
+        if (GameState.IsInBattle|| !GameState.IsGameStarted) return;
 
         // Tick do cooldown de borda (impedido de dar agro caso ele acabe de fugir de uma fronteira que não pode atravessar)
         if (hasBorderCooldown)
@@ -119,7 +119,7 @@ public class NPCsMovement : MonoBehaviour
 
     void FixedUpdate()
     {
-        if (GameState.IsInBattle || !GameState.isGameStarted)
+        if (GameState.IsInBattle || !GameState.IsGameStarted)
         {
             rb.linearVelocity = Vector2.zero;
             return; // ← trava física completamente em combates

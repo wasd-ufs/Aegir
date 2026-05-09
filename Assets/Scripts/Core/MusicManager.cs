@@ -11,45 +11,46 @@ public class MusicManager : MonoBehaviour
 {
     #region Singleton e Enumerações
     public static MusicManager Instance { get; private set; }
-    public enum MusicState { Exploracao, Perseguicao, TerraFirme, Batalha, Menu }
+
+    public enum MusicState { Exploration, Chase, Land, Battle, Menu }
     #endregion
 
     #region Listas de Reprodutibilidade (Playlists)
     [Header("Listas de Músicas")]
-    public List<AudioClip> musicasExploracao;
-    public List<AudioClip> musicasPerseguicao;
-    public List<AudioClip> musicasTerraFirme;
-    public List<AudioClip> musicasBatalha;
-    public List<AudioClip> musicasStart;
+    [SerializeField] private List<AudioClip> _explorationMusicList;
+    [SerializeField] private List<AudioClip> _chaseMusicList;
+    [SerializeField] private List<AudioClip> _landMusicList;
+    [SerializeField] private List<AudioClip> _battleMusicList;
+    [SerializeField] private List<AudioClip> _menuMusicList;
     #endregion
 
     #region Configurações Dinâmicas e Ambiente
     [Header("Som Ambiente")]
-    public AudioClip somDoMar;
-    [Range(0f, 1f)] public float volumeAmbiente = 0.4f;
+    [SerializeField] private AudioClip _seaSound;
+    [SerializeField][Range(0f, 1f)] private float _ambientVolume = 0.4f;
 
     [Header("Intervalo Sem Música")]
-    public float intervaloMinimo = 5f;
-    public float intervaloMaximo = 20f;
+    [SerializeField] private float _minInterval = 5f;
+    [SerializeField] private float _maxInterval = 20f;
 
     [Header("Configuração")]
-    public float fadeDuration = 1f;
+    [SerializeField] private float _fadeDuration = 1f;
     #endregion
 
     #region Estado Interno e Componentes
-    private AudioSource sourcMusica;
-    private AudioSource sourceAmbiente;
-    private MusicState estadoAtual;
+    private AudioSource _musicSource;
+    private AudioSource _ambientSource;
+    private MusicState _currentState;
 
     // Listas mapeadas para evitar repetições contínuas da mesma faixa
-    private Dictionary<MusicState, List<AudioClip>> playlists;
-    private Dictionary<MusicState, List<int>> indicesRestantes;
+    private Dictionary<MusicState, List<AudioClip>> _playlistsDictionary;
+    private Dictionary<MusicState, List<int>> _remainingIndexesDictionary;
 
-    private Coroutine fadeMusicaCoroutine;
-    private Coroutine fadeAmbienteCoroutine;
-    private Coroutine aguardarProximaCoroutine;
-    private bool emIntervalo = false;
-    private bool musicaMutada = false;
+    private Coroutine _musicFadeCoroutine;
+    private Coroutine _ambientFadeCoroutine;
+    private Coroutine _waitNextCoroutine;
+    private bool _isInInterval = false;
+    private bool _isMusicMuted = false;
     #endregion
 
     #region Inicialização e Ciclo de Vida
@@ -60,53 +61,53 @@ public class MusicManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
 
         // Inicialização de fontes de áudio dinâmicas
-        sourcMusica = gameObject.AddComponent<AudioSource>();
-        sourcMusica.loop = false;
+        _musicSource = gameObject.AddComponent<AudioSource>();
+        _musicSource.loop = false;
 
-        sourceAmbiente = gameObject.AddComponent<AudioSource>();
-        sourceAmbiente.loop = true;
-        sourceAmbiente.clip = somDoMar;
-        sourceAmbiente.volume = 0f;
+        _ambientSource = gameObject.AddComponent<AudioSource>();
+        _ambientSource.loop = true;
+        _ambientSource.clip = _seaSound;
+        _ambientSource.volume = 0f;
 
         // Mapeia listas do inspector para dicionários a fim de facilitar os sorteios em modo "shuffle"
-        playlists = new Dictionary<MusicState, List<AudioClip>>
+        _playlistsDictionary = new Dictionary<MusicState, List<AudioClip>>
         {
-            { MusicState.Exploracao,  musicasExploracao  },
-            { MusicState.Perseguicao, musicasPerseguicao },
-            { MusicState.TerraFirme,  musicasTerraFirme  },
-            { MusicState.Batalha,     musicasBatalha     },
-            { MusicState.Menu,        musicasStart       }
+            { MusicState.Exploration,  _explorationMusicList  },
+            { MusicState.Chase, _chaseMusicList },
+            { MusicState.Land,  _landMusicList  },
+            { MusicState.Battle,     _battleMusicList     },
+            { MusicState.Menu,        _menuMusicList       }
         };
 
-        indicesRestantes = new Dictionary<MusicState, List<int>>();
-        foreach (var estado in playlists.Keys)
-            ResetarIndices(estado);
+        _remainingIndexesDictionary = new Dictionary<MusicState, List<int>>();
+        foreach (var state in _playlistsDictionary.Keys)
+            ResetIndexes(state);
     }
 
     void Start()
     {
-        estadoAtual = ResolverEstado();
-        AtualizarAmbiente(estadoAtual);
-        TocarProxima(estadoAtual);
+        _currentState = ResolveState();
+        UpdateAmbient(_currentState);
+        PlayNext(_currentState);
     }
 
     void Update()
     {
-        MusicState novoEstado = ResolverEstado();
+        MusicState newState = ResolveState();
 
         // Se a situação global do jogo mudou, atualiza toda a rádio e os sons ambientes
-        if (novoEstado != estadoAtual)
+        if (newState != _currentState)
         {
-            estadoAtual = novoEstado;
-            AtualizarAmbiente(estadoAtual);
-            TrocarMusica(estadoAtual);
+            _currentState = newState;
+            UpdateAmbient(_currentState);
+            ChangeMusic(_currentState);
         }
 
         // Caso uma música termine e não haja silêncio programado ativado, agenda a próxima trilha
-        if (!sourcMusica.isPlaying && !emIntervalo && !musicaMutada) 
+        if (!_musicSource.isPlaying && !_isInInterval && !_isMusicMuted) 
         {
-            if (aguardarProximaCoroutine != null) StopCoroutine(aguardarProximaCoroutine);
-            aguardarProximaCoroutine = StartCoroutine(AguardarETocarProxima(estadoAtual));
+            if (_waitNextCoroutine != null) StopCoroutine(_waitNextCoroutine);
+            _waitNextCoroutine = StartCoroutine(WaitAndPlayNext(_currentState));
         }
     }
     #endregion
@@ -116,148 +117,148 @@ public class MusicManager : MonoBehaviour
     /// Consulta o GameState para determinar qual é o clima musical necessário no momento.
     /// Prioriza sempre situações de urgência como a Batalha e a Perseguição.
     /// </summary>
-    private MusicState ResolverEstado()
+    private MusicState ResolveState()
     {
-        if (!GameState.isGameStarted)  return MusicState.Menu;
-        if (GameState.IsInBattle)      return MusicState.Batalha;
-        if (GameState.IsBeingChased)   return MusicState.Perseguicao;
-        if (!GameState.IsOnWater)      return MusicState.TerraFirme;
-        return MusicState.Exploracao;
+        if (!GameState.IsGameStarted)  return MusicState.Menu;
+        if (GameState.IsInBattle)      return MusicState.Battle;
+        if (GameState.IsBeingChased)   return MusicState.Chase;
+        if (!GameState.IsOnWater)      return MusicState.Land;
+        return MusicState.Exploration;
     }
 
     /// <summary>
     /// Escolhe a próxima música garantindo que ela não toque novamente até que toda
     /// a playlist deste estado específico tenha sido percorrida (Sistema de "Saco" parecido com Tetris).
     /// </summary>
-    private void TocarProxima(MusicState estado)
+    private void PlayNext(MusicState state)
     {
-        List<AudioClip> lista = playlists[estado];
-        if (lista == null || lista.Count == 0) return;
+        List<AudioClip> musicList = _playlistsDictionary[state];
+        if (musicList == null || musicList.Count == 0) return;
 
-        if (indicesRestantes[estado].Count == 0)
-            ResetarIndices(estado);
+        if (_remainingIndexesDictionary[state].Count == 0)
+            ResetIndexes(state);
 
-        int sorteio = Random.Range(0, indicesRestantes[estado].Count);
-        int idx = indicesRestantes[estado][sorteio];
-        indicesRestantes[estado].RemoveAt(sorteio);
+        int randomIndex = Random.Range(0, _remainingIndexesDictionary[state].Count);
+        int index = _remainingIndexesDictionary[state][randomIndex];
+        _remainingIndexesDictionary[state].RemoveAt(randomIndex);
 
-        sourcMusica.clip = lista[idx];
-        sourcMusica.volume = 1f;
-        sourcMusica.Play();
+        _musicSource.clip = musicList[index];
+        _musicSource.volume = 1f;
+        _musicSource.Play();
     }
 
-    private void ResetarIndices(MusicState estado)
+    private void ResetIndexes(MusicState state)
     {
-        List<int> indices = new();
-        for (int i = 0; i < playlists[estado].Count; i++)
-            indices.Add(i);
-        indicesRestantes[estado] = indices;
+        List<int> indexes = new();
+        for (int i = 0; i < _playlistsDictionary[state].Count; i++)
+            indexes.Add(i);
+        _remainingIndexesDictionary[state] = indexes;
     }
     #endregion
 
     #region Gerenciamento de Fades (Transições Suaves)
-    private void AtualizarAmbiente(MusicState estado)
+    private void UpdateAmbient(MusicState state)
     {
-        bool deveTocar = estado != MusicState.Batalha;
+        bool shouldPlay = state != MusicState.Battle;
 
-        if (deveTocar && !sourceAmbiente.isPlaying)
+        if (shouldPlay && !_ambientSource.isPlaying)
         {
-            sourceAmbiente.Play();
-            if (fadeAmbienteCoroutine != null) StopCoroutine(fadeAmbienteCoroutine);
-            fadeAmbienteCoroutine = StartCoroutine(FadeAmbiente(volumeAmbiente));
+            _ambientSource.Play();
+            if (_ambientFadeCoroutine != null) StopCoroutine(_ambientFadeCoroutine);
+            _ambientFadeCoroutine = StartCoroutine(FadeAmbient(_ambientVolume));
         }
-        else if (!deveTocar && sourceAmbiente.isPlaying)
+        else if (!shouldPlay && _ambientSource.isPlaying)
         {
-            if (fadeAmbienteCoroutine != null) StopCoroutine(fadeAmbienteCoroutine);
-            fadeAmbienteCoroutine = StartCoroutine(FadeAmbiente(0f, pararAoTerminar: true));
+            if (_ambientFadeCoroutine != null) StopCoroutine(_ambientFadeCoroutine);
+            _ambientFadeCoroutine = StartCoroutine(FadeAmbient(0f, true));
         }
     }
 
-    private IEnumerator FadeAmbiente(float volumeAlvo, bool pararAoTerminar = false)
+    private IEnumerator FadeAmbient(float targetVolume, bool stopAfter = false)
     {
-        float volumeInicial = sourceAmbiente.volume;
+        float initialVolume = _ambientSource.volume;
         float elapsed = 0f;
-        while (elapsed < fadeDuration)
+        while (elapsed < _fadeDuration)
         {
             elapsed += Time.deltaTime;
-            sourceAmbiente.volume = Mathf.Lerp(volumeInicial, volumeAlvo, elapsed / fadeDuration);
+            _ambientSource.volume = Mathf.Lerp(initialVolume, targetVolume, elapsed / _fadeDuration);
             yield return null;
         }
-        sourceAmbiente.volume = volumeAlvo;
-        if (pararAoTerminar) sourceAmbiente.Stop();
+        _ambientSource.volume = targetVolume;
+        if (stopAfter) _ambientSource.Stop();
     }
 
-    private void TrocarMusica(MusicState novoEstado)
+    private void ChangeMusic(MusicState newState)
     {
-        emIntervalo = false;
-        if (aguardarProximaCoroutine != null) StopCoroutine(aguardarProximaCoroutine);
-        if (fadeMusicaCoroutine != null) StopCoroutine(fadeMusicaCoroutine);
-        fadeMusicaCoroutine = StartCoroutine(FadeParaNovoEstado(novoEstado));
+        _isInInterval = false;
+        if (_waitNextCoroutine != null) StopCoroutine(_waitNextCoroutine);
+        if (_musicFadeCoroutine != null) StopCoroutine(_musicFadeCoroutine);
+        _musicFadeCoroutine = StartCoroutine(FadeToNewState(newState));
     }
 
-    private IEnumerator FadeParaNovoEstado(MusicState novoEstado)
+    private IEnumerator FadeToNewState(MusicState newState)
     {
         // Fade out só se estiver tocando
-        if (sourcMusica.isPlaying)
+        if (_musicSource.isPlaying)
         {
-            float volumeInicial = sourcMusica.volume;
+            float initialVolume = _musicSource.volume;
             float elapsed = 0f;
-            while (elapsed < fadeDuration)
+            while (elapsed < _fadeDuration)
             {
                 elapsed += Time.deltaTime;
-                sourcMusica.volume = Mathf.Lerp(volumeInicial, 0f, elapsed / fadeDuration);
+                _musicSource.volume = Mathf.Lerp(initialVolume, 0f, elapsed / _fadeDuration);
                 yield return null;
             }
-            sourcMusica.Stop();
+            _musicSource.Stop();
         }
 
-        sourcMusica.volume = 0f;
-        TocarProxima(novoEstado);
+        _musicSource.volume = 0f;
+        PlayNext(newState);
 
         // Fade in da nova música
         float elapsedIn = 0f;
-        while (elapsedIn < fadeDuration)
+        while (elapsedIn < _fadeDuration)
         {
             elapsedIn += Time.deltaTime;
-            sourcMusica.volume = Mathf.Lerp(0f, 1f, elapsedIn / fadeDuration);
+            _musicSource.volume = Mathf.Lerp(0f, 1f, elapsedIn / _fadeDuration);
             yield return null;
         }
-        sourcMusica.volume = 1f;
+        _musicSource.volume = 1f;
     }
 
-    private IEnumerator AguardarETocarProxima(MusicState estado)
+    private IEnumerator WaitAndPlayNext(MusicState state)
     {
-        emIntervalo = true;
-        float espera = Random.Range(intervaloMinimo, intervaloMaximo);
-        yield return new WaitForSeconds(espera);
-        emIntervalo = false;
+        _isInInterval = true;
+        float waitTime = Random.Range(_minInterval, _maxInterval);
+        yield return new WaitForSeconds(waitTime);
+        _isInInterval = false;
 
-        if (estadoAtual == estado)
-            TocarProxima(estado);
+        if (_currentState == state)
+            PlayNext(state);
     }
 
-    public IEnumerator FadeOutMusica()
+    public IEnumerator FadeOutMusic()
     {
-        musicaMutada = true;
-        if (aguardarProximaCoroutine != null) StopCoroutine(aguardarProximaCoroutine);
-        emIntervalo = false;
+        _isMusicMuted = true;
+        if (_waitNextCoroutine != null) StopCoroutine(_waitNextCoroutine);
+        _isInInterval = false;
 
-        float volumeInicial = sourcMusica.volume;
+        float initialVolume = _musicSource.volume;
         float elapsed = 0f;
-        while (elapsed < fadeDuration)
+        while (elapsed < _fadeDuration)
         {
             elapsed += Time.deltaTime;
-            sourcMusica.volume = Mathf.Lerp(volumeInicial, 0f, elapsed / fadeDuration);
+            _musicSource.volume = Mathf.Lerp(initialVolume, 0f, elapsed / _fadeDuration);
             yield return null;
         }
-        sourcMusica.Stop();
-        sourcMusica.volume = 0f;
+        _musicSource.Stop();
+        _musicSource.volume = 0f;
     }
 
-    public void RetomarMusica()
+    public void ResumeMusic()
     {
-        musicaMutada = false;
-        TrocarMusica(estadoAtual);
+        _isMusicMuted = false;
+        ChangeMusic(_currentState);
     }
     #endregion
 }
