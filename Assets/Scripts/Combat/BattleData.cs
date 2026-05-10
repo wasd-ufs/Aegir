@@ -10,37 +10,48 @@ using UnityEngine.UI;
 public class BattleData : MonoBehaviour
 {
     #region Referências Visuais e de UI
+
     [Header("Imagens e Painéis")]
-    public Image background, enemy, player;
-    public Sprite pl;
-    public GameObject battle, gameOverPanel;
-    
+    [SerializeField] private Image _background;
+    [SerializeField] private Image _enemy;
+    [SerializeField] private Image _player;
+    [SerializeField] private Sprite _playerSprite;
+    [SerializeField] private GameObject _battle;
+    [SerializeField] private GameObject _gameOverPanel;
+
     [Header("Gerenciadores Relacionados")]
-    public BattleManager battleManager;
-    public CrewUI playerCrewUI;
-    public CrewUI enemyCrewUI;
+    [SerializeField] private BattleManager _battleManager;
+    [SerializeField] private CrewUI _playerCrewUI;
+    [SerializeField] private CrewUI _enemyCrewUI;
+
     #endregion
 
     #region Estado Interno
-    private GameBoyTransition transition;
+
+    private GameBoyTransition _transition;
+
     #endregion
 
     #region Ciclo de Vida (Unity)
-    void Awake()
+
+    private void Awake()
     {
-        transition = FindFirstObjectByType<GameBoyTransition>();
-        if (transition == null)
+        _transition = FindFirstObjectByType<GameBoyTransition>();
+
+        if (_transition == null)
             Debug.LogWarning("[BattleData] GameBoyTransition não encontrado na cena!", this);
     }
 
-    void Start()
+    private void Start()
     {
-        battle.SetActive(false);
+        _battle.SetActive(false);
         GameState.IsInBattle = false;
     }
+
     #endregion
 
     #region Controle de Fluxo da Batalha
+
     /// <summary>
     /// Configura a UI de combate e diz ao BattleManager para iniciar os turnos.
     /// </summary>
@@ -49,82 +60,88 @@ public class BattleData : MonoBehaviour
     /// <param name="enemyCrew">Estrutura de dados da equipe adversária.</param>
     public void StartFight(Sprite bg, Sprite en, CrewData enemyCrew)
     {
-        background.sprite = bg;
-        enemy.sprite = en;
-        player.sprite = pl;
+        _background.sprite = bg;
+        _enemy.sprite = en;
+        _player.sprite = _playerSprite;
 
-        battle.SetActive(true);
+        _battle.SetActive(true);
         GameState.IsInBattle = true;
 
-        playerCrewUI?.ReativarComoPlayer();
-        battleManager.IniciarBatalha(enemyCrew);
+        _playerCrewUI?.ReativarComoPlayer();
+        _battleManager.IniciateBattle(enemyCrew);
     }
 
     /// <summary>
     /// Finaliza o embate, gerenciando a transição de volta ao mapa, o som,
     /// a cura pós-combate e a penalidade/vitória.
     /// </summary>
-    /// <param name="playerVenceu">True se o inimigo foi derrotado, False se a equipe foi aniquilada.</param>
+    /// <param name="playerWon">True se o inimigo foi derrotado, False se a equipe foi aniquilada.</param>
     /// <param name="playerCrew">Referência da tripulação do jogador.</param>
     /// <param name="enemyCrew">Referência da tripulação do inimigo.</param>
     /// <param name="textoLog">Texto contendo o loot gerado em caso de vitória.</param>
-    public void EndFight(bool playerVenceu, CrewData playerCrew, CrewData enemyCrew, string textoLog = "")
+    public void EndFight(bool playerWon, CrewData playerCrew, CrewData enemyCrew, string textoLog = "")
     {
         GameState.ChasersCount = 0;
         GameState.IsInBattle = false;
-        if (transition != null)
+
+        if (_transition != null)
         {
-            transition.StartTransition(onMidpointCallback: () =>
-            {
-                if (enemyCrewUI != null)
-                    enemyCrewUI.gameObject.SetActive(false);
-                enemyCrewUI?.LimparUI();
-                battle.SetActive(false);
-                battleManager.LimparBotões();
-                
-                GameState.IsInBattle = !playerVenceu; // Mantém travado se for Game Over
-                gameOverPanel.SetActive(!playerVenceu); 
-                
-            }, onCompleteCallback: () =>
-            {
-                MusicManager.Instance.RetomarMusica();
-                if (playerVenceu)
+            _transition.StartTransition(
+                onMidpointCallback: () =>
                 {
-                    SFXManager.Instance?.TocarVitoria();
-                    battleManager.ExibirMensagem("Vitoria!!");
-                    battleManager.ExibirLog(textoLog);
+                    if (_enemyCrewUI != null)
+                        _enemyCrewUI.gameObject.SetActive(false);
 
-                    if (enemyCrew != null)
-                        StartCoroutine(FadeEDestruirCrew(enemyCrew)); 
-                }
-                else
+                    _enemyCrewUI?.LimparUI();
+                    _battle.SetActive(false);
+                    _battleManager.ClearActionButtons();
+
+                    GameState.IsInBattle = !playerWon;
+                    _gameOverPanel.SetActive(!playerWon);
+                },
+                onCompleteCallback: () =>
                 {
-                    SFXManager.Instance?.TocarDerrota();
-                    // Revive tripulantes e inimigos
-                    foreach (GameObject npc in playerCrew.crew)
-                    {
-                        NPCsData data = npc.GetComponent<NPCsData>();
-                        data.isAlive = true;
-                        data.Heal(data.vidaMáxima/2);
-                        data.gameObject.SetActive(data.creatureClass != NPCsData.Class.Capitão);
-                    }
+                    MusicManager.Instance.ResumeMusic();
 
-                    foreach (GameObject npc in enemyCrew.crew)
+                    if (playerWon)
                     {
-                        NPCsData data = npc.GetComponent<NPCsData>();
-                        data.isAlive = true;
-                        data.Heal(data.vidaMáxima);
-                        data.gameObject.SetActive(true);
+                        SFXManager.Instance?.PlayVictory();
+                        _battleManager.DisplayMessage("Vitoria!!");
+                        _battleManager.DisplayLog(textoLog);
+
+                        if (enemyCrew != null)
+                            StartCoroutine(FadeAndDestroyCrew(enemyCrew));
                     }
-                    enemyCrewUI?.LimparUI();
-                    if (enemyCrewUI != null)
-                        enemyCrewUI.gameObject.SetActive(false);
-                }
-            });
+                    else
+                    {
+                        SFXManager.Instance?.PlayDefeat();
+
+                        foreach (GameObject npc in playerCrew.crew)
+                        {
+                            NPCsData data = npc.GetComponent<NPCsData>();
+                            data.isAlive = true;
+                            data.Heal(data.vidaMáxima / 2);
+                            data.gameObject.SetActive(data.creatureClass != NPCsData.Class.Capitão);
+                        }
+
+                        foreach (GameObject npc in enemyCrew.crew)
+                        {
+                            NPCsData data = npc.GetComponent<NPCsData>();
+                            data.isAlive = true;
+                            data.Heal(data.vidaMáxima);
+                            data.gameObject.SetActive(true);
+                        }
+
+                        _enemyCrewUI?.LimparUI();
+
+                        if (_enemyCrewUI != null)
+                            _enemyCrewUI.gameObject.SetActive(false);
+                    }
+                });
         }
         else
         {
-            battle.SetActive(false);
+            _battle.SetActive(false);
             GameState.IsInBattle = false;
         }
     }
@@ -134,23 +151,26 @@ public class BattleData : MonoBehaviour
     /// </summary>
     public void RetornarAoMundo()
     {
-        transition.StartTransition(onMidpointCallback: () =>
+        _transition.StartTransition(onMidpointCallback: () =>
         {
-            gameOverPanel.SetActive(false);
+            _gameOverPanel.SetActive(false);
             GameState.IsInBattle = false;
 
-            playerCrewUI?.ReativarComoPlayer();
+            _playerCrewUI?.ReativarComoPlayer();
         });
     }
+
     #endregion
 
     #region Helpers e Animações
+
     /// <summary>
     /// Executa um fade-out no inimigo derrotado antes de destruí-lo de forma permanente no mapa.
     /// </summary>
-    private IEnumerator FadeEDestruirCrew(CrewData crew)
+    private IEnumerator FadeAndDestroyCrew(CrewData crew)
     {
         List<SpriteRenderer> renderers = new();
+
         foreach (GameObject npc in crew.crew)
         {
             SpriteRenderer sr = npc.GetComponent<SpriteRenderer>();
@@ -158,23 +178,27 @@ public class BattleData : MonoBehaviour
         }
 
         float elapsed = 0f;
-        float duracao = 1f;
+        float duration = 1f;
 
-        while (elapsed < duracao)
+        while (elapsed < duration)
         {
             elapsed += Time.deltaTime;
-            float alpha = Mathf.Lerp(1f, 0f, elapsed / duracao);
+            float alpha = Mathf.Lerp(1f, 0f, elapsed / duration);
+
             foreach (SpriteRenderer sr in renderers)
             {
                 if (sr == null) continue;
+
                 Color c = sr.color;
                 c.a = alpha;
                 sr.color = c;
             }
+
             yield return null;
         }
 
         Destroy(crew.gameObject);
     }
+
     #endregion
 }

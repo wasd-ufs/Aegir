@@ -92,7 +92,7 @@ public class NPCsData : MonoBehaviour
     [Serializable]
     public struct ActiveEffect
     {
-        public CombatBase.Efeito tipo;
+        public CombatBase.EffectType tipo;
         public float intensidade;
         public int turnosRestantes;
         public DamageType damageType;
@@ -193,22 +193,22 @@ public class NPCsData : MonoBehaviour
     public void AddEffect(ActiveEffect newEffect)
     {
         // Aplicação imediata no ato da adição para cura, dano ou aumento de força base
-        if (newEffect.tipo == CombatBase.Efeito.Cura)
+        if (newEffect.tipo == CombatBase.EffectType.Heal)
         {
             Heal(newEffect.intensidade);
             newEffect.turnosRestantes -= 1; 
         }
-        else if (newEffect.tipo == CombatBase.Efeito.Efeito)
+        else if (newEffect.tipo == CombatBase.EffectType.Status)
         {
             TakeDamage(newEffect.intensidade, newEffect.damageType);
             newEffect.turnosRestantes -= 1; 
         }
-        else if (newEffect.tipo == CombatBase.Efeito.Força)
+        else if (newEffect.tipo == CombatBase.EffectType.Strength)
         {
             força += newEffect.intensidade;
         }
 
-        if (newEffect.turnosRestantes <= 0 && newEffect.tipo != CombatBase.Efeito.Força)
+        if (newEffect.turnosRestantes <= 0 && newEffect.tipo != CombatBase.EffectType.Strength)
         {
             return; 
         }
@@ -221,7 +221,7 @@ public class NPCsData : MonoBehaviour
                 var existing = activeEffects[i];
 
                 // Retira a força anterior para aplicar a nova (Evita stack infinito)
-                if (newEffect.tipo == CombatBase.Efeito.Força)
+                if (newEffect.tipo == CombatBase.EffectType.Strength)
                 {
                     força -= existing.intensidade; 
                 }
@@ -251,10 +251,10 @@ public class NPCsData : MonoBehaviour
             // Aplica o efeito do turno
             switch (e.tipo)
             {
-                case CombatBase.Efeito.Efeito:
+                case CombatBase.EffectType.Damage:
                     TakeDamage(e.intensidade, e.damageType);
                     break;
-                case CombatBase.Efeito.Cura: 
+                case CombatBase.EffectType.Heal: 
                     Heal(e.intensidade); 
                     break;
                 // Força não aplica dano por turno, apenas expira
@@ -272,7 +272,7 @@ public class NPCsData : MonoBehaviour
             // Remove efeito expirado
             if (activeEffects[i].turnosRestantes <= 0)
             {
-                if (e.tipo == CombatBase.Efeito.Força)
+                if (e.tipo == CombatBase.EffectType.Strength)
                     força -= e.intensidade; // reverte o buff
 
                 activeEffects.RemoveAt(i);
@@ -315,14 +315,14 @@ public class NPCsData : MonoBehaviour
         {
             case ConsumableData.Effect.força:
                 ActiveEffect effectF = new();
-                effectF.tipo = CombatBase.Efeito.Força;
+                effectF.tipo = CombatBase.EffectType.Strength;
                 effectF.intensidade = consumable.intensity;
                 effectF.turnosRestantes = consumable.durationInTurns;
                 AddEffect(effectF);
                 break;
             case ConsumableData.Effect.cura:
                 ActiveEffect effectC = new();
-                effectC.tipo = CombatBase.Efeito.Cura;
+                effectC.tipo = CombatBase.EffectType.Heal;
                 effectC.intensidade = consumable.intensity;
                 effectC.turnosRestantes = consumable.durationInTurns;
                 AddEffect(effectC);

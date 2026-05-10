@@ -9,24 +9,48 @@ using UnityEngine;
 public class CrewAttacks : CombatBase
 {
     #region Referências de Equipes
+
     [Header("Crews")]
     [Tooltip("Referência para a tripulação que usará as ações.")]
-    public CrewData aliados;
+    [SerializeField] private CrewData _allies;
+
     [Tooltip("Referência para a tripulação adversária.")]
-    public CrewData inimigos;
+    [SerializeField] private CrewData _enemies;
+
+    // Mantendo acesso público controlado (caso outros scripts dependam)
+    public CrewData allies
+    {
+        get => _allies;
+        set => _allies = setValueSafe(value);
+    }
+
+    public CrewData enemies
+    {
+        get => _enemies;
+        set => _enemies = setValueSafe(value);
+    }
+
+    // Pequeno helper pra evitar null silencioso
+    private CrewData setValueSafe(CrewData value) => value;
+
     #endregion
 
     #region Execução de Ação
+
     /// <summary>
     /// Envolve a função DoAction da classe base e dispara os feedbacks na UI da Batalha.
     /// </summary>
     /// <param name="action">Ação escolhida para executar.</param>
-    /// <param name="alvos">A lista de alvos afetados.</param>
-    /// <param name="ator">O GameObject que está realizando a ação.</param>
-    public void ExecutarAção(Actions action, List<GameObject> alvos, GameObject ator)
+    /// <param name="targets">A lista de alvos afetados.</param>
+    /// <param name="actor">O GameObject que está realizando a ação.</param>
+    public void ExecuteAction(ActionData action, List<GameObject> targets, GameObject actor)
     {
-        DoAction(action, alvos, aliados, inimigos, ator);
-        BattleManager.Instance.ExibirMensagem(ator.GetComponent<NPCsData>().NPC_Name + " usou " + action.nomeAção + "!!");
+        DoAction(action, targets, _allies, _enemies, actor);
+
+        BattleManager.Instance.DisplayMessage(
+            actor.GetComponent<NPCsData>().NPC_Name + " usou " + action.actionName + "!!"
+        );
     }
+
     #endregion
 }
