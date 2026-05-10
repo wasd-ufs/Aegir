@@ -12,6 +12,9 @@ GameObject:
   - component: {fileID: 2416920423396864842}
   - component: {fileID: 4357271370124906672}
   - component: {fileID: 2598367051646900871}
+  - component: {fileID: 8480116743337490398}
+  - component: {fileID: 6275219399073290002}
+  - component: {fileID: 6503348447595818357}
   m_Layer: 0
   m_Name: ChunkPrefab
   m_TagString: Untagged
@@ -59,11 +62,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2068d3df185a3ae43b25d913fcf3425a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MapGenerator
-  tilemap: {fileID: 6809738680655517803}
-  tilesetData: {fileID: 11400000, guid: 6b5aba90c8cd3df43b4f44506abd15ea, type: 2}
-  ruleManager: {fileID: 2598367051646900871}
-  chunkSize: {x: 16, y: 16}
-  collapsesPerFrame: 16
+  _chunkSize: {x: 32, y: 32}
+  _tilesetData: {fileID: 11400000, guid: 6b5aba90c8cd3df43b4f44506abd15ea, type: 2}
+  _ruleManager: {fileID: 2598367051646900871}
 --- !u!114 &2598367051646900871
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -76,8 +77,49 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 17917c8ee9289ed4dada3826b5efa632, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RuleManager
-  regrasDeBloqueio: []
-  tilesetData: {fileID: 11400000, guid: 6b5aba90c8cd3df43b4f44506abd15ea, type: 2}
+  _blockingRulesList: []
+  _tilesetData: {fileID: 11400000, guid: 6b5aba90c8cd3df43b4f44506abd15ea, type: 2}
+--- !u!114 &8480116743337490398
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5338193686674964212}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 463a600b36f0ed1459444ef1e703d181, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WFCSolver
+  _collapsesPerFrame: 20
+--- !u!114 &6275219399073290002
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5338193686674964212}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3a01cb60b7b10f34f80d2259c21255a8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ChunkRenderer
+  _tilemap: {fileID: 6809738680655517803}
+  _tilesetData: {fileID: 11400000, guid: 6b5aba90c8cd3df43b4f44506abd15ea, type: 2}
+--- !u!114 &6503348447595818357
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5338193686674964212}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 03e5323da371ad84b822dd4ace5515c3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EntitySpawner
+  _maxCreaturesPerChunk: 10
+  _tilesetData: {fileID: 11400000, guid: 6b5aba90c8cd3df43b4f44506abd15ea, type: 2}
 --- !u!1 &6213186387704198590
 GameObject:
   m_ObjectHideFlags: 0

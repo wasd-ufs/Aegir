@@ -93,7 +93,7 @@ public class PlayerMovement : MonoBehaviour
         if (actualTile == null) return; 
 
         // Tenta achar água caso tenha bugado por estar "marítimo" fora do mapa 
-        if (actualTile.metadata.camada == 0 && lastValidPosition == null)
+        if (actualTile.Metadata.Layer == 0 && lastValidPosition == Vector3.zero)
         {
             worldGenerator.TryFindWaterTile();
         }
@@ -103,13 +103,13 @@ public class PlayerMovement : MonoBehaviour
         if (isOnWater)
         {
             // Camada 0 é Água
-            if (actualTile.metadata.camada == 0) ApplyWaterMovement(direction);
+            if (actualTile.Metadata.Layer == 0) ApplyWaterMovement(direction);
             else StopAndReset(); // Bateu em terra (Camada != 0)
         }
         else 
         {
             // Lógica do Capitão na Terra (Camada 1 ou superior)
-            if (actualTile.metadata.camada != 0)
+            if (actualTile.Metadata.Layer != 0)
             {
                 crb.linearVelocity = direction * captainSpeed;
                 rb.linearVelocity = Vector2.zero; // Garante que o barco não fuja sozinho

@@ -282,8 +282,8 @@ public class NPCsMovement : MonoBehaviour
         if (actualTile == null) return;
 
         bool isInvalidTile = isMaritime
-            ? actualTile.metadata.camada != 0
-            : actualTile.metadata.camada == 0;
+            ? actualTile.Metadata.Layer != 0
+            : actualTile.Metadata.Layer == 0;
 
         if (isInvalidTile)
         {
@@ -329,8 +329,8 @@ public class NPCsMovement : MonoBehaviour
             if (probeTile == null) continue;
 
             bool isValid = isMaritime
-                ? probeTile.metadata.camada == 0
-                : probeTile.metadata.camada != 0;
+                ? probeTile.Metadata.Layer == 0
+                : probeTile.Metadata.Layer != 0;
 
             if (isValid) return dir;
         }
