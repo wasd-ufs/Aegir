@@ -38,7 +38,7 @@ public class RecruitableNPC : MonoBehaviour
     {
         if (isPlayerNearby && inputActions.Player.Contatar.WasPressedThisFrame())
         {
-            FindFirstObjectByType<RecruitmentUI>().AbrirTela(this, GetComponent<NPCsData>());
+            FindFirstObjectByType<RecruitmentUI>().OpenScreen(this, GetComponent<NPCsData>());
         }
     }
 

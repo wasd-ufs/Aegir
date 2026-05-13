@@ -10,40 +10,49 @@ public class RecruitmentUI : MonoBehaviour
 {
     #region Referências de UI e Dados
     [Header("Entradas e Dados")]
-    public PlayerInputActions inputActions;
-    private RecruitableNPC recruitableNPC;
-    public CrewData playerCrew;
+    [SerializeField] private PlayerInputActions _inputActions;
+    private RecruitableNPC _recruitableNpc;
+    
+    [SerializeField] private CrewData _playerCrew;
 
     [Header("Painéis")]
-    public RectTransform Fundo, Textos, Botões;
+    [SerializeField] private RectTransform _background;
+    [SerializeField] private RectTransform _texts;
+    [SerializeField] private RectTransform _buttons;
     
     [Header("Textos")]
-    public TextMeshProUGUI Vida, Classe, Tipo, Nome, Força, Custo, Level;
+    [SerializeField] private TextMeshProUGUI _healthText;
+    [SerializeField] private TextMeshProUGUI _classText;
+    [SerializeField] private TextMeshProUGUI _typeText;
+    [SerializeField] private TextMeshProUGUI _nameText;
+    [SerializeField] private TextMeshProUGUI _strengthText;
+    [SerializeField] private TextMeshProUGUI _costText;
+    [SerializeField] private TextMeshProUGUI _levelText;
     #endregion
 
     #region Inicialização e Ciclo de Vida
-    void Awake()
+    private void Awake()
     {
-        inputActions = new();
-        FecharTela();
+        _inputActions = new();
+        CloseScreen();
     }
 
-    void Update()
+    private void Update()
     {
-        if (inputActions.Player.CancelarSeleção.WasPressedThisFrame())
+        if (_inputActions.Player.CancelarSeleção.WasPressedThisFrame())
         {
-           FecharTela(); 
+           CloseScreen(); 
         }
     }
 
-    void OnEnable()
+    private void OnEnable()
     {
-        inputActions.Enable();
+        _inputActions.Enable();
     }
 
-    void OnDisable()
+    private void OnDisable()
     {
-        inputActions.Disable();
+        _inputActions.Disable();
     }
     #endregion
 
@@ -51,52 +60,56 @@ public class RecruitmentUI : MonoBehaviour
     /// <summary>
     /// Preenche os campos de texto com os dados do NPC e abre o painel de recrutamento.
     /// </summary>
-    public void AbrirTela(RecruitableNPC npcSelecionado, NPCsData dadosDoNPC)
+    public void OpenScreen(RecruitableNPC selectedNpc, NPCsData npcData)
     {
-        recruitableNPC = npcSelecionado;
-        Vida.text = "Vida: " + $"{dadosDoNPC.vidaMáxima:F2}";
-        Classe.text = "Classe: " + dadosDoNPC.creatureClass;
-        Tipo.text = "Tipo: " + dadosDoNPC.creatureType;
-        Nome.text = "Nome: " + dadosDoNPC.NPC_Name;
-        Força.text = "Forca: " + $"{dadosDoNPC.força:F2}";
-        Custo.text = "Custo: " + $"{dadosDoNPC.custo:F2}";
-        Level.text = "Level: " + dadosDoNPC.level;
+        _recruitableNpc = selectedNpc;
 
-        Button b1 = Botões.GetChild(0).GetComponent<Button>();
-        Button b2 = Botões.GetChild(1).GetComponent<Button>();
+        _healthText.text = "Vida: " + $"{npcData.vidaMáxima:F2}";
+        _classText.text = "Classe: " + npcData.creatureClass;
+        _typeText.text = "Tipo: " + npcData.creatureType;
+        _nameText.text = "Nome: " + npcData.NPC_Name;
+        _strengthText.text = "Forca: " + $"{npcData.força:F2}";
+        _costText.text = "Custo: " + $"{npcData.custo:F2}";
+        _levelText.text = "Level: " + npcData.level;
 
-        b1.onClick.RemoveAllListeners();
-        b1.onClick.AddListener(() => Contratar(true));
-        b2.onClick.RemoveAllListeners();
-        b2.onClick.AddListener(() => Contratar(false));
+        Button acceptButton = _buttons.GetChild(0).GetComponent<Button>();
+        Button declineButton = _buttons.GetChild(1).GetComponent<Button>();
 
-        Botões.gameObject.SetActive(true);
-        Fundo.gameObject.SetActive(true);
-        Textos.gameObject.SetActive(true);
+        acceptButton.onClick.RemoveAllListeners();
+        acceptButton.onClick.AddListener(() => Recruit(true));
+
+        declineButton.onClick.RemoveAllListeners();
+        declineButton.onClick.AddListener(() => Recruit(false));
+
+        _buttons.gameObject.SetActive(true);
+        _background.gameObject.SetActive(true);
+        _texts.gameObject.SetActive(true);
     }
 
-    public void FecharTela()
+    public void CloseScreen()
     {
-        Botões.gameObject.SetActive(false);
-        Fundo.gameObject.SetActive(false);
-        Textos.gameObject.SetActive(false);
+        _buttons.gameObject.SetActive(false);
+        _background.gameObject.SetActive(false);
+        _texts.gameObject.SetActive(false);
     }
 
     /// <summary>
     /// Processa a decisão do jogador sobre a contratação.
     /// </summary>
-    public void Contratar(bool resposta)
+    public void Recruit(bool shouldRecruit)
     {
-        if (resposta)
+        if (shouldRecruit)
         {
-            recruitableNPC.GetComponent<NPCsMovement>().IrParaOBarco(playerCrew.transform);
-            playerCrew.crew.Add(recruitableNPC.gameObject);
+            _recruitableNpc.GetComponent<NPCsMovement>().IrParaOBarco(_playerCrew.transform);
+            _playerCrew.crew.Add(_recruitableNpc.gameObject);
+
             SFXManager.Instance?.PlayContract();
-            FecharTela();
+
+            CloseScreen();
         }
         else
         {
-            FecharTela();
+            CloseScreen();
         }
     }
     #endregion

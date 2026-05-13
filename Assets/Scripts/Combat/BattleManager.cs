@@ -109,7 +109,7 @@ public class BattleManager : MonoBehaviour
             Debug.LogWarning("[BattleManager] NPCAttacks não encontrado no GameObject do _enemyCrew — inimigos não poderão agir.");
 
         if (_enemyCrewUI != null)
-            _enemyCrewUI.InicializarComoInimigo(enemies);
+            _enemyCrewUI.InitializeAsEnemy(enemies);
         else
             Debug.LogWarning("[BattleManager] _enemyCrewUI não atribuído — HP inimigo não será exibido.");
 

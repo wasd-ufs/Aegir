@@ -5061,11 +5061,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4b17331698f1a244f88e2c8d7b5e806a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraFollow
-  worldGenerator: {fileID: 1829302568}
-  smoothSpeed: 0.125
-  offset: {x: 0, y: 0, z: -10}
-  multiplicador: 0.5
-  "amortecimentoDaMec\xE2nica": 0.05
+  _worldGenerator: {fileID: 1829302568}
+  _smoothSpeed: 0.125
+  _offset: {x: 0, y: 0, z: -10}
+  _movementLookAheadMultiplier: 0
+  _movementDamping: 0.05
 --- !u!1 &520236489
 GameObject:
   m_ObjectHideFlags: 0
@@ -10658,26 +10658,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5f736dd6e48592b468508d706b2bd727, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CrewUI
-  captainHP: {fileID: 8584437224055196043, guid: 1d7b99b0e6d5b6a4bb647ca3d67331cc, type: 3}
-  boatHP: {fileID: -8572167912249018265, guid: 1d7b99b0e6d5b6a4bb647ca3d67331cc, type: 3}
-  startHPBar: {fileID: -5639374565773268452, guid: 1d7b99b0e6d5b6a4bb647ca3d67331cc, type: 3}
-  bodyHP: {fileID: -414380116, guid: 1d7b99b0e6d5b6a4bb647ca3d67331cc, type: 3}
-  endHPBar: {fileID: 7840579542847498603, guid: 1d7b99b0e6d5b6a4bb647ca3d67331cc, type: 3}
-  startCoordinates: {x: 520, y: 445, z: 0}
-  segmentDistances: {x: 15, y: 15, z: 15}
-  heartDistance: 30
-  verticalDistance: 30
-  "vidaPorCora\xE7\xE3o": 10
-  vidaPorSegmento: 10
-  image: {fileID: 2306828781455713388, guid: 2c68e8b9992c5194ea5422c3492fb020, type: 3}
-  player: {fileID: 0}
-  canvasRoot: {fileID: 1949619938}
-  captainContainer: {fileID: 1923456631}
-  boatContainer: {fileID: 1923456631}
-  crewContainer: {fileID: 1923456631}
-  textoPrefab: {fileID: 171042543424101042, guid: f8ed5088029ab7e439340d87e52bdd1b, type: 3}
-  textoOffset: {x: -140, y: -10}
-  modoInimigo: 1
+  _captainHPSprite: {fileID: 8584437224055196043, guid: 1d7b99b0e6d5b6a4bb647ca3d67331cc, type: 3}
+  _boatHPSprite: {fileID: -8572167912249018265, guid: 1d7b99b0e6d5b6a4bb647ca3d67331cc, type: 3}
+  _startHPBarSprite: {fileID: -5639374565773268452, guid: 1d7b99b0e6d5b6a4bb647ca3d67331cc, type: 3}
+  _bodyHPBarSprite: {fileID: -414380116, guid: 1d7b99b0e6d5b6a4bb647ca3d67331cc, type: 3}
+  _endHPBarSprite: {fileID: 7840579542847498603, guid: 1d7b99b0e6d5b6a4bb647ca3d67331cc, type: 3}
+  _startCoordinates: {x: -520, y: 445, z: 0}
+  _segmentDistances: {x: 15, y: 15, z: 15}
+  _heartDistance: 30
+  _verticalDistance: 30
+  _healthPerHeart: 10
+  _healthPerSegment: 10
+  _imagePrefab: {fileID: 2306828781455713388, guid: 2c68e8b9992c5194ea5422c3492fb020, type: 3}
+  _player: {fileID: 679149521}
+  _canvasRoot: {fileID: 1949619938}
+  _captainContainer: {fileID: 1249750007}
+  _boatContainer: {fileID: 1249750007}
+  _crewContainer: {fileID: 1557339530}
+  _textPrefab: {fileID: 171042543424101042, guid: 4213b53fbd0a66e4981ea22cf46486bf, type: 3}
+  _textOffset: {x: 130, y: -10}
+  _isEnemyMode: 0
 --- !u!1 &975422470
 GameObject:
   m_ObjectHideFlags: 0
@@ -12744,17 +12744,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 096b1efe456d55c41824f19a614d93a6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RecruitmentUI
-  playerCrew: {fileID: 679149529}
-  Fundo: {fileID: 1092715642}
-  Textos: {fileID: 43733851}
-  "Bot\xF5es": {fileID: 942505748}
-  Vida: {fileID: 1487575731}
-  Classe: {fileID: 241654540}
-  Tipo: {fileID: 975422472}
-  Nome: {fileID: 1216798677}
-  "For\xE7a": {fileID: 2109309165}
-  Custo: {fileID: 1772478904}
-  Level: {fileID: 1814111655}
+  _playerCrew: {fileID: 679149529}
+  _background: {fileID: 1092715642}
+  _texts: {fileID: 43733851}
+  _buttons: {fileID: 942505748}
+  _healthText: {fileID: 1487575731}
+  _classText: {fileID: 241654540}
+  _typeText: {fileID: 975422472}
+  _nameText: {fileID: 1216798677}
+  _strengthText: {fileID: 2109309165}
+  _costText: {fileID: 1772478904}
+  _levelText: {fileID: 1814111655}
 --- !u!114 &1147722770
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -16222,14 +16222,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8bd77bf255282b2449dba78ddcea592f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameBoyTransition
-  transitionContainer: {fileID: 1201194643}
-  barCount: 22
-  barColor: {r: 0.18039216, g: 0.10980393, b: 0, a: 1}
-  closeDuration: 0.5
-  openDuration: 0.5
-  holdDuration: 0.15
-  staggerDelay: 0.03
-  easeCurve:
+  _transitionContainer: {fileID: 1201194643}
+  _barCount: 22
+  _barColor: {r: 0.2735849, g: 0.12980226, b: 0.02710039, a: 1}
+  _closeDuration: 0.5
+  _openDuration: 0.5
+  _holdDuration: 0.15
+  _staggerDelay: 0.03
+  _easeCurve:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 3
@@ -16253,13 +16253,13 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  onMidpoint:
+  _onMidpoint:
     m_PersistentCalls:
       m_Calls: []
-  onComplete:
+  _onComplete:
     m_PersistentCalls:
       m_Calls: []
-  somAbertura: {fileID: 8300000, guid: cc748703a18ba5647b69c9a2e8fdf7b5, type: 3}
+  _openingSound: {fileID: 8300000, guid: cc748703a18ba5647b69c9a2e8fdf7b5, type: 3}
 --- !u!82 &1483774936
 AudioSource:
   m_ObjectHideFlags: 0
@@ -21249,14 +21249,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 19cdd05f39d0ac24cbf478e7d2dc73de, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InventoryUI
-  container: {fileID: 969567413}
-  crewContainer: {fileID: 136735900}
-  fundo: {fileID: 237736701}
-  title: {fileID: 860251126}
-  slot: {fileID: 5297864435218012094, guid: 959793bde8bc7f247a0643f09176dbb3, type: 3}
-  button: {fileID: 6554151866833297218, guid: cd2e05e8c1dca4f40bc574605dbaffdf, type: 3}
-  uiSprite: {fileID: 2139730355303104054, guid: 8aaa3ee35377bba4b94a49757676b6a3, type: 3}
-  inventory: {fileID: 679149533}
+  _container: {fileID: 969567413}
+  _crewContainer: {fileID: 136735900}
+  _background: {fileID: 237736701}
+  _title: {fileID: 860251126}
+  _slotPrefab: {fileID: 5297864435218012094, guid: 959793bde8bc7f247a0643f09176dbb3, type: 3}
+  _buttonPrefab: {fileID: 948406152}
+  _uiSprite: {fileID: 2139730355303104054, guid: 8aaa3ee35377bba4b94a49757676b6a3, type: 3}
+  _inventory: {fileID: 679149533}
 --- !u!1 &1946280751
 GameObject:
   m_ObjectHideFlags: 0
@@ -21526,26 +21526,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5f736dd6e48592b468508d706b2bd727, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CrewUI
-  captainHP: {fileID: 8584437224055196043, guid: 1d7b99b0e6d5b6a4bb647ca3d67331cc, type: 3}
-  boatHP: {fileID: -8572167912249018265, guid: 1d7b99b0e6d5b6a4bb647ca3d67331cc, type: 3}
-  startHPBar: {fileID: -5639374565773268452, guid: 1d7b99b0e6d5b6a4bb647ca3d67331cc, type: 3}
-  bodyHP: {fileID: -414380116, guid: 1d7b99b0e6d5b6a4bb647ca3d67331cc, type: 3}
-  endHPBar: {fileID: 7840579542847498603, guid: 1d7b99b0e6d5b6a4bb647ca3d67331cc, type: 3}
-  startCoordinates: {x: -520, y: 445, z: 0}
-  segmentDistances: {x: 15, y: 15, z: 15}
-  heartDistance: 30
-  verticalDistance: 30
-  "vidaPorCora\xE7\xE3o": 10
-  vidaPorSegmento: 10
-  image: {fileID: 2306828781455713388, guid: 2c68e8b9992c5194ea5422c3492fb020, type: 3}
-  player: {fileID: 679149521}
-  canvasRoot: {fileID: 1949619938}
-  captainContainer: {fileID: 1557339530}
-  boatContainer: {fileID: 1557339530}
-  crewContainer: {fileID: 1557339530}
-  textoPrefab: {fileID: 171042543424101042, guid: 4213b53fbd0a66e4981ea22cf46486bf, type: 3}
-  textoOffset: {x: 130, y: -10}
-  modoInimigo: 0
+  _captainHPSprite: {fileID: 8584437224055196043, guid: 1d7b99b0e6d5b6a4bb647ca3d67331cc, type: 3}
+  _boatHPSprite: {fileID: -8572167912249018265, guid: 1d7b99b0e6d5b6a4bb647ca3d67331cc, type: 3}
+  _startHPBarSprite: {fileID: -5639374565773268452, guid: 1d7b99b0e6d5b6a4bb647ca3d67331cc, type: 3}
+  _bodyHPBarSprite: {fileID: -414380116, guid: 1d7b99b0e6d5b6a4bb647ca3d67331cc, type: 3}
+  _endHPBarSprite: {fileID: 7840579542847498603, guid: 1d7b99b0e6d5b6a4bb647ca3d67331cc, type: 3}
+  _startCoordinates: {x: -520, y: 445, z: 0}
+  _segmentDistances: {x: 15, y: 15, z: 15}
+  _heartDistance: 30
+  _verticalDistance: 30
+  _healthPerHeart: 10
+  _healthPerSegment: 10
+  _imagePrefab: {fileID: 2306828781455713388, guid: 2c68e8b9992c5194ea5422c3492fb020, type: 3}
+  _player: {fileID: 679149521}
+  _canvasRoot: {fileID: 1949619938}
+  _captainContainer: {fileID: 1249750007}
+  _boatContainer: {fileID: 1249750007}
+  _crewContainer: {fileID: 1249750007}
+  _textPrefab: {fileID: 171042543424101042, guid: 4213b53fbd0a66e4981ea22cf46486bf, type: 3}
+  _textOffset: {x: 130, y: -10}
+  _isEnemyMode: 0
 --- !u!114 &1949619940
 MonoBehaviour:
   m_ObjectHideFlags: 0

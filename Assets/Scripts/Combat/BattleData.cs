@@ -67,7 +67,7 @@ public class BattleData : MonoBehaviour
         _battle.SetActive(true);
         GameState.IsInBattle = true;
 
-        _playerCrewUI?.ReativarComoPlayer();
+        _playerCrewUI?.ReactivateAsPlayer();
         _battleManager.IniciateBattle(enemyCrew);
     }
 
@@ -92,7 +92,7 @@ public class BattleData : MonoBehaviour
                     if (_enemyCrewUI != null)
                         _enemyCrewUI.gameObject.SetActive(false);
 
-                    _enemyCrewUI?.LimparUI();
+                    _enemyCrewUI?.ClearUI();
                     _battle.SetActive(false);
                     _battleManager.ClearActionButtons();
 
@@ -132,7 +132,7 @@ public class BattleData : MonoBehaviour
                             data.gameObject.SetActive(true);
                         }
 
-                        _enemyCrewUI?.LimparUI();
+                        _enemyCrewUI?.ClearUI();
 
                         if (_enemyCrewUI != null)
                             _enemyCrewUI.gameObject.SetActive(false);
@@ -156,7 +156,7 @@ public class BattleData : MonoBehaviour
             _gameOverPanel.SetActive(false);
             GameState.IsInBattle = false;
 
-            _playerCrewUI?.ReativarComoPlayer();
+            _playerCrewUI?.ReactivateAsPlayer();
         });
     }
 
