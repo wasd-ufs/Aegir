@@ -120,26 +120,26 @@ public class InventoryUI : MonoBehaviour
         foreach (Transform crewMember in _crewContainer)
             Destroy(crewMember.gameObject);
 
-        foreach (GameObject npcObject in _inventory.GetComponent<CrewData>().crew)
+        foreach (GameObject npcObject in _inventory.GetComponent<CrewData>().CrewList)
         {
             NPCsData npcData = npcObject.GetComponent<NPCsData>();
 
-            if (!_pendingItem.possibleTypes.Contains(npcData.creatureType)) continue;
+            if (!_pendingItem.PossibleTypes.Contains(npcData.CreatureType)) continue;
 
             bool isCompatible = false;
 
             if (_pendingItem is ConsumableData)
                 isCompatible = true;
-            else if (_pendingItem is WeaponData weaponData && weaponData.classe.Contains(npcData.creatureClass))
+            else if (_pendingItem is WeaponData weaponData && weaponData.AllowedClassList.Contains(npcData.CreatureClass))
                 isCompatible = true;
-            else if (_pendingItem is ArmorData armorData && armorData.classe.Contains(npcData.creatureClass))
+            else if (_pendingItem is ArmorData armorData && armorData.AllowedClassList.Contains(npcData.CreatureClass))
                 isCompatible = true;
 
             if (!isCompatible) continue;
 
             GameObject newCrewMemberButton = Instantiate(_buttonPrefab, _crewContainer);
             newCrewMemberButton.GetComponent<Button>().onClick.AddListener(() => ApplyItemToTarget(npcData));
-            newCrewMemberButton.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = npcData.NPC_Name;
+            newCrewMemberButton.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = npcData.NpcName;
         }
 
         _crewContainer.gameObject.SetActive(true);
@@ -151,27 +151,27 @@ public class InventoryUI : MonoBehaviour
 
         if (_pendingItem is ConsumableData consumableData)
         {
-            targetNpc.AplicarConsumivel(consumableData);
-            _inventory.RemoverItem(_pendingItem, 1);
+            targetNpc.ApplyConsumable(consumableData);
+            _inventory.RemoveItem(_pendingItem, 1);
             SFXManager.Instance?.PlayItem();
         }
         else if (_pendingItem is WeaponData weaponData)
         {
-            WeaponData oldWeapon = targetNpc.EquiparArma(weaponData);
-            _inventory.RemoverItem(_pendingItem, 1);
+            WeaponData oldWeapon = targetNpc.EquipWeapon(weaponData);
+            _inventory.RemoveItem(_pendingItem, 1);
 
             if (oldWeapon != null)
-                _inventory.AdicionarItem(oldWeapon, 1);
+                _inventory.AddItem(oldWeapon, 1);
 
             SFXManager.Instance?.PlayItem();
         }
         else if (_pendingItem is ArmorData armorData)
         {
-            ArmorData oldArmor = targetNpc.EquiparArmadura(armorData);
-            _inventory.RemoverItem(_pendingItem, 1);
+            ArmorData oldArmor = targetNpc.EquipArmor(armorData);
+            _inventory.RemoveItem(_pendingItem, 1);
 
             if (oldArmor != null)
-                _inventory.AdicionarItem(oldArmor, 1);
+                _inventory.AddItem(oldArmor, 1);
 
             SFXManager.Instance?.PlayItem();
         }

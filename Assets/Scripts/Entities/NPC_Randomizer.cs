@@ -7,26 +7,26 @@ using UnityEngine;
 /// definindo seus limites de vida, força, custo baseados nos parâmetros estipulados e sorteando seu nome e classe.
 /// </summary>
 [RequireComponent(typeof(NPCsData))]
-public class NPC_Randomizer : MonoBehaviour
+public class NPCRandomizer : MonoBehaviour
 {
     #region Configurações de Randomização
     [Header("Limites de Atributos")]
-    public float minVida;
-    public float maxVida;
-    public float minForça;
-    public float maxForça;
-    public float minCusto;
-    public float maxCusto;
+    [SerializeField] private float _minHealth;
+    [SerializeField] private float _maxHealth;
+    [SerializeField] private float _minStrength;
+    [SerializeField] private float _maxStrength;
+    [SerializeField] private float _minCost;
+    [SerializeField] private float _maxCost;
 
     [Header("Opções de Sorteio")]
-    public bool randomizarClasse;
-    public bool randomizarNome;
-    
-    private NPCsData nPCs;
+    [SerializeField] private bool _shouldRandomizeClass;
+    [SerializeField] private bool _shouldRandomizeName;
+
+    private NPCsData _npcsData;
     #endregion
 
     #region Listas de Nomes
-    private string[] nomesIniciais = {
+    private string[] _firstNamesArray = {
         "Jack", "Anne", "Edward", "Will", "Elizabeth", "Henry",
         "Charles", "Mary", "Samuel", "Thomas", "Francis", "Grace",
         "Robert", "James", "Calico", "Benjamin", "Bartholomew", "John",
@@ -46,7 +46,7 @@ public class NPC_Randomizer : MonoBehaviour
         "Rosamund", "Soren", "Tristan", "Ursula", "Vasco", "Wendy"
     };
 
-    private string[] nomesFinais = {
+    private string[] _lastNamesArray = {
         "Barbosa", "Sparrow", "o Ruivo", "Enganador", "Tempestade", "Corvino",
         "Maos de Ferro", "a Sanguinaria", "o Maldito", "das Sombras", "Ossos",
         "o Sem-Lei", "Perna de Pau", "Olho de Vidro", "o Impiedoso", "Mare Negra",
@@ -69,33 +69,49 @@ public class NPC_Randomizer : MonoBehaviour
     #endregion
 
     #region Inicialização
-    void Awake()
+    private void Awake()
     {
-        nPCs = GetComponent<NPCsData>();
-        
+        _npcsData = GetComponent<NPCsData>();
+
         // Sorteia Atributos Básicos
-        nPCs.vidaMáxima = UnityEngine.Random.Range(minVida, maxVida);
-        nPCs.força = UnityEngine.Random.Range(minForça, maxForça);
-        nPCs.custo = UnityEngine.Random.Range(minCusto, maxCusto);
-        nPCs.Heal(nPCs.vidaMáxima);
+        _npcsData.MaxHealth = UnityEngine.Random.Range(_minHealth, _maxHealth);
+        _npcsData.Strength = UnityEngine.Random.Range(_minStrength, _maxStrength);
+        _npcsData.Cost = UnityEngine.Random.Range(_minCost, _maxCost);
+
+        _npcsData.Heal(_npcsData.MaxHealth);
 
         // Define Títulos
-        if (randomizarNome)
+        if (_shouldRandomizeName)
         {
-            nPCs.NPC_Name = nomesIniciais[UnityEngine.Random.Range(0, nomesIniciais.Length)] + " " + nomesFinais[UnityEngine.Random.Range(0, nomesFinais.Length)];
+            string firstName = _firstNamesArray[
+                UnityEngine.Random.Range(0, _firstNamesArray.Length)
+            ];
+
+            string lastName = _lastNamesArray[
+                UnityEngine.Random.Range(0, _lastNamesArray.Length)
+            ];
+
+            _npcsData.NpcName = firstName + " " + lastName;
         }
 
         // Define a ocupação do NPC para combate excluindo a entidade "Barco" da roleta
-        if (randomizarClasse)
+        if (_shouldRandomizeClass)
         {
-            Array valoresClasse = Enum.GetValues(typeof(NPCsData.Class));
-            List<NPCsData.Class> classes = new();
-            foreach (Enum value in valoresClasse)
+            Array classValues = Enum.GetValues(typeof(NPCsData.Class));
+
+            List<NPCsData.Class> availableClassesList = new();
+
+            foreach (Enum classValue in classValues)
             {
-                if ((NPCsData.Class) value != NPCsData.Class.Barco)
-                    classes.Add((NPCsData.Class)value);
+                if ((NPCsData.Class)classValue != NPCsData.Class.Ship)
+                {
+                    availableClassesList.Add((NPCsData.Class)classValue);
+                }
             }
-            nPCs.creatureClass = classes[UnityEngine.Random.Range(0, classes.Count)];
+
+            _npcsData.CreatureClass = availableClassesList[
+                UnityEngine.Random.Range(0, availableClassesList.Count)
+            ];
         }
     }
     #endregion

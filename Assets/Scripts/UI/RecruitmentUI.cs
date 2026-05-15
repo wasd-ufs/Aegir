@@ -64,13 +64,13 @@ public class RecruitmentUI : MonoBehaviour
     {
         _recruitableNpc = selectedNpc;
 
-        _healthText.text = "Vida: " + $"{npcData.vidaMáxima:F2}";
-        _classText.text = "Classe: " + npcData.creatureClass;
-        _typeText.text = "Tipo: " + npcData.creatureType;
-        _nameText.text = "Nome: " + npcData.NPC_Name;
-        _strengthText.text = "Forca: " + $"{npcData.força:F2}";
-        _costText.text = "Custo: " + $"{npcData.custo:F2}";
-        _levelText.text = "Level: " + npcData.level;
+        _healthText.text = "Vida: " + $"{npcData.MaxHealth:F2}";
+        _classText.text = "Classe: " + npcData.CreatureClass;
+        _typeText.text = "Tipo: " + npcData.CreatureType;
+        _nameText.text = "Nome: " + npcData.NpcName;
+        _strengthText.text = "Forca: " + $"{npcData.Strength:F2}";
+        _costText.text = "Custo: " + $"{npcData.Cost:F2}";
+        _levelText.text = "Level: " + npcData.Level;
 
         Button acceptButton = _buttons.GetChild(0).GetComponent<Button>();
         Button declineButton = _buttons.GetChild(1).GetComponent<Button>();
@@ -101,7 +101,7 @@ public class RecruitmentUI : MonoBehaviour
         if (shouldRecruit)
         {
             _recruitableNpc.GetComponent<NPCsMovement>().IrParaOBarco(_playerCrew.transform);
-            _playerCrew.crew.Add(_recruitableNpc.gameObject);
+            _playerCrew.CrewList.Add(_recruitableNpc.gameObject);
 
             SFXManager.Instance?.PlayContract();
 

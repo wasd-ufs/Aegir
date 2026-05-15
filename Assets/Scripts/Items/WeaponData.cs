@@ -23,13 +23,22 @@ public class WeaponData : ItemData
     #region Atributos de Combate
     [Header("Restrições")]
     [Tooltip("Lista de classes da tripulação permitidas a equipar esta arma.")]
-    public List<NPCsData.Class> classe;
+    [SerializeField]
+    private List<NPCsData.Class> _allowedClassList = new();
 
     [Header("Status de Ataque")]
     [Tooltip("Poder de ataque base adicionado à força da entidade utilizadora.")]
-    public float attackBaseValue;
-    
+    [SerializeField]
+    private float _attackBaseValue;
+
     [Tooltip("Bónus adicionais aplicados a diferentes tipos de dano (ex: Fogo, Gelo).")]
-    public List<AttackBonus> perTypeAttackBonus;
+    [SerializeField]
+    private List<AttackBonus> _perTypeAttackBonusList = new();
+    #endregion
+
+    #region Propriedades Públicas
+    public List<NPCsData.Class> AllowedClassList => _allowedClassList;
+    public float AttackBaseValue => _attackBaseValue;
+    public List<AttackBonus> PerTypeAttackBonusList => _perTypeAttackBonusList;
     #endregion
 }

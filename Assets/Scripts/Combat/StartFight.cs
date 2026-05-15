@@ -74,7 +74,7 @@ public class StartFight : MonoBehaviour
         CrewData tempCrew = tempObject.AddComponent<CrewData>();
 
         // Inicializa antes do Awake rodar para evitar duplicatas na lista
-        tempCrew.InicializarManualmente(gameObject);
+        tempCrew.InitializeManually(gameObject);
 
         return tempCrew;
     }

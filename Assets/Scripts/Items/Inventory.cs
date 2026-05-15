@@ -24,10 +24,17 @@ public class Inventory : MonoBehaviour
     #region Campos e Estado do Inventário
     [Header("Estado Interno")]
     [Tooltip("Lista com a disposição atual dos itens no inventário.")]
-    public List<Slot> InventorySlots;
-    
+    [SerializeField]
+    private List<Slot> _inventorySlots = new();
+
     [Tooltip("O número limite de slots totais (células) que este inventário pode comportar.")]
-    public int MaxItemsPerInventory;
+    [SerializeField]
+    private int _maxItemsPerInventory;
+    #endregion
+
+    #region Propriedades Públicas
+    public List<Slot> InventorySlots => _inventorySlots;
+    public int MaxItemsPerInventory => _maxItemsPerInventory;
     #endregion
 
     #region Lógica de Adição e Remoção
@@ -37,45 +44,57 @@ public class Inventory : MonoBehaviour
     /// e só depois cria novos slots caso o limite global de itens do inventário o permita.
     /// </summary>
     /// <param name="item">A base de dados (ScriptableObject) do item a adicionar.</param>
-    /// <param name="quantidade">O volume de itens a inserir no total.</param>
-    public void AdicionarItem(ItemData item, int quantidade)
+    /// <param name="quantity">O volume de itens a inserir no total.</param>
+    public void AddItem(ItemData item, int quantity)
     {
-        int qttRestante = quantidade;
-        
+        int remainingQuantity = quantity;
+
         // Passo 1: Inserir nos slots que já contêm este tipo de item, se não estiverem cheios
-        for (int i = 0; i < InventorySlots.Count; i++)
+        for (int i = 0; i < _inventorySlots.Count; i++)
         {
-            if (InventorySlots[i].item == item && InventorySlots[i].item.maximumQttPerSlot > InventorySlots[i].quantity)
+            if (_inventorySlots[i].item == item &&
+                _inventorySlots[i].item.MaximumQuantityPerSlot > _inventorySlots[i].quantity)
             {
-                int maxItemsToAddHere = InventorySlots[i].item.maximumQttPerSlot - InventorySlots[i].quantity;
-                int addedItems = Mathf.Min(qttRestante, maxItemsToAddHere);
+                int maxItemsToAddHere =
+                    _inventorySlots[i].item.MaximumQuantityPerSlot - _inventorySlots[i].quantity;
 
-                Slot slot = InventorySlots[i];
-                
+                int addedItems = Mathf.Min(remainingQuantity, maxItemsToAddHere);
+
+                Slot slot = _inventorySlots[i];
+
                 slot.quantity += addedItems;
-                qttRestante -= addedItems;
+                remainingQuantity -= addedItems;
 
-                InventorySlots[i] = slot;
+                _inventorySlots[i] = slot;
             }
 
-            if (qttRestante <= 0)
+            if (remainingQuantity <= 0)
+            {
                 return;
+            }
         }
-        
+
         // Passo 2: Se ainda sobrar item, cria novos slots independentes respeitando a quantidade de pilha
-        while (qttRestante > 0)
+        while (remainingQuantity > 0)
         {
             // Bloqueio se o inventário não comportar a abertura de mais espaços
-            if (MaxItemsPerInventory == InventorySlots.Count) return;
+            if (_maxItemsPerInventory == _inventorySlots.Count)
+            {
+                return;
+            }
 
             Slot slot = new()
             {
                 item = item,
-                quantity = Mathf.Min(qttRestante, item.maximumQttPerSlot)
+                quantity = Mathf.Min(remainingQuantity, item.MaximumQuantityPerSlot)
             };
 
-            InventorySlots.Add(slot);
-            qttRestante -= Mathf.Min(qttRestante, item.maximumQttPerSlot);
+            _inventorySlots.Add(slot);
+
+            remainingQuantity -= Mathf.Min(
+                remainingQuantity,
+                item.MaximumQuantityPerSlot
+            );
         }
     }
 
@@ -85,31 +104,37 @@ public class Inventory : MonoBehaviour
     /// os restos se consomem de forma estável, removendo completamente da lista os slots cujo valor atinja 0.
     /// </summary>
     /// <param name="item">A base de dados (ScriptableObject) do item a remover.</param>
-    /// <param name="quantidade">Total de itens a ser debitado.</param>
-    public void RemoverItem(ItemData item, int quantidade = 1)
+    /// <param name="quantity">Total de itens a ser debitado.</param>
+    public void RemoveItem(ItemData item, int quantity = 1)
     {
-        int qttParaRemover = quantidade;
+        int quantityToRemove = quantity;
 
-        for (int i = InventorySlots.Count - 1; i >= 0; i--)
+        for (int i = _inventorySlots.Count - 1; i >= 0; i--)
         {
-            if (InventorySlots[i].item == item)
+            if (_inventorySlots[i].item == item)
             {
-                Slot temp = InventorySlots[i];
-                
-                temp.quantity -= Mathf.Min(qttParaRemover, temp.quantity);
-                qttParaRemover -= Mathf.Min(qttParaRemover, InventorySlots[i].quantity);
+                Slot tempSlot = _inventorySlots[i];
+
+                int removedQuantity = Mathf.Min(quantityToRemove, tempSlot.quantity);
+
+                tempSlot.quantity -= removedQuantity;
+                quantityToRemove -= removedQuantity;
 
                 // Se o slot ficou sem nenhum item, o próprio index é obliterado da List
-                if (temp.quantity <= 0)
+                if (tempSlot.quantity <= 0)
                 {
-                    InventorySlots.RemoveAt(i);
+                    _inventorySlots.RemoveAt(i);
                 }
                 else
                 {
-                    InventorySlots[i] = temp;
+                    _inventorySlots[i] = tempSlot;
                 }
             }
-            if (qttParaRemover <= 0) return;
+
+            if (quantityToRemove <= 0)
+            {
+                return;
+            }
         }
     }
     #endregion

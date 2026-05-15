@@ -128,8 +128,8 @@ public class BattleManager : MonoBehaviour
         while (isActiveBattle)
         {
             // Reseta ações da tripulação do jogador
-            foreach (GameObject npc in _playerCrew.crew)
-                npc.GetComponent<NPCsData>().ResetarAcoes();
+            foreach (GameObject npc in _playerCrew.CrewList)
+                npc.GetComponent<NPCsData>().ResetActions();
 
             shouldPassTurn = false;
 
@@ -166,8 +166,8 @@ public class BattleManager : MonoBehaviour
     /// </summary>
     private IEnumerator EnemyTurns()
     {
-        foreach (GameObject npc in _enemyCrew.crew)
-            npc.GetComponent<NPCsData>().ResetarAcoes();
+        foreach (GameObject npc in _enemyCrew.CrewList)
+            npc.GetComponent<NPCsData>().ResetActions();
 
         yield return _waitForSeconds1_5;
         if (_enemyAttacks == null) yield break;
@@ -195,7 +195,7 @@ public class BattleManager : MonoBehaviour
 
             _enemyAttacks.allies  = _enemyCrew;
             _enemyAttacks.enemies = _playerCrew;
-            actor.GetComponent<NPCsData>().ConsumirAcao();
+            actor.GetComponent<NPCsData>().ConsumeAction();
             _enemyAttacks.ExecuteAction(chosenAction, targets, actor);
             yield return new WaitWhile(() => isShowingMessage);
         }
@@ -216,13 +216,13 @@ public class BattleManager : MonoBehaviour
 
         if (canAffectEnemies)
         {
-            var vivos = _playerCrew.crew.Where(g => g.GetComponent<NPCsData>()?.isAlive == true).ToList();
+            var vivos = _playerCrew.CrewList.Where(g => g.GetComponent<NPCsData>()?.isAlive == true).ToList();
             if (vivos.Count > 0) targets.AddRange(Shuffle(vivos));
         }
 
         if (canAffectAllies)
         {
-            var vivos = _enemyCrew.crew.Where(g => g.GetComponent<NPCsData>()?.isAlive == true).ToList();
+            var vivos = _enemyCrew.CrewList.Where(g => g.GetComponent<NPCsData>()?.isAlive == true).ToList();
             if (vivos.Count > 0) targets.AddRange(Shuffle(vivos));
         }
 
@@ -273,15 +273,15 @@ public class BattleManager : MonoBehaviour
         if (_playerTargets.Count == 0)
         {
             if (action.targetTeams.Contains(CombatBase.TargetTeam.Enemy))
-                _playerTargets.AddRange(Shuffle(_enemyCrew.crew.Where(g => g.GetComponent<NPCsData>()?.isAlive == true).ToList()));
+                _playerTargets.AddRange(Shuffle(_enemyCrew.CrewList.Where(g => g.GetComponent<NPCsData>()?.isAlive == true).ToList()));
 
             if (action.targetTeams.Contains(CombatBase.TargetTeam.Ally))
-                _playerTargets.AddRange(Shuffle(_playerCrew.crew.Where(g => g.GetComponent<NPCsData>()?.isAlive == true).ToList()));
+                _playerTargets.AddRange(Shuffle(_playerCrew.CrewList.Where(g => g.GetComponent<NPCsData>()?.isAlive == true).ToList()));
         }
 
         _playerAttacks.allies  = _playerCrew;
         _playerAttacks.enemies = _enemyCrew;
-        actor.GetComponent<NPCsData>().ConsumirAcao();
+        actor.GetComponent<NPCsData>().ConsumeAction();
         _playerAttacks.ExecuteAction(action, _playerTargets, actor);
 
         _playerTargets.Clear();
@@ -297,11 +297,11 @@ public class BattleManager : MonoBehaviour
     {
         bool hasNoRestrictions = action.allowedClasses == null || action.allowedClasses.Count == 0;
 
-        var eligible = crew.crew
+        var eligible = crew.CrewList
             .Where(g => {
                 NPCsData npc = g?.GetComponent<NPCsData>();
-                if (npc == null || !npc.isAlive || !npc.PodeAgir()) return false;
-                return hasNoRestrictions || action.allowedClasses.Contains(npc.creatureClass);
+                if (npc == null || !npc.isAlive || !npc.CanAct()) return false;
+                return hasNoRestrictions || action.allowedClasses.Contains(npc.CreatureClass);
             })
             .ToList();
 
@@ -325,7 +325,7 @@ public class BattleManager : MonoBehaviour
         if (shouldPassTurn || !isActiveBattle) return;
 
         NPCsData nPCs = clickedCrewMember.GetComponent<NPCsData>();
-        if (!nPCs.isAlive || !nPCs.PodeAgir()) return;
+        if (!nPCs.isAlive || !nPCs.CanAct()) return;
 
         _selectedActor = clickedCrewMember;
 
@@ -367,7 +367,7 @@ public class BattleManager : MonoBehaviour
     private void GenerateActionButtons()
     {
         if (_selectedActor == null) return;
-        NPCsData.Class classeDoAtor = _selectedActor.GetComponent<NPCsData>().creatureClass;
+        NPCsData.Class classeDoAtor = _selectedActor.GetComponent<NPCsData>().CreatureClass;
 
         foreach (Transform child in _actionButtonContainer)
             Destroy(child.gameObject);
@@ -393,13 +393,13 @@ public class BattleManager : MonoBehaviour
         foreach (Transform child in _crewButtonContainer)
             Destroy(child.gameObject);
 
-        foreach (GameObject npcObject in _playerCrew.crew)
+        foreach (GameObject npcObject in _playerCrew.CrewList)
         {
             NPCsData nPCs = npcObject.GetComponent<NPCsData>();
-            if (!nPCs.isAlive || !nPCs.PodeAgir()) continue;
+            if (!nPCs.isAlive || !nPCs.CanAct()) continue;
 
             GameObject buttonObject = Instantiate(_crewButtonPrefab, _crewButtonContainer);
-            buttonObject.GetComponentInChildren<TextMeshProUGUI>().text = nPCs.NPC_Name;
+            buttonObject.GetComponentInChildren<TextMeshProUGUI>().text = nPCs.NpcName;
 
             Button button = buttonObject.GetComponent<Button>();
             GameObject capturedNPC = npcObject;
@@ -437,9 +437,9 @@ public class BattleManager : MonoBehaviour
     /// </summary>
     private void TicksFromAllEffects(CrewData crew)
     {
-        for (int i = crew.crew.Count - 1; i >= 0; i--)
+        for (int i = crew.CrewList.Count - 1; i >= 0; i--)
         {
-            NPCsData npc = crew.crew[i].GetComponent<NPCsData>();
+            NPCsData npc = crew.CrewList[i].GetComponent<NPCsData>();
             if (npc != null) npc.TickEffects();
         }
     }
@@ -449,8 +449,8 @@ public class BattleManager : MonoBehaviour
     /// </summary>
     private bool HasCrewActions(CrewData crew)
     {
-        foreach (GameObject npc in crew.crew)
-            if (npc.GetComponent<NPCsData>().PodeAgir()) return true;
+        foreach (GameObject npc in crew.CrewList)
+            if (npc.GetComponent<NPCsData>().CanAct()) return true;
         return false;
     }
 
@@ -462,10 +462,10 @@ public class BattleManager : MonoBehaviour
     /// <returns>True se a batalha chegou ao fim e não deve continuar o loop.</returns>
     private bool IsBattleOver()
     {
-        bool isPlayerDefeated = _playerCrew.crew.Any(g => g.GetComponent<NPCsData>()?.creatureClass == NPCsData.Class.Barco && g.GetComponent<NPCsData>()?.isAlive == false)
-                             || _playerCrew.crew.Where(g => g.GetComponent<NPCsData>().creatureClass != NPCsData.Class.Barco).All(g => g.GetComponent<NPCsData>().isAlive == false);
-        bool isEnemyDefeated = _enemyCrew.crew.Any(g => g.GetComponent<NPCsData>()?.creatureClass == NPCsData.Class.Barco && g.GetComponent<NPCsData>()?.isAlive == false)
-                             || _enemyCrew.crew.Where(g => g.GetComponent<NPCsData>().creatureClass != NPCsData.Class.Barco).All(g => g.GetComponent<NPCsData>().isAlive == false);
+        bool isPlayerDefeated = _playerCrew.CrewList.Any(g => g.GetComponent<NPCsData>()?.CreatureClass == NPCsData.Class.Ship && g.GetComponent<NPCsData>()?.isAlive == false)
+                             || _playerCrew.CrewList.Where(g => g.GetComponent<NPCsData>().CreatureClass != NPCsData.Class.Ship).All(g => g.GetComponent<NPCsData>().isAlive == false);
+        bool isEnemyDefeated = _enemyCrew.CrewList.Any(g => g.GetComponent<NPCsData>()?.CreatureClass == NPCsData.Class.Ship && g.GetComponent<NPCsData>()?.isAlive == false)
+                             || _enemyCrew.CrewList.Where(g => g.GetComponent<NPCsData>().CreatureClass != NPCsData.Class.Ship).All(g => g.GetComponent<NPCsData>().isAlive == false);
 
         if (isPlayerDefeated)
         {
@@ -479,19 +479,19 @@ public class BattleManager : MonoBehaviour
         if (isEnemyDefeated)
         {
             Dictionary<string, int> itensSaqueados = new Dictionary<string, int>();
-            foreach (GameObject npc in _enemyCrew.crew)
+            foreach (GameObject npc in _enemyCrew.CrewList)
             {
                 NPCsData data = npc.GetComponent<NPCsData>();
                 if (data != null)
                 {
-                    List<Inventory.Slot> drops = data.GerarLoot();
+                    List<Inventory.Slot> drops = data.GenerateLoot();
                     foreach (Inventory.Slot slot in drops)
                     {
-                        _playerCrew.inventory.AdicionarItem(slot.item, slot.quantity);
-                        if (itensSaqueados.ContainsKey(slot.item.itemName))
-                            itensSaqueados[slot.item.itemName] += slot.quantity;
+                        _playerCrew.Inventory.AddItem(slot.item, slot.quantity);
+                        if (itensSaqueados.ContainsKey(slot.item.ItemName))
+                            itensSaqueados[slot.item.ItemName] += slot.quantity;
                         else
-                            itensSaqueados.Add(slot.item.itemName, slot.quantity);
+                            itensSaqueados.Add(slot.item.ItemName, slot.quantity);
                     }
                 }
             }

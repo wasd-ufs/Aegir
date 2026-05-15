@@ -209,7 +209,7 @@ public class CrewUI : MonoBehaviour
     {
         CrewData crewData = _isEnemyMode ? _enemyCrewData : _player.GetComponent<CrewData>();
 
-        if (crewData == null || crewData.crew == null || crewData.crew.Count == 0)
+        if (crewData == null || crewData.CrewList == null || crewData.CrewList.Count == 0)
         {
             Debug.LogWarning("[CrewUI] Crew vazia, aguardando...");
             return;
@@ -224,7 +224,7 @@ public class CrewUI : MonoBehaviour
         List<float> newUnitsHPList = new();
         List<float> newUnitsMaxHPList = new();
 
-        foreach (GameObject crewMember in crewData.crew)
+        foreach (GameObject crewMember in crewData.CrewList)
         {
             if (crewMember == null) continue;
             if (crewMember.GetComponent<NPCsData>().isAlive == false) continue;
@@ -232,21 +232,21 @@ public class CrewUI : MonoBehaviour
             NPCsData npcData = crewMember.GetComponent<NPCsData>();
             if (npcData == null) continue;
 
-            switch (npcData.creatureClass)
+            switch (npcData.CreatureClass)
             {
-                case NPCsData.Class.Capitão:
-                    newCaptainHP = npcData.GetVidaAtual();
-                    newCaptainMaxHP = npcData.GetVidaMaxima();
+                case NPCsData.Class.Captain:
+                    newCaptainHP = npcData.GetCurrentHealth();
+                    newCaptainMaxHP = npcData.GetMaxHealth();
                     break;
 
-                case NPCsData.Class.Barco:
-                    newBoatHP = npcData.GetVidaAtual();
-                    newBoatMaxHP = npcData.GetVidaMaxima();
+                case NPCsData.Class.Ship:
+                    newBoatHP = npcData.GetCurrentHealth();
+                    newBoatMaxHP = npcData.GetMaxHealth();
                     break;
 
                 default:
-                    newUnitsHPList.Add(npcData.GetVidaAtual());
-                    newUnitsMaxHPList.Add(npcData.GetVidaMaxima());
+                    newUnitsHPList.Add(npcData.GetCurrentHealth());
+                    newUnitsMaxHPList.Add(npcData.GetMaxHealth());
                     break;
             }
         }
