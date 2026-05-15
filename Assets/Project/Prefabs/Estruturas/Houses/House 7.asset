@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6431e4df66678924180ab026ce2d9ff0, type: 3}
+  m_Name: House 7
+  m_EditorClassIdentifier: Assembly-CSharp::StructureData
+  _structureName: House
+  _structureDimensions: {x: 2, y: 3}
+  _structurePrefab: {fileID: 2513479562337027355, guid: 88843e01d50404941af99722d62ceb64, type: 3}
+  _spawnChance: 0.1
+  _validBaseLayersList: 020000000300000004000000
+  _isolationRadius: 10
+  _layerOverridesList: []
