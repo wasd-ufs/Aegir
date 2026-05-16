@@ -91,7 +91,6 @@ public class StructureGenerator : MonoBehaviour
                     if (ValidateBlueprint(worldPosition, blueprint))
                     {
                         worldPosition.x += (blueprint.StructureDimensions.x - 1) * _cachedCellSize / 2f;
-                        worldPosition.y += (blueprint.StructureDimensions.y - 1) * _cachedCellSize / 2f;
 
                         Instantiate(blueprint.StructurePrefab, worldPosition, Quaternion.identity, _structuresContainer);
                         RegisterStructure(blueprint.StructureName, worldPosition, blueprint.IsolationRadius);
