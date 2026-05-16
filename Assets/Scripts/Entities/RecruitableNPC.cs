@@ -10,60 +10,66 @@ public class RecruitableNPC : MonoBehaviour
 {
     #region Configurações de Interação
     [Header("Configurações")]
-    public float raioDeInteração;
-    public Transform barco;
+    [SerializeField] private float _interactionRadius;
+    [SerializeField] private Transform _boatTransform;
     #endregion
 
     #region Estado Interno e Componentes
-    private bool isPlayerNearby = false;
-    private PlayerInputActions inputActions;
-    private Rigidbody2D rb;
-    private CircleCollider2D circleCollider2D;
+    private bool _isPlayerNearby = false;
+    private PlayerInputActions _inputActions;
+    private Rigidbody2D _rigidbody2D;
+    private CircleCollider2D _circleCollider2D;
     #endregion
 
     #region Ciclo de Vida (Unity)
-    void Awake()
+    private void Awake()
     {
-        inputActions = new();
-        rb = GetComponent<Rigidbody2D>();
-        rb.freezeRotation = true;
-        rb.gravityScale = 0;
-        
-        circleCollider2D = GetComponent<CircleCollider2D>();
-        circleCollider2D.radius = raioDeInteração;
-        circleCollider2D.isTrigger = true;
+        _inputActions = new();
+
+        _rigidbody2D = GetComponent<Rigidbody2D>();
+        _rigidbody2D.freezeRotation = true;
+        _rigidbody2D.gravityScale = 0;
+
+        _circleCollider2D = GetComponent<CircleCollider2D>();
+        _circleCollider2D.radius = _interactionRadius;
+        _circleCollider2D.isTrigger = true;
     }
-    
-    void Update()
+
+    private void Update()
     {
-        if (isPlayerNearby && inputActions.Player.Contatar.WasPressedThisFrame())
+        if (_isPlayerNearby && _inputActions.Player.Contatar.WasPressedThisFrame())
         {
-            FindFirstObjectByType<RecruitmentUI>().AbrirTela(this, GetComponent<NPCsData>());
+            FindFirstObjectByType<RecruitmentUI>()
+                .OpenScreen(this, GetComponent<NPCsData>());
         }
     }
 
-    void OnEnable()
+    private void OnEnable()
     {
-        inputActions.Enable();
+        _inputActions.Enable();
     }
 
-    void OnDisable()
+    private void OnDisable()
     {
-        inputActions.Disable();
+        _inputActions.Disable();
     }
     #endregion
 
     #region Triggers de Colisão
-    void OnTriggerEnter2D(Collider2D collision)
+    private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.gameObject.CompareTag("Player"))
-            isPlayerNearby = true;
+        {
+            _isPlayerNearby = true;
+        }
     }
 
-    void OnTriggerExit2D(Collider2D other)
+    private void OnTriggerExit2D(Collider2D other)
     {
         if (other.gameObject.CompareTag("Player"))
-            isPlayerNearby = false;
+        {
+            _isPlayerNearby = false;
+        }
     }
     #endregion
 }

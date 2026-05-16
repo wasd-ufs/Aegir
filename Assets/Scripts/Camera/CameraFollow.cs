@@ -9,26 +9,26 @@ public class CameraFollow : MonoBehaviour
     #region Referências e Configurações
     [Header("Referências")]
     [Tooltip("Referência ao gerador do mundo para acessar qual é o jogador atual no momento da execução.")]
-    public WorldGenerator worldGenerator;
+    [SerializeField] private WorldGenerator _worldGenerator;
 
     [Header("Parâmetros de Câmera")]
     [Tooltip("Velocidade de interpolação da câmera. Valores menores resultam em um movimento mais suave/atrasado.")]
-    public float smoothSpeed = 0.125f;
+    [SerializeField] private float _smoothSpeed = 0.125f;
     
     [Tooltip("Distância base da câmera em relação ao alvo. O eixo Z deve ser negativo para visualização 2D.")]
-    public Vector3 offset = new Vector3(0, 0, -10);
+    [SerializeField] private Vector3 _offset = new Vector3(0, 0, -10);
     
     [Tooltip("Multiplicador da força de antecipação. Define o quão longe a câmera 'olha à frente' baseado na velocidade.")]
-    public float multiplicador;
+    [SerializeField] private float _movementLookAheadMultiplier;
     
     [Tooltip("Taxa de amortecimento (Lerp) aplicada à leitura da velocidade, para evitar solavancos na câmera.")]
-    public float amortecimentoDaMecânica = 0.05f;
+    [SerializeField] private float _movementDamping = 0.05f;
     #endregion
 
     #region Estado Interno
-    private Transform alvoAtual;
-    private Rigidbody2D rbAtual;
-    private Vector2 velocidadeSuavizada;
+    private Transform _currentTarget;
+    private Rigidbody2D _currentRigidBody;
+    private Vector2 _smoothedVelocity;
     #endregion
 
     #region Ciclo de Vida (Unity)
@@ -40,27 +40,27 @@ public class CameraFollow : MonoBehaviour
     void FixedUpdate()
     {
         // Só tenta seguir se o jogador existir no mundo
-        if (worldGenerator.player != null)
+        if (_worldGenerator.player != null)
         {
-            Transform playerT = worldGenerator.player;
+            Transform playerTransform = _worldGenerator.player;
             
             // Verifica se o jogador alvo mudou (ex: ocorreu a transição Barco <-> Capitão)
             // Atualiza o cache do alvo e seu Rigidbody2D respectivo
-            if (playerT != alvoAtual)
+            if (playerTransform != _currentTarget)
             {
-                alvoAtual = playerT;
-                rbAtual = playerT.GetComponent<Rigidbody2D>();
+                _currentTarget = playerTransform;
+                _currentRigidBody = playerTransform.GetComponent<Rigidbody2D>();
             }
 
             // Suaviza a velocidade lida do jogador atual.
             // Isso evita que mudanças abruptas de direção façam a câmera pular de forma instantânea.
-            velocidadeSuavizada = Vector2.Lerp(velocidadeSuavizada, rbAtual.linearVelocity, amortecimentoDaMecânica);
+            _smoothedVelocity = Vector2.Lerp(_smoothedVelocity, _currentRigidBody.linearVelocity, _movementDamping);
 
             // Posição Desejada = Posição Real do Jogador + Recuo Z (Offset) + Projeção de Velocidade (Antecipação)
-            Vector3 desiredPosition = playerT.position + offset + new Vector3(velocidadeSuavizada.x, velocidadeSuavizada.y, 0) * multiplicador;
+            Vector3 desiredPosition = playerTransform.position + _offset + new Vector3(_smoothedVelocity.x, _smoothedVelocity.y, 0) * _movementLookAheadMultiplier;
             
             // Interpolação linear da posição atual da câmera até a posição desejada para criar o movimento fluido
-            Vector3 smoothedPosition = Vector3.Lerp(transform.position, desiredPosition, smoothSpeed);
+            Vector3 smoothedPosition = Vector3.Lerp(transform.position, desiredPosition, _smoothSpeed);
             transform.position = smoothedPosition;
         }
     }

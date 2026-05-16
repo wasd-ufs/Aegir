@@ -13,82 +13,96 @@ public class CrewUI : MonoBehaviour
 {
     #region Configurações de Sprites
     [Header("Sprites de Interface")]
-    public Sprite captainHP;
-    public Sprite boatHP;
-    public Sprite startHPBar;
-    public Sprite bodyHP;
-    public Sprite endHPBar;
+    [SerializeField] private Sprite _captainHPSprite;
+    [SerializeField] private Sprite _boatHPSprite;
+    [SerializeField] private Sprite _startHPBarSprite;
+    [SerializeField] private Sprite _bodyHPBarSprite;
+    [SerializeField] private Sprite _endHPBarSprite;
     #endregion
 
     #region Layout e Posicionamento
     [Header("Configurações de Layout")]
-    public Vector3Int startCoordinates;
-    public Vector3Int segmentDistances;
-    public int heartDistance;
-    public int verticalDistance;
-    public int vidaPorCoração;
-    public int vidaPorSegmento;
+    [SerializeField] private Vector3Int _startCoordinates;
+    [SerializeField] private Vector3Int _segmentDistances;
+    [SerializeField] private int _heartDistance;
+    [SerializeField] private int _verticalDistance;
+    [SerializeField] private int _healthPerHeart;
+    [SerializeField] private int _healthPerSegment;
     #endregion
 
     #region Referências de Objetos
     [Header("Referências")]
-    public GameObject image;
-    public GameObject player;
+    [SerializeField] private GameObject _imagePrefab;
+    [SerializeField] private GameObject _player;
     
     [Header("Canvas Root")]
     [Tooltip("Container dentro do Canvas onde todos os elementos de UI serão instanciados.")]
-    public RectTransform canvasRoot;
+    [SerializeField] private RectTransform _canvasRoot;
 
     [Header("Containers")]
-    public RectTransform captainContainer;
-    public RectTransform boatContainer;
-    public RectTransform crewContainer;
+    [SerializeField] private RectTransform _captainContainer;
+    [SerializeField] private RectTransform _boatContainer;
+    [SerializeField] private RectTransform _crewContainer;
 
     [Header("Texto de HP")]
-    public GameObject textoPrefab;
-    public Vector2 textoOffset;
+    [SerializeField] private GameObject _textPrefab;
+    [SerializeField] private Vector2 _textOffset;
     #endregion
 
     #region Estado Interno
     [Header("Modo Inimigo")]
-    public bool modoInimigo = false;
-    private CrewData crewInimigo;
+    [SerializeField] private bool _isEnemyMode = false;
 
-    private float cHP, bHP;
-    private float cMaxHP, bMaxHP;
-    private List<float> unitsHP = new List<float>();
-    private List<float> unitsMaxHP = new List<float>();
+    private CrewData _enemyCrewData;
+
+    private float _captainHP;
+    private float _boatHP;
+    private float _captainMaxHP;
+    private float _boatMaxHP;
+
+    private List<float> _unitsHPList = new List<float>();
+    private List<float> _unitsMaxHPList = new List<float>();
     
-    private List<GameObject> spawnedObjects = new List<GameObject>();
-    private float lastCHP, lastBHP;
-    private List<float> lastUnitsHP = new List<float>();
+    private List<GameObject> _spawnedObjectsList = new List<GameObject>();
+
+    private float _lastCaptainHP;
+    private float _lastBoatHP;
+
+    private List<float> _lastUnitsHPList = new List<float>();
     
-    private bool isValid = false;
-    private bool inicializado = false;
+    private bool _isValid = false;
+    private bool _isInitialized = false;
     #endregion
 
     #region Ciclo de Vida (Unity)
     void Start()
     {
-        if (modoInimigo) return;
-        isValid = Validate();
-        if (isValid) StartCoroutine(LateStart());
+        if (_isEnemyMode) return;
+
+        _isValid = IsValid();
+
+        if (_isValid)
+            StartCoroutine(LateStart());
     }
 
     void Update()
     {
-        if (modoInimigo && !GameState.IsInBattle)
+        if (_isEnemyMode && !GameState.IsInBattle)
         {
-            if (spawnedObjects.Count > 0) LimparUI(); 
-            foreach(GameObject spawned in spawnedObjects)
-                spawned.SetActive(false);
+            if (_spawnedObjectsList.Count > 0)
+                ClearUI();
+
+            foreach(GameObject spawnedObject in _spawnedObjectsList)
+                spawnedObject.SetActive(false);
+
             return;
         }
         
-        if (!isValid || !inicializado) return;
+        if (!_isValid || !_isInitialized) return;
         
         FetchHP();
-        if (HPChanged())
+
+        if (HasHPChanged())
         {
             CacheHP();
             ClearSpawned();
@@ -101,33 +115,33 @@ public class CrewUI : MonoBehaviour
     /// <summary>
     /// Limpa todos os elementos visuais instanciados e reseta o estado do componente.
     /// </summary>
-    public void LimparUI()
+    public void ClearUI()
     {
         ClearSpawned();
-        crewInimigo = null;
-        isValid = false;
-        inicializado = false;
+        _enemyCrewData = null;
+        _isValid = false;
+        _isInitialized = false;
     }
 
     /// <summary>
     /// Reativa a validação da UI para voltar a funcionar como tripulação do jogador.
     /// Chamado pelo BattleData no fim do combate.
     /// </summary>
-    public void ReativarComoPlayer()
+    public void ReactivateAsPlayer()
     {
-        isValid = true;
+        _isValid = true;
     }
 
     /// <summary>
     /// Configura a UI para monitorar e exibir a tripulação inimiga durante o combate.
     /// </summary>
-    public void InicializarComoInimigo(CrewData crew)
+    public void InitializeAsEnemy(CrewData crew)
     {
         ClearSpawned();
-        inicializado = false;
-        crewInimigo  = crew;
-        modoInimigo  = true;
-        isValid      = true;
+        _isInitialized = false;
+        _enemyCrewData = crew;
+        _isEnemyMode = true;
+        _isValid = true;
         StartCoroutine(LateStart());
     }
     #endregion
@@ -140,126 +154,171 @@ public class CrewUI : MonoBehaviour
         FetchHP();
         CacheHP();
         InstantiateHP();
-        inicializado = true;
+        _isInitialized = true;
     }
 
     /// <summary>
     /// Verifica se todas as referências necessárias foram preenchidas no Inspector.
     /// </summary>
-    private bool Validate()
+    private bool IsValid()
     {
-        bool ok = true;
-        if (canvasRoot == null)  { Debug.LogError("[CrewUI] 'canvasRoot' não atribuído.", this);      ok = false; }
-        if (image == null)       { Debug.LogError("[CrewUI] 'image' não atribuído.", this);           ok = false; }
-        if (player == null)      { Debug.LogError("[CrewUI] 'player' não atribuído.", this);          ok = false; }
-        if (captainHP == null)   { Debug.LogError("[CrewUI] Sprite 'captainHP' não atribuído.", this); ok = false; }
-        if (boatHP == null)      { Debug.LogError("[CrewUI] Sprite 'boatHP' não atribuído.", this);    ok = false; }
-        if (startHPBar == null)  { Debug.LogError("[CrewUI] Sprite 'startHPBar' não atribuído.", this);ok = false; }
-        if (bodyHP == null)      { Debug.LogError("[CrewUI] Sprite 'bodyHP' não atribuído.", this);    ok = false; }
-        if (endHPBar == null)    { Debug.LogError("[CrewUI] Sprite 'endHPBar' não atribuído.", this);  ok = false; }
-        if (heartDistance <= 0)      { Debug.LogError("[CrewUI] 'heartDistance' precisa ser maior que zero.", this);       ok = false; }
-        if (vidaPorCoração <= 0)     { Debug.LogError("[CrewUI] 'vidaPorCoração' precisa ser maior que zero.", this);     ok = false; }
-        if (vidaPorSegmento <= 0)   { Debug.LogError("[CrewUI] 'vidaPorSegmento' precisa ser maior que zero.", this);   ok = false; }
-        if (segmentDistances.y <= 0) { Debug.LogError("[CrewUI] 'segmentDistances.Y' precisa ser maior que zero.", this); ok = false; }
-        if (player != null && player.GetComponent<CrewData>() == null)
-            { Debug.LogError("[CrewUI] 'player' não tem CrewData.", this); ok = false; }
-        if (image != null)
+        bool isValidConfiguration = true;
+
+        if (_canvasRoot == null)  { Debug.LogError("[CrewUI] 'canvasRoot' não atribuído.", this);      isValidConfiguration = false; }
+        if (_imagePrefab == null) { Debug.LogError("[CrewUI] 'image' não atribuído.", this);           isValidConfiguration = false; }
+        if (_player == null)      { Debug.LogError("[CrewUI] 'player' não atribuído.", this);          isValidConfiguration = false; }
+
+        if (_captainHPSprite == null)  { Debug.LogError("[CrewUI] Sprite 'captainHP' não atribuído.", this); isValidConfiguration = false; }
+        if (_boatHPSprite == null)     { Debug.LogError("[CrewUI] Sprite 'boatHP' não atribuído.", this);    isValidConfiguration = false; }
+        if (_startHPBarSprite == null) { Debug.LogError("[CrewUI] Sprite 'startHPBar' não atribuído.", this);isValidConfiguration = false; }
+        if (_bodyHPBarSprite == null)  { Debug.LogError("[CrewUI] Sprite 'bodyHP' não atribuído.", this);    isValidConfiguration = false; }
+        if (_endHPBarSprite == null)   { Debug.LogError("[CrewUI] Sprite 'endHPBar' não atribuído.", this);  isValidConfiguration = false; }
+
+        if (_heartDistance <= 0)       { Debug.LogError("[CrewUI] 'heartDistance' precisa ser maior que zero.", this);       isValidConfiguration = false; }
+        if (_healthPerHeart <= 0)      { Debug.LogError("[CrewUI] 'vidaPorCoração' precisa ser maior que zero.", this);      isValidConfiguration = false; }
+        if (_healthPerSegment <= 0)    { Debug.LogError("[CrewUI] 'vidaPorSegmento' precisa ser maior que zero.", this);     isValidConfiguration = false; }
+        if (_segmentDistances.y <= 0)  { Debug.LogError("[CrewUI] 'segmentDistances.Y' precisa ser maior que zero.", this);  isValidConfiguration = false; }
+
+        if (_player != null && _player.GetComponent<CrewData>() == null)
         {
-            if (image.GetComponent<RectTransform>() == null) { Debug.LogError("[CrewUI] Prefab 'image' não tem RectTransform.", this); ok = false; }
-            if (image.GetComponent<Image>() == null)         { Debug.LogError("[CrewUI] Prefab 'image' não tem Image.", this);         ok = false; }
+            Debug.LogError("[CrewUI] 'player' não tem CrewData.", this);
+            isValidConfiguration = false;
         }
 
-        return ok;
+        if (_imagePrefab != null)
+        {
+            if (_imagePrefab.GetComponent<RectTransform>() == null)
+            {
+                Debug.LogError("[CrewUI] Prefab 'image' não tem RectTransform.", this);
+                isValidConfiguration = false;
+            }
+
+            if (_imagePrefab.GetComponent<Image>() == null)
+            {
+                Debug.LogError("[CrewUI] Prefab 'image' não tem Image.", this);
+                isValidConfiguration = false;
+            }
+        }
+
+        return isValidConfiguration;
     }
     #endregion
 
     #region Lógica de Cache e Atualização de HP
     private void FetchHP()
     {
-        CrewData crew = modoInimigo ? crewInimigo : player.GetComponent<CrewData>();
-        if (crew == null || crew.crew == null || crew.crew.Count == 0)
+        CrewData crewData = _isEnemyMode ? _enemyCrewData : _player.GetComponent<CrewData>();
+
+        if (crewData == null || crewData.CrewList == null || crewData.CrewList.Count == 0)
         {
             Debug.LogWarning("[CrewUI] Crew vazia, aguardando...");
             return;
         }
 
-        float newCHP = 0f, newCMaxHP = 0f;
-        float newBHP = 0f, newBMaxHP = 0f;
-        List<float> newUnitsHP    = new();
-        List<float> newUnitsMaxHP = new();
+        float newCaptainHP = 0f;
+        float newCaptainMaxHP = 0f;
 
-        foreach (GameObject membro in crew.crew)
+        float newBoatHP = 0f;
+        float newBoatMaxHP = 0f;
+
+        List<float> newUnitsHPList = new();
+        List<float> newUnitsMaxHPList = new();
+
+        foreach (GameObject crewMember in crewData.CrewList)
         {
-            if (membro == null) continue;
-            if (membro.GetComponent<NPCsData>().isAlive == false) continue;
+            if (crewMember == null) continue;
+            if (crewMember.GetComponent<NPCsData>().isAlive == false) continue;
 
-            NPCsData npc = membro.GetComponent<NPCsData>();
-            if (npc == null) continue;
+            NPCsData npcData = crewMember.GetComponent<NPCsData>();
+            if (npcData == null) continue;
 
-            switch (npc.creatureClass)
+            switch (npcData.CreatureClass)
             {
-                case NPCsData.Class.Capitão:
-                    newCHP = npc.GetVidaAtual(); newCMaxHP = npc.GetVidaMaxima(); break;
-                case NPCsData.Class.Barco:
-                    newBHP = npc.GetVidaAtual(); newBMaxHP = npc.GetVidaMaxima(); break;
+                case NPCsData.Class.Captain:
+                    newCaptainHP = npcData.GetCurrentHealth();
+                    newCaptainMaxHP = npcData.GetMaxHealth();
+                    break;
+
+                case NPCsData.Class.Ship:
+                    newBoatHP = npcData.GetCurrentHealth();
+                    newBoatMaxHP = npcData.GetMaxHealth();
+                    break;
+
                 default:
-                    newUnitsHP.Add(npc.GetVidaAtual());
-                    newUnitsMaxHP.Add(npc.GetVidaMaxima());
+                    newUnitsHPList.Add(npcData.GetCurrentHealth());
+                    newUnitsMaxHPList.Add(npcData.GetMaxHealth());
                     break;
             }
         }
 
-        cHP = newCHP; cMaxHP = newCMaxHP;
-        bHP = newBHP; bMaxHP = newBMaxHP;
-        unitsHP    = newUnitsHP;
-        unitsMaxHP = newUnitsMaxHP;
+        _captainHP = newCaptainHP;
+        _captainMaxHP = newCaptainMaxHP;
+
+        _boatHP = newBoatHP;
+        _boatMaxHP = newBoatMaxHP;
+
+        _unitsHPList = newUnitsHPList;
+        _unitsMaxHPList = newUnitsMaxHPList;
     }
 
-    private bool HPChanged()
+        private bool HasHPChanged()
     {
-        if (!Mathf.Approximately(cHP, lastCHP)) return true;
-        if (!Mathf.Approximately(bHP, lastBHP)) return true;
-        if (unitsHP.Count != lastUnitsHP.Count) return true;
-        for (int i = 0; i < unitsHP.Count; i++)
-            if (!Mathf.Approximately(unitsHP[i], lastUnitsHP[i])) return true;
+        if (!Mathf.Approximately(_captainHP, _lastCaptainHP)) return true;
+        if (!Mathf.Approximately(_boatHP, _lastBoatHP)) return true;
+
+        if (_unitsHPList.Count != _lastUnitsHPList.Count)
+            return true;
+
+        for (int i = 0; i < _unitsHPList.Count; i++)
+        {
+            if (!Mathf.Approximately(_unitsHPList[i], _lastUnitsHPList[i]))
+                return true;
+        }
+
         return false;
     }
 
     private void CacheHP()
     {
-        lastCHP = cHP; lastBHP = bHP;
-        lastUnitsHP = new List<float>(unitsHP);
+        _lastCaptainHP = _captainHP;
+        _lastBoatHP = _boatHP;
+
+        _lastUnitsHPList = new List<float>(_unitsHPList);
     }
     #endregion
 
     #region Renderização
     private void ClearSpawned()
     {
-        foreach (GameObject go in spawnedObjects)
-            if (go != null) Destroy(go);
-        spawnedObjects.Clear();
+        foreach (GameObject spawnedObject in _spawnedObjectsList)
+        {
+            if (spawnedObject != null)
+                Destroy(spawnedObject);
+        }
+
+        _spawnedObjectsList.Clear();
     }
 
     private void InstantiateHP()
     {
-        int linhaAtual = 0;
+        int currentRow = 0;
 
-        if (cMaxHP > 0)
+        if (_captainMaxHP > 0)
         {
-            DrawHearts(cHP, cMaxHP, linhaAtual, captainHP, captainContainer);
-            linhaAtual++;
+            DrawHearts(_captainHP, _captainMaxHP, currentRow, _captainHPSprite, _captainContainer);
+            currentRow++;
         }
 
-        if (bMaxHP > 0)
+        if (_boatMaxHP > 0)
         {
-            DrawHearts(bHP, bMaxHP, linhaAtual, boatHP, boatContainer);
-            linhaAtual++;
+            DrawHearts(_boatHP, _boatMaxHP, currentRow, _boatHPSprite, _boatContainer);
+            currentRow++;
         }
 
-        for (int i = 0; i < unitsHP.Count; i++)
+        for (int i = 0; i < _unitsHPList.Count; i++)
         {
-            DrawCrewBar(unitsHP[i], unitsMaxHP[i], linhaAtual, crewContainer);
-            linhaAtual++;
+            DrawCrewBar(_unitsHPList[i], _unitsMaxHPList[i], currentRow, _crewContainer);
+            currentRow++;
         }
     }
 
@@ -268,89 +327,109 @@ public class CrewUI : MonoBehaviour
         if (hp <= 0 && maxHP <= 0) return;
 
         RectTransform parent = ResolveParent(container);
-        float yOffset = -row * verticalDistance;
+        float yOffset = -row * _verticalDistance;
 
-        int índice = 0;
-        for (float v = 0; v < hp; v += vidaPorCoração)
+        int index = 0;
+
+        for (float health = 0; health < hp; health += _healthPerHeart)
         {
-            float xPixel = índice * heartDistance;
-            Spawn(sprite, new Vector2(modoInimigo ? -xPixel : xPixel, yOffset), parent);
-            índice++;
+            float xPixel = index * _heartDistance;
+
+            Spawn(sprite, new Vector2(_isEnemyMode ? -xPixel : xPixel, yOffset), parent);
+
+            index++;
         }
 
         // Posição do texto: logo após o último coração
-        float últimoPx = (índice > 0 ? índice - 1 : 0) * heartDistance;
-        float textoX   = últimoPx + heartDistance;
-        SpawnText(hp, maxHP, new Vector2(modoInimigo ? -(textoX) : textoX, yOffset), parent);
+        float lastPixel = (index > 0 ? index - 1 : 0) * _heartDistance;
+        float textPositionX = lastPixel + _heartDistance;
+
+        SpawnText(hp, maxHP, new Vector2(_isEnemyMode ? -(textPositionX) : textPositionX, yOffset), parent);
     }
 
     private void DrawCrewBar(float hp, float maxHP, int row, RectTransform container)
     {
         RectTransform parent = ResolveParent(container);
-        float yOffset = -row * verticalDistance;
+        float yOffset = -row * _verticalDistance;
 
-        int índice = 0;
+        int index = 0;
 
-        if (modoInimigo)
+        if (_isEnemyMode)
         {
-            Spawn(endHPBar, new Vector2(0, yOffset), parent);
+            Spawn(_endHPBarSprite, new Vector2(0, yOffset), parent);
 
-            for (float v = 0; v < hp; v += vidaPorSegmento)
+            for (float health = 0; health < hp; health += _healthPerSegment)
             {
-                float xPixel = índice * segmentDistances.y + segmentDistances.x;
-                Spawn(bodyHP, new Vector2(-xPixel, yOffset), parent);
-                índice++;
+                float xPixel = index * _segmentDistances.y + _segmentDistances.x;
+
+                Spawn(_bodyHPBarSprite, new Vector2(-xPixel, yOffset), parent);
+
+                index++;
             }
 
-            float endX = (índice > 0 ? índice - 1 : 0) * segmentDistances.y + segmentDistances.x + segmentDistances.z;
-            Spawn(startHPBar, new Vector2(-endX, yOffset), parent);
-            SpawnText(hp, maxHP, new Vector2(-(endX + segmentDistances.z), yOffset), parent);
+            float endPositionX = (index > 0 ? index - 1 : 0) * _segmentDistances.y + _segmentDistances.x + _segmentDistances.z;
+
+            Spawn(_startHPBarSprite, new Vector2(-endPositionX, yOffset), parent);
+
+            SpawnText(hp, maxHP, new Vector2(-(endPositionX + _segmentDistances.z), yOffset), parent);
         }
         else
         {
-            Spawn(startHPBar, new Vector2(0, yOffset), parent);
+            Spawn(_startHPBarSprite, new Vector2(0, yOffset), parent);
 
-            for (float v = 0; v < hp; v += vidaPorSegmento)
+            for (float health = 0; health < hp; health += _healthPerSegment)
             {
-                float xPixel = índice * segmentDistances.y + segmentDistances.x;
-                Spawn(bodyHP, new Vector2(xPixel, yOffset), parent);
-                índice++;
+                float xPixel = index * _segmentDistances.y + _segmentDistances.x;
+
+                Spawn(_bodyHPBarSprite, new Vector2(xPixel, yOffset), parent);
+
+                index++;
             }
 
-            float endX = (índice > 0 ? índice - 1 : 0) * segmentDistances.y + segmentDistances.x + segmentDistances.z;
-            Spawn(endHPBar, new Vector2(endX, yOffset), parent);
-            SpawnText(hp, maxHP, new Vector2(endX + segmentDistances.z, yOffset), parent);
+            float endPositionX = (index > 0 ? index - 1 : 0) * _segmentDistances.y + _segmentDistances.x + _segmentDistances.z;
+
+            Spawn(_endHPBarSprite, new Vector2(endPositionX, yOffset), parent);
+
+            SpawnText(hp, maxHP, new Vector2(endPositionX + _segmentDistances.z, yOffset), parent);
         }
     }
 
     private RectTransform ResolveParent(RectTransform container)
     {
         if (container != null) return container;
-        if (canvasRoot != null) return canvasRoot;
+        if (_canvasRoot != null) return _canvasRoot;
+
         return (RectTransform)transform;
     }
 
     private void Spawn(Sprite sprite, Vector2 localOffset, RectTransform parent)
     {
-        GameObject go = Instantiate(image, ResolveParent(parent));
-        go.GetComponent<RectTransform>().anchoredPosition = new Vector2(
-            startCoordinates.x + localOffset.x,
-            startCoordinates.y + localOffset.y
+        GameObject spawnedObject = Instantiate(_imagePrefab, ResolveParent(parent));
+
+        spawnedObject.GetComponent<RectTransform>().anchoredPosition = new Vector2(
+            _startCoordinates.x + localOffset.x,
+            _startCoordinates.y + localOffset.y
         );
-        go.GetComponent<Image>().sprite = sprite;
-        spawnedObjects.Add(go);
+
+        spawnedObject.GetComponent<Image>().sprite = sprite;
+
+        _spawnedObjectsList.Add(spawnedObject);
     }
 
     private void SpawnText(float hp, float maxHP, Vector2 localOffset, RectTransform parent)
     {
-        if (textoPrefab == null) return;
-        GameObject go = Instantiate(textoPrefab, ResolveParent(parent));
-        go.GetComponent<RectTransform>().anchoredPosition = new Vector2(
-            startCoordinates.x + localOffset.x + textoOffset.x,
-            startCoordinates.y + localOffset.y + textoOffset.y
+        if (_textPrefab == null) return;
+
+        GameObject spawnedObject = Instantiate(_textPrefab, ResolveParent(parent));
+
+        spawnedObject.GetComponent<RectTransform>().anchoredPosition = new Vector2(
+            _startCoordinates.x + localOffset.x + _textOffset.x,
+            _startCoordinates.y + localOffset.y + _textOffset.y
         );
-        go.GetComponent<TextMeshProUGUI>().text = $"{(int)hp}/{(int)maxHP}";
-        spawnedObjects.Add(go);
+
+        spawnedObject.GetComponent<TextMeshProUGUI>().text = $"{(int)hp}/{(int)maxHP}";
+
+        _spawnedObjectsList.Add(spawnedObject);
     }
     #endregion
 }

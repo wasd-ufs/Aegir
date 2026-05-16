@@ -10,67 +10,70 @@ public class InventoryUI : MonoBehaviour
 {
     #region Referências de UI
     [Header("Containers")]
-    public Transform container;
-    public Transform crewContainer;
-    public Transform fundo;
-    public Transform title;
+    [SerializeField] private Transform _container;
+    [SerializeField] private Transform _crewContainer;
+    [SerializeField] private Transform _background;
+    [SerializeField] private Transform _title;
 
     [Header("Prefabs e Estética")]
-    public GameObject slot;
-    public GameObject button;
-    public Sprite uiSprite;
+    [SerializeField] private GameObject _slotPrefab;
+    [SerializeField] private GameObject _buttonPrefab;
+    [SerializeField] private Sprite _uiSprite;
     #endregion
 
     #region Estado do Inventário
     [Header("Estado Interno")]
-    public Inventory inventory;
-    private bool inventarioAberto = false;
-    private bool esperandoAlvo = false;
-    private ItemData itemPendente; 
-    private PlayerInputActions inputActions;
+    [SerializeField] private Inventory _inventory;
+
+    private bool _isInventoryOpen = false;
+    private bool _isWaitingForTarget = false;
+    private ItemData _pendingItem; 
+    private PlayerInputActions _inputActions;
     #endregion
 
     #region Inicialização e Ciclo de Vida
-    void Awake()
+    private void Awake()
     {
-        inputActions = new();
-        AtualizarUI();
+        _inputActions = new();
+        UpdateUI();
 
-        container.gameObject.SetActive(inventarioAberto);
-        title.gameObject.SetActive(inventarioAberto);
-        crewContainer.gameObject.SetActive(inventarioAberto);
-        fundo.gameObject.SetActive(inventarioAberto);
+        _container.gameObject.SetActive(_isInventoryOpen);
+        _title.gameObject.SetActive(_isInventoryOpen);
+        _crewContainer.gameObject.SetActive(_isInventoryOpen);
+        _background.gameObject.SetActive(_isInventoryOpen);
     }
 
-    void Update()
+    private void Update()
     {
-        if (inputActions.Player.Inventory.WasPressedThisFrame())
+        if (_inputActions.Player.Inventory.WasPressedThisFrame())
         {
-            AtualizarUI();
-            inventarioAberto = !inventarioAberto;
-            container.gameObject.SetActive(inventarioAberto);
-            title.gameObject.SetActive(inventarioAberto);
-            fundo.gameObject.SetActive(inventarioAberto);
-            if (esperandoAlvo && inventarioAberto)
-                crewContainer.gameObject.SetActive(true);
+            UpdateUI();
+            _isInventoryOpen = !_isInventoryOpen;
+
+            _container.gameObject.SetActive(_isInventoryOpen);
+            _title.gameObject.SetActive(_isInventoryOpen);
+            _background.gameObject.SetActive(_isInventoryOpen);
+
+            if (_isWaitingForTarget && _isInventoryOpen)
+                _crewContainer.gameObject.SetActive(true);
             else
-                crewContainer.gameObject.SetActive(false);
+                _crewContainer.gameObject.SetActive(false);
         }
 
-        if (inputActions.Player.CancelarSeleção.WasPressedThisFrame())
+        if (_inputActions.Player.CancelarSeleção.WasPressedThisFrame())
         {
-            CancelarSeleção();
+            CancelSelection();
         }
     }
 
-    void OnEnable()
+    private void OnEnable()
     {
-        inputActions.Enable();
+        _inputActions.Enable();
     }
 
-    void OnDisable()
+    private void OnDisable()
     {
-        inputActions.Disable();
+        _inputActions.Disable();
     }
     #endregion
 
@@ -78,33 +81,33 @@ public class InventoryUI : MonoBehaviour
     /// <summary>
     /// Reconstrói visualmente os slots do inventário baseado nos dados da classe Inventory.
     /// </summary>
-    public void AtualizarUI()
+    public void UpdateUI()
     {
-        foreach (Transform item in container)
+        foreach (Transform inventoryItem in _container)
         {
-            Destroy(item.gameObject);
+            Destroy(inventoryItem.gameObject);
         }
 
-        foreach (Inventory.Slot item in inventory.InventorySlots)
+        foreach (Inventory.Slot inventorySlot in _inventory.InventorySlots)
         {
-            GameObject newSlot = Instantiate(slot, container);
-            newSlot.transform.GetChild(0).GetComponent<Image>().sprite = item.item.Icon;
+            GameObject newSlot = Instantiate(_slotPrefab, _container);
+            newSlot.transform.GetChild(0).GetComponent<Image>().sprite = inventorySlot.item.Icon;
 
-            ItemData itemSelecionado = item.item;
-            newSlot.GetComponent<Button>().onClick.AddListener(() => PrepararUsoItem(itemSelecionado));
+            ItemData selectedItem = inventorySlot.item;
+            newSlot.GetComponent<Button>().onClick.AddListener(() => PrepareItemUsage(selectedItem));
 
-            if (item.quantity <= 1)
+            if (inventorySlot.quantity <= 1)
                 newSlot.transform.GetChild(2).GetComponent<TextMeshProUGUI>().text = "";
             else
-                newSlot.transform.GetChild(2).GetComponent<TextMeshProUGUI>().text = item.quantity + " x";
+                newSlot.transform.GetChild(2).GetComponent<TextMeshProUGUI>().text = inventorySlot.quantity + " x";
         }
 
-        int slotsVazios = inventory.MaxItemsPerInventory - inventory.InventorySlots.Count;
+        int emptySlotsCount = _inventory.MaxItemsPerInventory - _inventory.InventorySlots.Count;
 
-        for (int i = 0; i < slotsVazios; i++)
+        for (int i = 0; i < emptySlotsCount; i++)
         {
-            GameObject newSlot = Instantiate(slot, container);
-            newSlot.transform.GetChild(0).GetComponent<Image>().sprite = uiSprite;
+            GameObject newSlot = Instantiate(_slotPrefab, _container);
+            newSlot.transform.GetChild(0).GetComponent<Image>().sprite = _uiSprite;
             newSlot.transform.GetChild(2).GetComponent<TextMeshProUGUI>().text = "";               
         }
     }
@@ -112,86 +115,94 @@ public class InventoryUI : MonoBehaviour
     /// <summary>
     /// Atualiza os botões da tripulação elegível para receber o item selecionado.
     /// </summary>
-    public void AtualizarTripulaçãoUI()
+    public void UpdateCrewUI()
     {
-        foreach (Transform item in crewContainer)
-            Destroy(item.gameObject);
+        foreach (Transform crewMember in _crewContainer)
+            Destroy(crewMember.gameObject);
 
-        foreach (GameObject npc in inventory.GetComponent<CrewData>().crew)
+        foreach (GameObject npcObject in _inventory.GetComponent<CrewData>().CrewList)
         {
-            NPCsData nPCs = npc.GetComponent<NPCsData>();
-            if (!itemPendente.possibleTypes.Contains(nPCs.creatureType)) continue;
+            NPCsData npcData = npcObject.GetComponent<NPCsData>();
 
-            bool compativel = false;
+            if (!_pendingItem.PossibleTypes.Contains(npcData.CreatureType)) continue;
 
-            if (itemPendente is ConsumableData)
-                compativel = true;
-            else if (itemPendente is WeaponData weaponData && weaponData.classe.Contains(nPCs.creatureClass))
-                compativel = true;
-            else if (itemPendente is ArmorData armorData && armorData.classe.Contains(nPCs.creatureClass))
-                compativel = true;
+            bool isCompatible = false;
 
-            if (!compativel) continue;
+            if (_pendingItem is ConsumableData)
+                isCompatible = true;
+            else if (_pendingItem is WeaponData weaponData && weaponData.AllowedClassList.Contains(npcData.CreatureClass))
+                isCompatible = true;
+            else if (_pendingItem is ArmorData armorData && armorData.AllowedClassList.Contains(npcData.CreatureClass))
+                isCompatible = true;
 
-            GameObject newTripulant = Instantiate(button, crewContainer);
-            newTripulant.GetComponent<Button>().onClick.AddListener(() => AplicarItemEmAlvo(nPCs));
-            newTripulant.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = nPCs.NPC_Name;
+            if (!isCompatible) continue;
+
+            GameObject newCrewMemberButton = Instantiate(_buttonPrefab, _crewContainer);
+            newCrewMemberButton.GetComponent<Button>().onClick.AddListener(() => ApplyItemToTarget(npcData));
+            newCrewMemberButton.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = npcData.NpcName;
         }
 
-        crewContainer.gameObject.SetActive(true);
+        _crewContainer.gameObject.SetActive(true);
     }
 
-    public void AplicarItemEmAlvo(NPCsData alvo)
+    public void ApplyItemToTarget(NPCsData targetNpc)
     {
-        if (!esperandoAlvo || itemPendente == null) return;
+        if (!_isWaitingForTarget || _pendingItem == null) return;
 
-        if (itemPendente is ConsumableData consumable)
+        if (_pendingItem is ConsumableData consumableData)
         {
-            alvo.AplicarConsumivel(consumable);
-            inventory.RemoverItem(itemPendente, 1);
+            targetNpc.ApplyConsumable(consumableData);
+            _inventory.RemoveItem(_pendingItem, 1);
             SFXManager.Instance?.PlayItem();
         }
-        else if (itemPendente is WeaponData weaponData)
+        else if (_pendingItem is WeaponData weaponData)
         {
-            WeaponData armaAntiga = alvo.EquiparArma(weaponData);
-            inventory.RemoverItem(itemPendente, 1);
-            if (armaAntiga != null)
-                inventory.AdicionarItem(armaAntiga, 1);
+            WeaponData oldWeapon = targetNpc.EquipWeapon(weaponData);
+            _inventory.RemoveItem(_pendingItem, 1);
+
+            if (oldWeapon != null)
+                _inventory.AddItem(oldWeapon, 1);
+
             SFXManager.Instance?.PlayItem();
         }
-        else if (itemPendente is ArmorData armorData)
+        else if (_pendingItem is ArmorData armorData)
         {
-            ArmorData armaduraAntiga = alvo.EquiparArmadura(armorData);
-            inventory.RemoverItem(itemPendente, 1);
-            if (armaduraAntiga != null)
-                inventory.AdicionarItem(armaduraAntiga, 1);
+            ArmorData oldArmor = targetNpc.EquipArmor(armorData);
+            _inventory.RemoveItem(_pendingItem, 1);
+
+            if (oldArmor != null)
+                _inventory.AddItem(oldArmor, 1);
+
             SFXManager.Instance?.PlayItem();
         }
 
-        esperandoAlvo = false;
-        itemPendente = null;
-        crewContainer.gameObject.SetActive(false);
-        AtualizarUI();
+        _isWaitingForTarget = false;
+        _pendingItem = null;
+        _crewContainer.gameObject.SetActive(false);
+
+        UpdateUI();
     }
 
-    public void PrepararUsoItem(ItemData itemEscolhido)
+    public void PrepareItemUsage(ItemData selectedItem)
     {
-        if (itemEscolhido is ConsumableData consumivel 
-         || itemEscolhido is WeaponData weaponData
-         || itemEscolhido is ArmorData armorData)
+        if (selectedItem is ConsumableData consumableData 
+         || selectedItem is WeaponData weaponData
+         || selectedItem is ArmorData armorData)
         {
-            itemPendente = itemEscolhido;
-            esperandoAlvo = true;
+            _pendingItem = selectedItem;
+            _isWaitingForTarget = true;
+
             Debug.Log("Selecione o membro da tripulação para aplicar o item!");
-            AtualizarTripulaçãoUI();
+
+            UpdateCrewUI();
         }
     }
 
-    public void CancelarSeleção()
+    public void CancelSelection()
     {
-        esperandoAlvo = false;
-        itemPendente = null;
-        crewContainer.gameObject.SetActive(false);
+        _isWaitingForTarget = false;
+        _pendingItem = null;
+        _crewContainer.gameObject.SetActive(false);
     }
     #endregion
 }

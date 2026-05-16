@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 /// <summary>
@@ -9,16 +8,27 @@ using UnityEngine;
 public class ConsumableData : ItemData
 {
     #region Tipos e Efeitos
-    public enum Effect { cura, força }
+    public enum Effect {Heal, Strength}
 
     [Header("Atributos do Consumível")]
     [Tooltip("A magnitude do efeito aplicado (quantidade de HP curado ou força adicionada).")]
-    public float intensity;  
-    
+    [SerializeField]
+    private float _intensity;
+
     [Tooltip("Qual o tipo de efeito que este item causa ao ser consumido.")]
-    public Effect efeito;  
-    
+    [SerializeField]
+    private Effect _effectType;
+
     [Tooltip("Duração do efeito em turnos de combate. (Use 1 para efeito imediato/único).")]
-    public int durationInTurns = 1;
+    [SerializeField]
+    private int _durationInTurns = 1;
+    #endregion
+
+    #region Propriedades Públicas
+    public float Intensity => _intensity;
+
+    public Effect EffectType => _effectType;
+
+    public int DurationInTurns => _durationInTurns;
     #endregion
 }

@@ -23,13 +23,24 @@ public class ArmorData : ItemData
     #region Atributos de Defesa
     [Header("Restrições")]
     [Tooltip("Classes permitidas a equipar e utilizar esta armadura.")]
-    public List<NPCsData.Class> classe;
+    [SerializeField]
+    private List<NPCsData.Class> _allowedClassList;
 
     [Header("Status Defensivos")]
     [Tooltip("Valor de armadura genérica subtraída de forma passiva ao dano recebido.")]
-    public float resistanceBaseValue;
+    [SerializeField]
+    private float _resistanceBaseValue;
 
     [Tooltip("Resistências extra calculadas contra tipos específicos de ataque.")]
-    public List<ResistanceBonus> perTypeResistanceBonus;
+    [SerializeField]
+    private List<ResistanceBonus> _perTypeResistanceBonusList;
+    #endregion
+
+    #region Propriedades Públicas
+    public List<NPCsData.Class> AllowedClassList => _allowedClassList;
+
+    public float ResistanceBaseValue => _resistanceBaseValue;
+
+    public List<ResistanceBonus> PerTypeResistanceBonusList => _perTypeResistanceBonusList;
     #endregion
 }
