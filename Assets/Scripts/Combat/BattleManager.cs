@@ -50,6 +50,7 @@ public class BattleManager : MonoBehaviour
     [SerializeField] private BattleData _battleData;
     [SerializeField] private TextMeshProUGUI _battleActionText;
     [SerializeField] private float _fadeSpeed;
+    [SerializeField] private float _buttonTextSize = 9f;
 
     #endregion
 
@@ -378,6 +379,8 @@ public class BattleManager : MonoBehaviour
 
             GameObject buttonObject = Instantiate(_actionButtonPrefab, _actionButtonContainer);
             buttonObject.GetComponentInChildren<TextMeshProUGUI>().text = action.actionName;
+            
+            buttonObject.GetComponentInChildren<TextMeshProUGUI>().fontSize = _buttonTextSize;
 
             Button button = buttonObject.GetComponent<Button>();
             CombatBase.ActionData capturedAction = action;
@@ -400,6 +403,8 @@ public class BattleManager : MonoBehaviour
 
             GameObject buttonObject = Instantiate(_crewButtonPrefab, _crewButtonContainer);
             buttonObject.GetComponentInChildren<TextMeshProUGUI>().text = nPCs.NpcName;
+            
+            buttonObject.GetComponentInChildren<TextMeshProUGUI>().fontSize = _buttonTextSize;
 
             Button button = buttonObject.GetComponent<Button>();
             GameObject capturedNPC = npcObject;
