@@ -13,16 +13,21 @@ public class MaterialData : ItemData
     /// Mapeia o NPC que deixa cair o item e a quantidade máxima possível no saque.
     /// </summary>
     [System.Serializable]
-    public struct NPCs
+    public struct NpcDropSource
     {
-        public GameObject NPC;
-        public int MaxQtt;
+        public GameObject npc;
+        public int maxQuantity;
     }
     #endregion
 
     #region Atributos do Material
     [Header("Fontes do Material")]
     [Tooltip("Lista de entidades ou criaturas do jogo que podem largar este material após a sua morte.")]
-    public List<NPCs> canBeDroppedBy;
+    [SerializeField]
+    private List<NpcDropSource> _dropSourceList = new();
+    #endregion
+
+    #region Propriedades Públicas
+    public List<NpcDropSource> DropSourceList => _dropSourceList;
     #endregion
 }

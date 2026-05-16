@@ -48,7 +48,7 @@ public class CrewAttacks : CombatBase
         DoAction(action, targets, _allies, _enemies, actor);
 
         BattleManager.Instance.DisplayMessage(
-            actor.GetComponent<NPCsData>().NPC_Name + " usou " + action.actionName + "!!"
+            actor.GetComponent<NPCsData>().NpcName + " usou " + action.actionName + "!!"
         );
     }
 

@@ -67,7 +67,7 @@ public class BattleData : MonoBehaviour
         _battle.SetActive(true);
         GameState.IsInBattle = true;
 
-        _playerCrewUI?.ReativarComoPlayer();
+        _playerCrewUI?.ReactivateAsPlayer();
         _battleManager.IniciateBattle(enemyCrew);
     }
 
@@ -92,7 +92,7 @@ public class BattleData : MonoBehaviour
                     if (_enemyCrewUI != null)
                         _enemyCrewUI.gameObject.SetActive(false);
 
-                    _enemyCrewUI?.LimparUI();
+                    _enemyCrewUI?.ClearUI();
                     _battle.SetActive(false);
                     _battleManager.ClearActionButtons();
 
@@ -116,23 +116,23 @@ public class BattleData : MonoBehaviour
                     {
                         SFXManager.Instance?.PlayDefeat();
 
-                        foreach (GameObject npc in playerCrew.crew)
+                        foreach (GameObject npc in playerCrew.CrewList)
                         {
                             NPCsData data = npc.GetComponent<NPCsData>();
                             data.isAlive = true;
-                            data.Heal(data.vidaMáxima / 2);
-                            data.gameObject.SetActive(data.creatureClass != NPCsData.Class.Capitão);
+                            data.Heal(data.MaxHealth / 2);
+                            data.gameObject.SetActive(data.CreatureClass != NPCsData.Class.Captain);
                         }
 
-                        foreach (GameObject npc in enemyCrew.crew)
+                        foreach (GameObject npc in enemyCrew.CrewList)
                         {
                             NPCsData data = npc.GetComponent<NPCsData>();
                             data.isAlive = true;
-                            data.Heal(data.vidaMáxima);
+                            data.Heal(data.MaxHealth);
                             data.gameObject.SetActive(true);
                         }
 
-                        _enemyCrewUI?.LimparUI();
+                        _enemyCrewUI?.ClearUI();
 
                         if (_enemyCrewUI != null)
                             _enemyCrewUI.gameObject.SetActive(false);
@@ -156,7 +156,7 @@ public class BattleData : MonoBehaviour
             _gameOverPanel.SetActive(false);
             GameState.IsInBattle = false;
 
-            _playerCrewUI?.ReativarComoPlayer();
+            _playerCrewUI?.ReactivateAsPlayer();
         });
     }
 
@@ -171,7 +171,7 @@ public class BattleData : MonoBehaviour
     {
         List<SpriteRenderer> renderers = new();
 
-        foreach (GameObject npc in crew.crew)
+        foreach (GameObject npc in crew.CrewList)
         {
             SpriteRenderer sr = npc.GetComponent<SpriteRenderer>();
             if (sr != null) renderers.Add(sr);

@@ -60,13 +60,13 @@ public abstract class CombatBase : MonoBehaviour
     /// </summary>
     public void DoAction(ActionData action, List<GameObject> targets, CrewData allies, CrewData enemies, GameObject actor)
     {
-        float strength = actor?.GetComponent<NPCsData>()?.força ?? 1f;
+        float strength = actor?.GetComponent<NPCsData>()?.Strength ?? 1f;
 
         foreach (TargetTeam targetTeam in action.targetTeams)
         {
             CrewData targetCrew = targetTeam == TargetTeam.Ally ? allies : enemies;
 
-            Debug.Log($"[CrewData] DoDamage chamado — alvos: {targets.Count}, dano: {strength}, crew: {targetCrew.crew.Count}");
+            Debug.Log($"[CrewData] DoDamage chamado — alvos: {targets.Count}, dano: {strength}, crew: {targetCrew.CrewList.Count}");
 
             foreach (EffectData effect in action.effects)
             {
@@ -102,16 +102,16 @@ public abstract class CombatBase : MonoBehaviour
     {
         foreach (GameObject target in targets)
         {
-            if (!crew.crew.Contains(target)) continue;
+            if (!crew.CrewList.Contains(target)) continue;
 
             NPCsData npc = target.GetComponent<NPCsData>();
             if (npc == null) continue;
 
             npc.AddEffect(new NPCsData.ActiveEffect
             {
-                tipo = effect.effectType,
-                intensidade = effect.intensity,
-                turnosRestantes = effect.durationTurns,
+                effectType = effect.effectType,
+                intensity = effect.intensity,
+                remainingTurns = effect.durationTurns,
                 damageType = effect.damageType
             });
         }
