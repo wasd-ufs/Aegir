@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: House 8
   m_EditorClassIdentifier: Assembly-CSharp::StructureData
   _structureName: House
-  _structureDimensions: {x: 2, y: 3}
+  _structureDimensions: {x: 2, y: 2}
   _structurePrefab: {fileID: 7024637536199684764, guid: 633f2fc5126411143bce12a686e42bc2, type: 3}
   _spawnChance: 0.1
   _validBaseLayersList: 020000000300000004000000

@@ -180,8 +180,8 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: 1113153767
+  m_SortingLayer: 1
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_Sprite: {fileID: 6786067987214140302, guid: 3bd81e18bee4c0148ad083596a011d06, type: 3}
@@ -193,7 +193,7 @@ SpriteRenderer:
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
-  m_SpriteSortPoint: 0
+  m_SpriteSortPoint: 1
 --- !u!95 &5676664127598656753
 Animator:
   serializedVersion: 7
@@ -370,62 +370,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5a45077a16ad65e46a6f1ce1117bb6b8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CrewAttacks
-  actions:
-  - "nomeA\xE7\xE3o": Mordida
-    peso: 0.5
-    classesPermitidas: 03000000
-    timesAlvos: 0000000001000000
-    efeitos:
-    - efeito: 0
-      qtdMaximaDeAlvos: 1
-      intensidade: 0.5
-      "turnosDura\xE7\xE3o": 0
-      timesAlvos: 00000000
-      damageType: 0
-    - efeito: 1
-      qtdMaximaDeAlvos: 2
-      intensidade: 1.5
-      "turnosDura\xE7\xE3o": 0
-      timesAlvos: 01000000
-      damageType: 0
-  - "nomeA\xE7\xE3o": Empurrar
-    peso: 1
-    classesPermitidas: 03000000
-    timesAlvos: 01000000
-    efeitos:
-    - efeito: 1
-      qtdMaximaDeAlvos: 3
-      intensidade: 1
-      "turnosDura\xE7\xE3o": 0
-      timesAlvos: 01000000
-      damageType: 0
-  - "nomeA\xE7\xE3o": Apertar com Tentaculos
-    peso: 1
-    classesPermitidas: 03000000
-    timesAlvos: 01000000
-    efeitos:
-    - efeito: 1
-      qtdMaximaDeAlvos: 1
-      intensidade: 2
-      "turnosDura\xE7\xE3o": 0
-      timesAlvos: 01000000
-      damageType: 0
-  - "nomeA\xE7\xE3o": Mergulho
-    peso: 0.5
-    classesPermitidas: 03000000
-    timesAlvos: 0100000000000000
-    efeitos:
-    - efeito: 1
-      qtdMaximaDeAlvos: 3
-      intensidade: 1.5
-      "turnosDura\xE7\xE3o": 0
-      timesAlvos: 01000000
-      damageType: 0
-    - efeito: 0
-      qtdMaximaDeAlvos: 1
-      intensidade: 0.3
-      "turnosDura\xE7\xE3o": 0
-      timesAlvos: 00000000
-      damageType: 0
-  aliados: {fileID: 6647514320837233979}
-  inimigos: {fileID: 0}
+  _actions: []
+  _allies: {fileID: 0}
+  _enemies: {fileID: 0}
