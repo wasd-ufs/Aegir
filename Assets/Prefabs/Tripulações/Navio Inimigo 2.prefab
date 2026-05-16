@@ -155,7 +155,7 @@ SpriteRenderer:
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 0
-  m_SpriteSortPoint: 0
+  m_SpriteSortPoint: 1
 --- !u!61 &1686335000259064980
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -336,8 +336,8 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: 1113153767
+  m_SortingLayer: 1
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_Sprite: {fileID: -1330817633476403919, guid: d3dfa67886702d74189eb9ee626826ac, type: 3}
@@ -349,7 +349,7 @@ SpriteRenderer:
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
-  m_SpriteSortPoint: 0
+  m_SpriteSortPoint: 1
 --- !u!95 &7704490322004717483
 Animator:
   serializedVersion: 7
@@ -578,73 +578,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5a45077a16ad65e46a6f1ce1117bb6b8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CrewAttacks
-  actions:
-  - "nomeA\xE7\xE3o": Tiro de Canhao
-    peso: 0
-    classesPermitidas: 0100000006000000
-    timesAlvos: 01000000
-    efeitos:
-    - efeito: 1
-      qtdMaximaDeAlvos: 3
-      intensidade: 2
-      "turnosDura\xE7\xE3o": 0
-      timesAlvos: 01000000
-      damageType: 0
-  - "nomeA\xE7\xE3o": Tiro com Arma
-    peso: 0
-    classesPermitidas: 0200000006000000
-    timesAlvos: 01000000
-    efeitos:
-    - efeito: 1
-      qtdMaximaDeAlvos: 1
-      intensidade: 1.5
-      "turnosDura\xE7\xE3o": 0
-      timesAlvos: 01000000
-      damageType: 0
-  - "nomeA\xE7\xE3o": 'Ataque a Curta Distancia '
-    peso: 0
-    classesPermitidas: 0300000002000000
-    timesAlvos: 0100000000000000
-    efeitos:
-    - efeito: 1
-      qtdMaximaDeAlvos: 3
-      intensidade: 1
-      "turnosDura\xE7\xE3o": 0
-      timesAlvos: 01000000
-      damageType: 0
-    - efeito: 1
-      qtdMaximaDeAlvos: 1
-      intensidade: 0.5
-      "turnosDura\xE7\xE3o": 0
-      timesAlvos: 00000000
-      damageType: 0
-  - "nomeA\xE7\xE3o": 'Bandagem '
-    peso: 0
-    classesPermitidas: 05000000
-    timesAlvos: 00000000
-    efeitos:
-    - efeito: 0
-      qtdMaximaDeAlvos: 3
-      intensidade: 1
-      "turnosDura\xE7\xE3o": 0
-      timesAlvos: 00000000
-      damageType: 0
-  - "nomeA\xE7\xE3o": "Refei\xE7\xE3o "
-    peso: 0
-    classesPermitidas: 04000000
-    timesAlvos: 00000000
-    efeitos:
-    - efeito: 0
-      qtdMaximaDeAlvos: 5
-      intensidade: 1
-      "turnosDura\xE7\xE3o": 0
-      timesAlvos: 00000000
-      damageType: 0
-    - efeito: 2
-      qtdMaximaDeAlvos: 5
-      intensidade: 1
-      "turnosDura\xE7\xE3o": 0
-      timesAlvos: 00000000
-      damageType: 0
-  aliados: {fileID: 7561312500233614401}
-  inimigos: {fileID: 0}
+  _actions: []
+  _allies: {fileID: 0}
+  _enemies: {fileID: 0}
