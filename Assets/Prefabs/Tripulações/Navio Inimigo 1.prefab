@@ -407,7 +407,7 @@ MonoBehaviour:
   CrewList:
   - {fileID: 2832443967332854208}
   - {fileID: 8533408150939068044}
-  _maxCrewLength: 4
+  _maxCrewLength: 5
   Inventory: {fileID: 0}
 --- !u!114 &1714336080688807292
 MonoBehaviour:
@@ -451,7 +451,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 219e42c4f178e554fa4c90e3398ce337, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::NPCsData
-  _npcName: Navio inimigo
+  _npcName: Perola Negra
   _creatureType: 5
   _creatureClass: 7
   _equippedWeapon: {fileID: 0}
@@ -516,7 +516,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5a45077a16ad65e46a6f1ce1117bb6b8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CrewAttacks
-  _actions: []
+  _actions:
+  - actionName: Teste
+    weight: 1
+    allowedClasses: 07000000
+    targetTeams: 01000000
+    effects:
+    - effectType: 1
+      maxTargets: 1
+      intensity: 10
+      durationTurns: 0
+      targetTeams: 01000000
+      damageType: 0
   _allies: {fileID: 0}
   _enemies: {fileID: 0}
 --- !u!1 &8533408150939068044

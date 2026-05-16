@@ -578,6 +578,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5a45077a16ad65e46a6f1ce1117bb6b8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CrewAttacks
-  _actions: []
+  _actions:
+  - actionName: Teste
+    weight: 1
+    allowedClasses: 07000000
+    targetTeams: 01000000
+    effects:
+    - effectType: 1
+      maxTargets: 1
+      intensity: 10
+      durationTurns: 0
+      targetTeams: 01000000
+      damageType: 0
   _allies: {fileID: 0}
   _enemies: {fileID: 0}

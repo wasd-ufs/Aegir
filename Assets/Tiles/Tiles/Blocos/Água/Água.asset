@@ -17,7 +17,7 @@ MonoBehaviour:
   _spawnableCreaturesList:
   - _creaturePrefab: {fileID: 8897055980418512927, guid: c1b7338709da5f14ea69e106a99df9c4, type: 3}
     _quantity: 1
-    _spawnChance: 0.00005
+    _spawnChance: 0.0005
   - _creaturePrefab: {fileID: 4994657344583832398, guid: b9d13193d694d0a4d8581728bf07c016, type: 3}
     _quantity: 1
     _spawnChance: 0.000005

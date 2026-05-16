@@ -328,13 +328,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::NPCsData
   _npcName: Megalodon
   _creatureType: 0
-  _creatureClass: 0
+  _creatureClass: 3
   _equippedWeapon: {fileID: 0}
   _equippedArmor: {fileID: 0}
   _maxActionsPerTurn: 1
   remainingActions: 0
   _permanentDeathChance: 0.3
-  _maxHealth: 100
+  _maxHealth: 150
   _strength: 20
   isAlive: 1
   _level: 1
@@ -345,13 +345,13 @@ MonoBehaviour:
   possibleDrops:
   - itemData: {fileID: 11400000, guid: c7061b46607c9f0439ddeff3067e260f, type: 2}
     dropChance: 1
-    maxQuantity: 0
+    maxQuantity: 2
   - itemData: {fileID: 11400000, guid: 15cdc4b1dc08efc4a94d5c9e1ec19af5, type: 2}
     dropChance: 1
-    maxQuantity: 0
+    maxQuantity: 2
   - itemData: {fileID: 11400000, guid: 15cdc4b1dc08efc4a94d5c9e1ec19af5, type: 2}
     dropChance: 1
-    maxQuantity: 0
+    maxQuantity: 2
   activeEffects: []
 --- !u!114 &2761781038233207625
 MonoBehaviour:
@@ -379,6 +379,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5a45077a16ad65e46a6f1ce1117bb6b8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CrewAttacks
-  _actions: []
+  _actions:
+  - actionName: Mordida
+    weight: 0.5
+    allowedClasses: 03000000
+    targetTeams: 01000000
+    effects:
+    - effectType: 1
+      maxTargets: 2
+      intensity: 1.5
+      durationTurns: 0
+      targetTeams: 01000000
+      damageType: 0
   _allies: {fileID: 0}
   _enemies: {fileID: 0}

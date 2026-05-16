@@ -293,14 +293,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::NPCsData
   _npcName: Lusca
   _creatureType: 4
-  _creatureClass: 0
+  _creatureClass: 3
   _equippedWeapon: {fileID: 0}
   _equippedArmor: {fileID: 0}
   _maxActionsPerTurn: 1
   remainingActions: 0
   _permanentDeathChance: 0.3
-  _maxHealth: 100
-  _strength: 20
+  _maxHealth: 200
+  _strength: 30
   isAlive: 1
   _level: 1
   _cost: 0
@@ -342,7 +342,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CrewData
   CrewList:
   - {fileID: 4994657344583832398}
-  _maxCrewLength: 1
+  _maxCrewLength: 2
   Inventory: {fileID: 0}
 --- !u!114 &6057915947782014393
 MonoBehaviour:
@@ -356,7 +356,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ffe8d41aa5cb8904a879c9a6407a8d0f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Inventory
-  _inventorySlots: []
+  _inventorySlots:
+  - item: {fileID: 0}
+    quantity: 0
   _maxItemsPerInventory: 0
 --- !u!114 &1631884374301810768
 MonoBehaviour:
@@ -370,6 +372,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5a45077a16ad65e46a6f1ce1117bb6b8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CrewAttacks
-  _actions: []
+  _actions:
+  - actionName: Mordida
+    weight: 0.5
+    allowedClasses: 03000000
+    targetTeams: 01000000
+    effects:
+    - effectType: 1
+      maxTargets: 1
+      intensity: 0.5
+      durationTurns: 0
+      targetTeams: 01000000
+      damageType: 0
   _allies: {fileID: 0}
   _enemies: {fileID: 0}
