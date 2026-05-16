@@ -7112,8 +7112,19 @@ MonoBehaviour:
     targetTeams: 0100000000000000
     effects:
     - effectType: 1
-      maxTargets: 2
-      intensity: 10
+      maxTargets: 1
+      intensity: 2
+      durationTurns: 1
+      targetTeams: 01000000
+      damageType: 0
+  - actionName: Tackle
+    weight: 1
+    allowedClasses: 06000000
+    targetTeams: 01000000
+    effects:
+    - effectType: 1
+      maxTargets: 1
+      intensity: 1
       durationTurns: 1
       targetTeams: 01000000
       damageType: 0
@@ -9856,11 +9867,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 920233459}
   m_CullTransparentMesh: 1
---- !u!1 &927029408 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 6554151866833297218, guid: cd2e05e8c1dca4f40bc574605dbaffdf, type: 3}
-  m_PrefabInstance: {fileID: 1534210258}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &929878897
 GameObject:
   m_ObjectHideFlags: 0
@@ -10884,8 +10890,8 @@ MonoBehaviour:
   _playerCrew: {fileID: 679149529}
   _enemyCrew: {fileID: 0}
   _playerAttacks: {fileID: 679149534}
-  _actionButtonContainer: {fileID: 1939293826}
-  _actionButtonPrefab: {fileID: 927029408}
+  _actionButtonContainer: {fileID: 1947359843}
+  _actionButtonPrefab: {fileID: 948406152}
   _crewButtonContainer: {fileID: 1754807382}
   _crewButtonPrefab: {fileID: 948406152}
   _skipTurnButton: {fileID: 1465264410}
@@ -10894,6 +10900,7 @@ MonoBehaviour:
   _battleData: {fileID: 1949619940}
   _battleActionText: {fileID: 1939293824}
   _fadeSpeed: 1
+  _buttonTextSize: 9
   isActiveBattle: 0
   shouldPassTurn: 0
   isShowingMessage: 0
@@ -10915,21 +10922,21 @@ MonoBehaviour:
   _startHPBarSprite: {fileID: -5639374565773268452, guid: 1d7b99b0e6d5b6a4bb647ca3d67331cc, type: 3}
   _bodyHPBarSprite: {fileID: -414380116, guid: 1d7b99b0e6d5b6a4bb647ca3d67331cc, type: 3}
   _endHPBarSprite: {fileID: 7840579542847498603, guid: 1d7b99b0e6d5b6a4bb647ca3d67331cc, type: 3}
-  _startCoordinates: {x: -520, y: 445, z: 0}
+  _startCoordinates: {x: 520, y: 445, z: 0}
   _segmentDistances: {x: 15, y: 15, z: 15}
   _heartDistance: 30
   _verticalDistance: 30
   _healthPerHeart: 10
   _healthPerSegment: 10
   _imagePrefab: {fileID: 2306828781455713388, guid: 2c68e8b9992c5194ea5422c3492fb020, type: 3}
-  _player: {fileID: 679149521}
+  _player: {fileID: 0}
   _canvasRoot: {fileID: 1949619938}
-  _captainContainer: {fileID: 1249750007}
-  _boatContainer: {fileID: 1249750007}
-  _crewContainer: {fileID: 1557339530}
+  _captainContainer: {fileID: 1923456631}
+  _boatContainer: {fileID: 1923456631}
+  _crewContainer: {fileID: 1923456631}
   _textPrefab: {fileID: 171042543424101042, guid: 4213b53fbd0a66e4981ea22cf46486bf, type: 3}
-  _textOffset: {x: 130, y: -10}
-  _isEnemyMode: 0
+  _textOffset: {x: -20, y: -10}
+  _isEnemyMode: 1
 --- !u!1 &975422470
 GameObject:
   m_ObjectHideFlags: 0
@@ -22317,7 +22324,7 @@ PrefabInstance:
       objectReference: {fileID: 974054887}
     - target: {fileID: 2290343093287686882, guid: cd2e05e8c1dca4f40bc574605dbaffdf, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: PassarTurno
+      value: PassTurn
       objectReference: {fileID: 0}
     - target: {fileID: 2290343093287686882, guid: cd2e05e8c1dca4f40bc574605dbaffdf, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
@@ -22357,11 +22364,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4907373093793969132, guid: cd2e05e8c1dca4f40bc574605dbaffdf, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 0
+      value: 60
       objectReference: {fileID: 0}
     - target: {fileID: 4907373093793969132, guid: cd2e05e8c1dca4f40bc574605dbaffdf, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 0
+      value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 4907373093793969132, guid: cd2e05e8c1dca4f40bc574605dbaffdf, type: 3}
       propertyPath: m_LocalPosition.x
@@ -22393,11 +22400,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4907373093793969132, guid: cd2e05e8c1dca4f40bc574605dbaffdf, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: -350
       objectReference: {fileID: 0}
     - target: {fileID: 4907373093793969132, guid: cd2e05e8c1dca4f40bc574605dbaffdf, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: -390
       objectReference: {fileID: 0}
     - target: {fileID: 4907373093793969132, guid: cd2e05e8c1dca4f40bc574605dbaffdf, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
