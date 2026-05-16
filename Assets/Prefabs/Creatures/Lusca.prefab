@@ -291,22 +291,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 219e42c4f178e554fa4c90e3398ce337, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::NPCsData
-  NPC_Name: Lusca
-  creatureType: 4
-  creatureClass: 3
-  armaEquipada: {fileID: 0}
-  armaduraEquipada: {fileID: 0}
-  maxAcoesPorTurno: 1
-  acoesRestantes: 0
-  chanceDeMortePermanente: 0.3
-  "vidaM\xE1xima": 200
-  "for\xE7a": 30
+  _npcName: Lusca
+  _creatureType: 4
+  _creatureClass: 0
+  _equippedWeapon: {fileID: 0}
+  _equippedArmor: {fileID: 0}
+  _maxActionsPerTurn: 1
+  remainingActions: 0
+  _permanentDeathChance: 0.3
+  _maxHealth: 100
+  _strength: 20
   isAlive: 1
-  level: 1
-  custo: 0
-  currentXP: 0
-  xpToNextLevel: 100
-  xpReward: 20
+  _level: 1
+  _cost: 0
+  _currentXp: 0
+  _xpToNextLevel: 100
+  _xpReward: 20
   possibleDrops: []
   activeEffects: []
 --- !u!114 &3072879550563025543
@@ -340,10 +340,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e3318b340adad124689811be33b7e31e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CrewData
-  crew:
+  CrewList:
   - {fileID: 4994657344583832398}
-  maxCrewLength: 2
-  inventory: {fileID: 6057915947782014393}
+  _maxCrewLength: 1
+  Inventory: {fileID: 0}
 --- !u!114 &6057915947782014393
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -356,8 +356,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ffe8d41aa5cb8904a879c9a6407a8d0f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Inventory
-  InventorySlots: []
-  MaxItemsPerInventory: 0
+  _inventorySlots: []
+  _maxItemsPerInventory: 0
 --- !u!114 &1631884374301810768
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -370,62 +370,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5a45077a16ad65e46a6f1ce1117bb6b8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CrewAttacks
-  actions:
-  - "nomeA\xE7\xE3o": Mordida
-    peso: 0.5
-    classesPermitidas: 03000000
-    timesAlvos: 0000000001000000
-    efeitos:
-    - efeito: 0
-      qtdMaximaDeAlvos: 1
-      intensidade: 0.5
-      "turnosDura\xE7\xE3o": 0
-      timesAlvos: 00000000
-      damageType: 0
-    - efeito: 1
-      qtdMaximaDeAlvos: 2
-      intensidade: 1.5
-      "turnosDura\xE7\xE3o": 0
-      timesAlvos: 01000000
-      damageType: 0
-  - "nomeA\xE7\xE3o": Empurrar
-    peso: 1
-    classesPermitidas: 03000000
-    timesAlvos: 01000000
-    efeitos:
-    - efeito: 1
-      qtdMaximaDeAlvos: 3
-      intensidade: 1
-      "turnosDura\xE7\xE3o": 0
-      timesAlvos: 01000000
-      damageType: 0
-  - "nomeA\xE7\xE3o": Apertar com Tentaculos
-    peso: 1
-    classesPermitidas: 03000000
-    timesAlvos: 01000000
-    efeitos:
-    - efeito: 1
-      qtdMaximaDeAlvos: 1
-      intensidade: 2
-      "turnosDura\xE7\xE3o": 0
-      timesAlvos: 01000000
-      damageType: 0
-  - "nomeA\xE7\xE3o": Mergulho
-    peso: 0.5
-    classesPermitidas: 03000000
-    timesAlvos: 0100000000000000
-    efeitos:
-    - efeito: 1
-      qtdMaximaDeAlvos: 3
-      intensidade: 1.5
-      "turnosDura\xE7\xE3o": 0
-      timesAlvos: 01000000
-      damageType: 0
-    - efeito: 0
-      qtdMaximaDeAlvos: 1
-      intensidade: 0.3
-      "turnosDura\xE7\xE3o": 0
-      timesAlvos: 00000000
-      damageType: 0
-  aliados: {fileID: 6647514320837233979}
-  inimigos: {fileID: 0}
+  _actions: []
+  _allies: {fileID: 0}
+  _enemies: {fileID: 0}

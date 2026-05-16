@@ -167,22 +167,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 219e42c4f178e554fa4c90e3398ce337, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::NPCsData
-  NPC_Name: Perola Negra
-  creatureType: 5
-  creatureClass: 7
-  armaEquipada: {fileID: 0}
-  armaduraEquipada: {fileID: 0}
-  maxAcoesPorTurno: 1
-  acoesRestantes: 0
-  chanceDeMortePermanente: 0.3
-  "vidaM\xE1xima": 120
-  "for\xE7a": 20
+  _npcName: 
+  _creatureType: 0
+  _creatureClass: 0
+  _equippedWeapon: {fileID: 0}
+  _equippedArmor: {fileID: 0}
+  _maxActionsPerTurn: 1
+  remainingActions: 0
+  _permanentDeathChance: 0.3
+  _maxHealth: 0
+  _strength: 0
   isAlive: 1
-  level: 1
-  custo: 0
-  currentXP: 0
-  xpToNextLevel: 100
-  xpReward: 20
+  _level: 1
+  _cost: 0
+  _currentXp: 0
+  _xpToNextLevel: 100
+  _xpReward: 20
   possibleDrops: []
   activeEffects: []
 --- !u!1 &3166267825794385228
@@ -404,11 +404,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e3318b340adad124689811be33b7e31e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CrewData
-  crew:
+  CrewList:
   - {fileID: 2832443967332854208}
   - {fileID: 8533408150939068044}
-  maxCrewLength: 5
-  inventory: {fileID: 6500702295112638631}
+  _maxCrewLength: 4
+  Inventory: {fileID: 0}
 --- !u!114 &1714336080688807292
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -451,44 +451,44 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 219e42c4f178e554fa4c90e3398ce337, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::NPCsData
-  NPC_Name: Barco
-  creatureType: 0
-  creatureClass: 7
-  armaEquipada: {fileID: 0}
-  armaduraEquipada: {fileID: 0}
-  maxAcoesPorTurno: 1
-  acoesRestantes: 0
-  chanceDeMortePermanente: 0.3
-  "vidaM\xE1xima": 0
-  "for\xE7a": 0
+  _npcName: Navio inimigo
+  _creatureType: 5
+  _creatureClass: 7
+  _equippedWeapon: {fileID: 0}
+  _equippedArmor: {fileID: 0}
+  _maxActionsPerTurn: 1
+  remainingActions: 0
+  _permanentDeathChance: 0.3
+  _maxHealth: 100
+  _strength: 20
   isAlive: 1
-  level: 1
-  custo: 0
-  currentXP: 0
-  xpToNextLevel: 100
-  xpReward: 20
+  _level: 1
+  _cost: 0
+  _currentXp: 0
+  _xpToNextLevel: 100
+  _xpReward: 20
   possibleDrops:
   - itemData: {fileID: 11400000, guid: c8358b0af8dba2f42b1c065f21dc04c4, type: 2}
     dropChance: 0.1
-    maxDuantity: 5
+    maxQuantity: 0
   - itemData: {fileID: 11400000, guid: dabd0eb54c8f11045af755f3c0a45515, type: 2}
     dropChance: 0.2
-    maxDuantity: 2
+    maxQuantity: 0
   - itemData: {fileID: 11400000, guid: 70d81fe6627dc8a468f94ed868eed00b, type: 2}
     dropChance: 0.2
-    maxDuantity: 2
+    maxQuantity: 0
   - itemData: {fileID: 11400000, guid: c7061b46607c9f0439ddeff3067e260f, type: 2}
     dropChance: 0.2
-    maxDuantity: 2
+    maxQuantity: 0
   - itemData: {fileID: 11400000, guid: 15cdc4b1dc08efc4a94d5c9e1ec19af5, type: 2}
     dropChance: 0.1
-    maxDuantity: 2
+    maxQuantity: 0
   - itemData: {fileID: 11400000, guid: fcdda23c4f1639e4598dc0f46cbe6794, type: 2}
     dropChance: 0.5
-    maxDuantity: 3
+    maxQuantity: 0
   - itemData: {fileID: 11400000, guid: d664a7e68edf16346a244202a1619049, type: 2}
     dropChance: 0.1
-    maxDuantity: 1
+    maxQuantity: 0
   activeEffects: []
 --- !u!114 &6500702295112638631
 MonoBehaviour:
@@ -502,8 +502,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ffe8d41aa5cb8904a879c9a6407a8d0f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Inventory
-  InventorySlots: []
-  MaxItemsPerInventory: 0
+  _inventorySlots: []
+  _maxItemsPerInventory: 0
 --- !u!114 &4588480445315497306
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -516,76 +516,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5a45077a16ad65e46a6f1ce1117bb6b8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CrewAttacks
-  actions:
-  - "nomeA\xE7\xE3o": Tiro de Canhao
-    peso: 0
-    classesPermitidas: 0100000006000000
-    timesAlvos: 01000000
-    efeitos:
-    - efeito: 1
-      qtdMaximaDeAlvos: 3
-      intensidade: 2
-      "turnosDura\xE7\xE3o": 0
-      timesAlvos: 01000000
-      damageType: 0
-  - "nomeA\xE7\xE3o": Tiro com Arma
-    peso: 0
-    classesPermitidas: 0200000006000000
-    timesAlvos: 01000000
-    efeitos:
-    - efeito: 1
-      qtdMaximaDeAlvos: 1
-      intensidade: 1.5
-      "turnosDura\xE7\xE3o": 0
-      timesAlvos: 01000000
-      damageType: 0
-  - "nomeA\xE7\xE3o": 'Ataque a Curta Distancia '
-    peso: 0
-    classesPermitidas: 0300000002000000
-    timesAlvos: 0100000000000000
-    efeitos:
-    - efeito: 1
-      qtdMaximaDeAlvos: 3
-      intensidade: 1
-      "turnosDura\xE7\xE3o": 0
-      timesAlvos: 01000000
-      damageType: 0
-    - efeito: 1
-      qtdMaximaDeAlvos: 1
-      intensidade: 0.5
-      "turnosDura\xE7\xE3o": 0
-      timesAlvos: 00000000
-      damageType: 0
-  - "nomeA\xE7\xE3o": 'Bandagem '
-    peso: 0
-    classesPermitidas: 05000000
-    timesAlvos: 00000000
-    efeitos:
-    - efeito: 0
-      qtdMaximaDeAlvos: 3
-      intensidade: 1
-      "turnosDura\xE7\xE3o": 0
-      timesAlvos: 00000000
-      damageType: 0
-  - "nomeA\xE7\xE3o": "Refei\xE7\xE3o "
-    peso: 0
-    classesPermitidas: 04000000
-    timesAlvos: 00000000
-    efeitos:
-    - efeito: 0
-      qtdMaximaDeAlvos: 5
-      intensidade: 1
-      "turnosDura\xE7\xE3o": 0
-      timesAlvos: 00000000
-      damageType: 0
-    - efeito: 2
-      qtdMaximaDeAlvos: 5
-      intensidade: 1
-      "turnosDura\xE7\xE3o": 0
-      timesAlvos: 00000000
-      damageType: 0
-  aliados: {fileID: 7964487619842761467}
-  inimigos: {fileID: 0}
+  _actions: []
+  _allies: {fileID: 0}
+  _enemies: {fileID: 0}
 --- !u!1 &8533408150939068044
 GameObject:
   m_ObjectHideFlags: 0
@@ -630,21 +563,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 219e42c4f178e554fa4c90e3398ce337, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::NPCsData
-  NPC_Name: Hector Barbossa
-  creatureType: 1
-  creatureClass: 6
-  armaEquipada: {fileID: 0}
-  armaduraEquipada: {fileID: 0}
-  maxAcoesPorTurno: 1
-  acoesRestantes: 0
-  chanceDeMortePermanente: 0.3
-  "vidaM\xE1xima": 70
-  "for\xE7a": 15
+  _npcName: 
+  _creatureType: 0
+  _creatureClass: 0
+  _equippedWeapon: {fileID: 0}
+  _equippedArmor: {fileID: 0}
+  _maxActionsPerTurn: 1
+  remainingActions: 0
+  _permanentDeathChance: 0.3
+  _maxHealth: 0
+  _strength: 0
   isAlive: 1
-  level: 1
-  custo: 0
-  currentXP: 0
-  xpToNextLevel: 100
-  xpReward: 20
+  _level: 1
+  _cost: 0
+  _currentXp: 0
+  _xpToNextLevel: 100
+  _xpReward: 20
   possibleDrops: []
   activeEffects: []
