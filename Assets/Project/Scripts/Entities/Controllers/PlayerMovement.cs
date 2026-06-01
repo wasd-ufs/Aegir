@@ -24,7 +24,7 @@ public class PlayerMovement : MonoBehaviour
     #region Estado Interno e Física
     [Header("Internal State")]
     public bool isOnWater = true;
-    private Vector2 moveInput;
+    public Vector2 moveInput;
     private Vector3 lastValidPosition;
     private float intervaloEntreMudancas = 0;
     private float dirVentoX = 1, dirVentoY = 1;
@@ -36,11 +36,30 @@ public class PlayerMovement : MonoBehaviour
     public Camera mainCamera;
     public WorldGenerator worldGenerator;
 
-    private Rigidbody2D rb;
-    private Rigidbody2D crb;
+    public Rigidbody2D rb;
+    public Rigidbody2D crb;
     private Animator animator;
     private Animator cAnimator;
-    private PlayerInputActions inputActions;
+    public PlayerInputActions inputActions;
+    #endregion
+
+    private IPlayerState currentState;
+
+    public void ChangeState(IPlayerState newState)
+    {
+        currentState?.Exit();
+        currentState = newState;
+        currentState?.Enter();
+    }
+
+    #region State Machine
+    public interface IPlayerState
+    {
+        void Enter();
+        void Update();
+        void FixedUpdate();
+        void Exit();
+    }
     #endregion
 
     #region Ciclo de Vida (Unity)
@@ -57,6 +76,11 @@ public class PlayerMovement : MonoBehaviour
     void Start()
     {
         lastValidPosition = transform.position;
+
+        if(isOnWater)
+            ChangeState(new BoatState(this));
+        else
+            ChangeState(new CaptainState(this));
     }
 
     void Update()
@@ -67,63 +91,37 @@ public class PlayerMovement : MonoBehaviour
 
         if (inputActions.Player.EnterGetOut.WasPressedThisFrame()) 
         {
-            worldGenerator.TryGoOut(mainCamera);   
+            worldGenerator.TryGoOut(mainCamera);
+            
+            if (isOnWater)
+                ChangeState(new CaptainState(this));
+            else
+                ChangeState(new BoatState(this));
+
+            isOnWater = !isOnWater;
         }
 
         SimularVentos();
-        AtualizarAnimacoes();
+        currentState?.Update();
     }
     #endregion
 
     #region Física e Movimento (FixedUpdate)
     void FixedUpdate()
     {
-        // Trava física completamente em combate ou menus
-        if (GameState.IsInBattle || !GameState.IsGameStarted)
+        if(GameState.IsInBattle || !GameState.IsGameStarted)
         {
             rb.linearVelocity = Vector2.zero;
             crb.linearVelocity = Vector2.zero;
-            return; 
-        }
-        
-        Vector3 currentPos = isOnWater ? transform.position : capitão.transform.position;
-        Tile actualTile = worldGenerator.GetTileAtWorldPosition(currentPos);
-        
-        // Se o mapa ainda não carregou o tile sob o jogador, não zera a velocidade ainda
-        if (actualTile == null) return; 
-
-        // Tenta achar água caso tenha bugado por estar "marítimo" fora do mapa 
-        if (actualTile.Metadata.Layer == 0 && lastValidPosition == Vector3.zero)
-        {
-            worldGenerator.TryFindWaterTile();
+            return;
         }
 
-        Vector2 direction = moveInput.sqrMagnitude > 1 ? moveInput.normalized : moveInput;
-
-        if (isOnWater)
-        {
-            // Camada 0 é Água
-            if (actualTile.Metadata.Layer == 0) ApplyWaterMovement(direction);
-            else StopAndReset(); // Bateu em terra (Camada != 0)
-        }
-        else 
-        {
-            // Lógica do Capitão na Terra (Camada 1 ou superior)
-            if (actualTile.Metadata.Layer != 0)
-            {
-                crb.linearVelocity = direction * captainSpeed;
-                rb.linearVelocity = Vector2.zero; // Garante que o barco não fuja sozinho
-            }
-            else
-            {
-                crb.linearVelocity *= -1;
-            }
-        }
+        currentState?.FixedUpdate();
     }
     #endregion
 
     #region Helpers de Movimento e Simulação
-    private void ApplyWaterMovement(Vector2 direction)
+    public void ApplyWaterMovement(Vector2 direction)
     {
         // Efeito de balanço das ondas cruzado com a direção do vento
         float balancox = Mathf.Sin(Time.fixedTime * frequencia) * amplitude * dirVentoX, 
@@ -147,11 +145,11 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-    private void AtualizarAnimacoes()
+    public void AtualizarAnimacoes()
     {
         if(moveInput.sqrMagnitude >= 0.01f)
         {
-            if (isOnWater)
+            if (currentState is BoatState)
             {
                 animator.SetFloat("Horizontal", rb.linearVelocity.x);
                 animator.SetFloat("Vertical", rb.linearVelocity.y);        
@@ -169,7 +167,7 @@ public class PlayerMovement : MonoBehaviour
         animator.SetFloat("MoveSpeed", rb.linearVelocity.sqrMagnitude);
     }
 
-    private void StopAndReset()
+    public void StopAndReset()
     {
         rb.linearVelocity = Vector2.zero;
         transform.position = lastValidPosition;
@@ -181,4 +179,4 @@ public class PlayerMovement : MonoBehaviour
     void OnDisable() => inputActions.Disable();
     public PlayerInputActions GetInputActions() => inputActions;
     #endregion
-}
+} 
