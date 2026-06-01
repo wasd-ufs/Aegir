@@ -11,8 +11,6 @@ public class CaptainState : PlayerMovement.IPlayerState
 
     public void Enter()
     {
-        GameState.IsOnWater = false;
-
         player.crb.linearVelocity = Vector2.zero;
     }
 

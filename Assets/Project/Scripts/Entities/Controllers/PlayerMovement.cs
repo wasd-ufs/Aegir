@@ -85,24 +85,25 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
-        if (GameState.IsInBattle || !GameState.IsGameStarted) return; 
-        
-        moveInput = inputActions.Player.Move.ReadValue<Vector2>();
+         if (GameState.IsInBattle || !GameState.IsGameStarted) return;
 
-        if (inputActions.Player.EnterGetOut.WasPressedThisFrame()) 
-        {
-            worldGenerator.TryGoOut(mainCamera);
-            
-            if (isOnWater)
-                ChangeState(new CaptainState(this));
-            else
-                ChangeState(new BoatState(this));
+    moveInput = inputActions.Player.Move.ReadValue<Vector2>();
 
-            isOnWater = !isOnWater;
-        }
+    if (inputActions.Player.EnterGetOut.WasPressedThisFrame())
+    {
+        worldGenerator.TryGoOut(mainCamera);
+    }
 
-        SimularVentos();
-        currentState?.Update();
+    SimularVentos();
+    currentState?.Update();
+
+    // sincroniza com GameState
+    if (GameState.IsOnWater && !(currentState is BoatState))
+        ChangeState(new BoatState(this));
+
+    if (!GameState.IsOnWater && !(currentState is CaptainState))
+        ChangeState(new CaptainState(this));
+
     }
     #endregion
 

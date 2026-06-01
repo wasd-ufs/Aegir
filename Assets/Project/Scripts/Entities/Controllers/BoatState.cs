@@ -10,8 +10,6 @@ public class BoatState : PlayerMovement.IPlayerState
 
     public void Enter()
     {
-        GameState.IsOnWater = true;
-
         player.rb.linearVelocity = Vector2.zero;
     }
 
