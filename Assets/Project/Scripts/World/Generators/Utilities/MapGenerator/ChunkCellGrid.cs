@@ -101,4 +101,11 @@ public class ChunkCellGrid
         int tileIndex = cell.CollapsedIndex();
         return tileIndex >= 0 ? _tilesetData.TilesetList[tileIndex] : null;
     }
+    public void UpdateHaloCellSnapshot(Vector2Int position)
+    {
+        if (_haloSnapshotArray != null && IsInsideBounds(position))
+        {
+            _haloSnapshotArray[position.x, position.y] = new BitArray(CellsArray[position.x, position.y].PossibleBitsArray);
+        }
+    }
 }

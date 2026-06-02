@@ -1,0 +1,897 @@
+fileFormatVersion: 2
+guid: 90bf10825e563914bbf6dc02408ca6b6
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 6146006568974949459
+    second: texture (11)_scaled_8x_pngcrushed_0
+  - first:
+      213: 4880372753617407243
+    second: texture (11)_scaled_8x_pngcrushed_1
+  - first:
+      213: -2826217145888725347
+    second: texture (11)_scaled_8x_pngcrushed_2
+  - first:
+      213: -7895599516201594907
+    second: texture (11)_scaled_8x_pngcrushed_3
+  - first:
+      213: -5309877159598725154
+    second: texture (11)_scaled_8x_pngcrushed_4
+  - first:
+      213: -3716925769929776540
+    second: texture (11)_scaled_8x_pngcrushed_5
+  - first:
+      213: -4222037399312021485
+    second: texture (11)_scaled_8x_pngcrushed_6
+  - first:
+      213: -1337718228362004948
+    second: texture (11)_scaled_8x_pngcrushed_7
+  - first:
+      213: -5618306171567909923
+    second: texture (11)_scaled_8x_pngcrushed_8
+  - first:
+      213: -2878067588613299659
+    second: texture (11)_scaled_8x_pngcrushed_9
+  - first:
+      213: 1292134639813174267
+    second: texture (11)_scaled_8x_pngcrushed_10
+  - first:
+      213: -5071033595028393293
+    second: texture (11)_scaled_8x_pngcrushed_11
+  - first:
+      213: 5056277437762131668
+    second: texture (11)_scaled_8x_pngcrushed_12
+  - first:
+      213: -5671314552717991635
+    second: texture (11)_scaled_8x_pngcrushed_13
+  - first:
+      213: -3611967700308276119
+    second: texture (11)_scaled_8x_pngcrushed_14
+  - first:
+      213: 8913382075808516096
+    second: texture (11)_scaled_8x_pngcrushed_15
+  - first:
+      213: 8178218271661012860
+    second: texture (11)_scaled_8x_pngcrushed_16
+  - first:
+      213: -2042856793201040262
+    second: texture (11)_scaled_8x_pngcrushed_17
+  - first:
+      213: 2783871940857224525
+    second: texture (11)_scaled_8x_pngcrushed_18
+  - first:
+      213: 3745744084606181488
+    second: texture (11)_scaled_8x_pngcrushed_19
+  - first:
+      213: -361451185753102611
+    second: texture (11)_scaled_8x_pngcrushed_20
+  - first:
+      213: -3465541813010232786
+    second: texture (11)_scaled_8x_pngcrushed_21
+  - first:
+      213: -6487594057018863755
+    second: texture (11)_scaled_8x_pngcrushed_22
+  - first:
+      213: 225833120026464005
+    second: texture (11)_scaled_8x_pngcrushed_23
+  - first:
+      213: 2103088624037487532
+    second: texture (11)_scaled_8x_pngcrushed_24
+  - first:
+      213: 6939626141121247602
+    second: texture (11)_scaled_8x_pngcrushed_25
+  - first:
+      213: 3175913106169821228
+    second: texture (11)_scaled_8x_pngcrushed_26
+  - first:
+      213: -3660685217426456375
+    second: texture (11)_scaled_8x_pngcrushed_27
+  - first:
+      213: -6206943236389968741
+    second: texture (11)_scaled_8x_pngcrushed_28
+  - first:
+      213: 8610280699972502254
+    second: texture (11)_scaled_8x_pngcrushed_29
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 2
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 200
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: SL Intern NO
+      rect:
+        serializedVersion: 2
+        x: 7
+        y: 967
+        width: 178
+        height: 178
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 35c18fa59600b4550800000000000000
+      internalID: 6146006568974949459
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SL Intern NE
+      rect:
+        serializedVersion: 2
+        x: 191
+        y: 967
+        width: 178
+        height: 178
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b0d4cde79219ab340800000000000000
+      internalID: 4880372753617407243
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SL Coast N
+      rect:
+        serializedVersion: 2
+        x: 375
+        y: 967
+        width: 178
+        height: 178
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d962f21da7247c8d0800000000000000
+      internalID: -2826217145888725347
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SL Coast S
+      rect:
+        serializedVersion: 2
+        x: 559
+        y: 967
+        width: 178
+        height: 178
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5efce0c92123d6290800000000000000
+      internalID: -7895599516201594907
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SL Quintet SE
+      rect:
+        serializedVersion: 2
+        x: 743
+        y: 967
+        width: 178
+        height: 178
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ed768253bd68f46b0800000000000000
+      internalID: -5309877159598725154
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SL Quintet SO
+      rect:
+        serializedVersion: 2
+        x: 927
+        y: 967
+        width: 178
+        height: 178
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 46227d294b3da6cc0800000000000000
+      internalID: -3716925769929776540
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SL Intern SO
+      rect:
+        serializedVersion: 2
+        x: 7
+        y: 783
+        width: 178
+        height: 178
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 318c799ca5f4865c0800000000000000
+      internalID: -4222037399312021485
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SL Intern SE
+      rect:
+        serializedVersion: 2
+        x: 191
+        y: 783
+        width: 178
+        height: 178
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c26faecdb587f6de0800000000000000
+      internalID: -1337718228362004948
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SL Coast O
+      rect:
+        serializedVersion: 2
+        x: 375
+        y: 783
+        width: 178
+        height: 178
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dd35f44dd44c702b0800000000000000
+      internalID: -5618306171567909923
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SL Coast L
+      rect:
+        serializedVersion: 2
+        x: 559
+        y: 783
+        width: 178
+        height: 178
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 532a32dd6cc0f08d0800000000000000
+      internalID: -2878067588613299659
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SL Quintet NE
+      rect:
+        serializedVersion: 2
+        x: 743
+        y: 783
+        width: 178
+        height: 178
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bf3aa00eb959ee110800000000000000
+      internalID: 1292134639813174267
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SL Quintet NO
+      rect:
+        serializedVersion: 2
+        x: 927
+        y: 783
+        width: 178
+        height: 178
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3b2b24410d110a9b0800000000000000
+      internalID: -5071033595028393293
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Quintet SE
+      rect:
+        serializedVersion: 2
+        x: 7
+        y: 599
+        width: 178
+        height: 178
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4d652a35a818b2640800000000000000
+      internalID: 5056277437762131668
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Quintet SO
+      rect:
+        serializedVersion: 2
+        x: 191
+        y: 599
+        width: 178
+        height: 178
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d21adb356717b41b0800000000000000
+      internalID: -5671314552717991635
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Coast S
+      rect:
+        serializedVersion: 2
+        x: 375
+        y: 599
+        width: 178
+        height: 178
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 96cc0fa7386bfddc0800000000000000
+      internalID: -3611967700308276119
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Coast N
+      rect:
+        serializedVersion: 2
+        x: 559
+        y: 599
+        width: 178
+        height: 178
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 00886e7d5c1b2bb70800000000000000
+      internalID: 8913382075808516096
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Sea 1
+      rect:
+        serializedVersion: 2
+        x: 743
+        y: 599
+        width: 178
+        height: 178
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c77b6f1203ede7170800000000000000
+      internalID: 8178218271661012860
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Sand 1
+      rect:
+        serializedVersion: 2
+        x: 927
+        y: 599
+        width: 178
+        height: 178
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a742242f19056a3e0800000000000000
+      internalID: -2042856793201040262
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Quintet NE
+      rect:
+        serializedVersion: 2
+        x: 7
+        y: 415
+        width: 178
+        height: 178
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d4dd8f6d7cc42a620800000000000000
+      internalID: 2783871940857224525
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Quintet NO
+      rect:
+        serializedVersion: 2
+        x: 190
+        y: 415
+        width: 178
+        height: 178
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 070e87e266e8bf330800000000000000
+      internalID: 3745744084606181488
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Coast E
+      rect:
+        serializedVersion: 2
+        x: 375
+        y: 415
+        width: 178
+        height: 178
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: de6ea85cf0edbfaf0800000000000000
+      internalID: -361451185753102611
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Coast O
+      rect:
+        serializedVersion: 2
+        x: 559
+        y: 415
+        width: 178
+        height: 178
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e2a0341151ce7efc0800000000000000
+      internalID: -3465541813010232786
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Sea 2
+      rect:
+        serializedVersion: 2
+        x: 743
+        y: 415
+        width: 178
+        height: 178
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 57f8470f39f67f5a0800000000000000
+      internalID: -6487594057018863755
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Sand 2
+      rect:
+        serializedVersion: 2
+        x: 927
+        y: 415
+        width: 178
+        height: 178
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 50f02b1b602522300800000000000000
+      internalID: 225833120026464005
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Intern SO
+      rect:
+        serializedVersion: 2
+        x: 7
+        y: 231
+        width: 178
+        height: 178
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ca36beef5fbaf2d10800000000000000
+      internalID: 2103088624037487532
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Intern SE
+      rect:
+        serializedVersion: 2
+        x: 191
+        y: 231
+        width: 178
+        height: 178
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 279fb8725318e4060800000000000000
+      internalID: 6939626141121247602
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Grass 1
+      rect:
+        serializedVersion: 2
+        x: 743
+        y: 231
+        width: 178
+        height: 178
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c2872c2b42c131c20800000000000000
+      internalID: 3175913106169821228
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Grass 2
+      rect:
+        serializedVersion: 2
+        x: 927
+        y: 231
+        width: 178
+        height: 178
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9c0c5cc9032a23dc0800000000000000
+      internalID: -3660685217426456375
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Intern NO
+      rect:
+        serializedVersion: 2
+        x: 7
+        y: 47
+        width: 178
+        height: 178
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b9466f523028cd9a0800000000000000
+      internalID: -6206943236389968741
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Intern NE
+      rect:
+        serializedVersion: 2
+        x: 191
+        y: 47
+        width: 178
+        height: 178
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ee2434a6dacdd7770800000000000000
+      internalID: 8610280699972502254
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 784dc8099b10e97489042543f8867f82
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      Coast E: -361451185753102611
+      Coast N: 8913382075808516096
+      Coast O: -3465541813010232786
+      Coast S: -3611967700308276119
+      Grass 1: 3175913106169821228
+      Grass 2: -3660685217426456375
+      Intern NE: 8610280699972502254
+      Intern NO: -6206943236389968741
+      Intern SE: 6939626141121247602
+      Intern SO: 2103088624037487532
+      Quintet NE: 2783871940857224525
+      Quintet NO: 3745744084606181488
+      Quintet SE: 5056277437762131668
+      Quintet SO: -5671314552717991635
+      SL Coast L: -2878067588613299659
+      SL Coast N: -2826217145888725347
+      SL Coast O: -5618306171567909923
+      SL Coast S: -7895599516201594907
+      SL Intern NE: 4880372753617407243
+      SL Intern NO: 6146006568974949459
+      SL Intern SE: -1337718228362004948
+      SL Intern SO: -4222037399312021485
+      SL Quintet NE: 1292134639813174267
+      SL Quintet NO: -5071033595028393293
+      SL Quintet SE: -5309877159598725154
+      SL Quintet SO: -3716925769929776540
+      Sand 1: -2042856793201040262
+      Sand 2: 225833120026464005
+      Sea 1: 8178218271661012860
+      Sea 2: -6487594057018863755
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
