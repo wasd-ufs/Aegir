@@ -12,14 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 33e5b92196183694d8413d1b1e7db8b6, type: 3}
   m_Name: Sword Lvl 1
   m_EditorClassIdentifier: Assembly-CSharp::WeaponData
-  itemName: Espada Lvl 1
-  description: espadinha shin shin
-  Icon: {fileID: -9144960104466704823, guid: 961b45b1ead9bfa43b9661aba3fc3db1, type: 3}
-  possibleTypes: 010000000200000003000000
-  maximumQttPerSlot: 1
-  unitaryPrice: 200
-  type: 1
-  attackBaseValue: 7.5
-  perTypeAttackBonus:
-  - damageType: 0
-    intensity: 1.2
+  _itemName: Espada Comum
+  _description: "Espada forjada nos mais infames picos de Anastanael, usada por anjos
+    e demonios em guerras sangrentas e devastadoras, feita a partir de material sagrado,
+    batido pelas maos fortes e r\xEDgidas dos anoes cavernosos"
+  _icon: {fileID: 4749367379176292346, guid: 961b45b1ead9bfa43b9661aba3fc3db1, type: 3}
+  _possibleTypes: 
+  _maximumQuantityPerSlot: 1
+  _unitaryPrice: 100
+  _allowedClassList: 030000000600000004000000
+  _attackBaseValue: 10
+  _perTypeAttackBonusList: []
