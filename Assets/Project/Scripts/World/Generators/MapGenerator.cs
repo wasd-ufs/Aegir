@@ -90,18 +90,18 @@ public class MapGenerator : MonoBehaviour
     /// Usada nos chunks do campo de visão inicial.
     /// </summary>
     /// <returns><c>true</c> se o chunk foi gerado sem contradições.</returns>
-    public bool GenerateChunkSync(Dictionary<Vector2Int, Tile> borderTilesDictionary, Vector2Int chunkCoord, float noiseScale)
+    public bool GenerateChunkSync(Dictionary<Vector2Int, Tile> borderTilesDictionary, Vector2Int chunkCoord, float noiseScale, int worldSeed)
     {
         EnsureCache();
 
         int maxRestarts = 10;
-        _wfcSolver.SetParameters(chunkCoord, noiseScale);
+        _wfcSolver.SetParameters(chunkCoord, noiseScale, worldSeed);
 
         for (int attempt = 0; attempt < maxRestarts; attempt++)
         {
             _grid.InitializeCells(borderTilesDictionary, _wfcSolver.PropagateConsequences);
 
-            if (_wfcSolver.RunCollapseSync())
+            if (_wfcSolver.HasCompletedCollapseSync())
             {
                 _chunkRenderer.RenderMap(_grid, _chunkSize);
                 SpawnEntities();
@@ -116,36 +116,39 @@ public class MapGenerator : MonoBehaviour
     /// Geração assíncrona. Distribui o trabalho em frames via coroutine.
     /// Ao concluir, invoca <see cref="OnGenerationComplete"/>.
     /// </summary>
-    public void GenerateChunkAsync(Dictionary<Vector2Int, Tile> borderTilesDictionary, Vector2Int chunkCoord, float noiseScale)
+    public void GenerateChunkAsync(Dictionary<Vector2Int, Tile> borderTilesDictionary, Vector2Int chunkCoord, float noiseScale, int worldSeed)
     {
         EnsureCache();
 
         int maxRestarts = 10;
-        StartCoroutine(AsyncGenerationRoutine(borderTilesDictionary, chunkCoord, noiseScale, maxRestarts));
+        StartCoroutine(AsyncGenerationRoutine(borderTilesDictionary, chunkCoord, noiseScale, maxRestarts, worldSeed));
     }
 
     private IEnumerator AsyncGenerationRoutine(
-        Dictionary<Vector2Int, Tile> borderTilesDictionary,
-        Vector2Int chunkCoord,
-        float noiseScale,
-        int maxRestarts)
+    Dictionary<Vector2Int, Tile> borderTilesDictionary,
+    Vector2Int chunkCoord,
+    float noiseScale,
+    int maxRestarts,
+    int worldSeed)
     {
-        _wfcSolver.SetParameters(chunkCoord, noiseScale);
+        _wfcSolver.SetParameters(chunkCoord, noiseScale, worldSeed);
+        _grid.InitializeCells(borderTilesDictionary, _wfcSolver.PropagateConsequences);
+        _wfcSolver.StartAsyncGeneration();
 
-        for (int attempt = 0; attempt < maxRestarts; attempt++)
-        {
-            _grid.InitializeCells(borderTilesDictionary, _wfcSolver.PropagateConsequences);
-            _wfcSolver.StartAsyncGeneration();
+        while (_wfcSolver.IsGenerating)
+            yield return null;
 
-            while (_wfcSolver.IsGenerating)
-                yield return null;
+        if (_wfcSolver.HasGenerationSucceeded)
+            _chunkRenderer.RenderMap(_grid, _chunkSize);
 
-            if (_wfcSolver.HasGenerationSucceeded)
-            {
-                _chunkRenderer.RenderMap(_grid, _chunkSize);
-                yield break;
-            }
-        }
+        // Delegar todo o retry ao WFC — o loop externo não faz sentido no modo async
+        // O WFC já gerencia seus próprios restarts via RestartGenerationAttempt
+        // OnGenerationComplete será invocado pelo WFC ao final
+    }
+
+    public void SetIslandSampler(IslandMapSampler sampler)
+    {
+        _wfcSolver.SetIslandSampler(sampler);
     }
 
     // =========================================================================
@@ -172,6 +175,7 @@ public class MapGenerator : MonoBehaviour
             if (tileIndex < 0) continue;
 
             haloCell.CollapseCell(tileIndex);
+            _grid.UpdateHaloCellSnapshot(keyValuePair.Key);
             _wfcSolver.PropagateConsequences(haloCell);
         }
 

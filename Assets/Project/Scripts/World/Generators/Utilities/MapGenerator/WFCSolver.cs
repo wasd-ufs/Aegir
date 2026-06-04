@@ -1,127 +1,115 @@
+using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// Executa o algoritmo Wave Function Collapse (WFC) sobre uma grade de células.
-/// Recebe todos os dados necessários via <see cref="Setup"/> e não depende de
-/// SerializeField próprios — o cache de compatibilidade já encapsula as regras do tileset.
+/// O Controlador Principal (MonoBehaviour) do WFC. 
+/// Atua como orquestrador entre a matemática do terreno (TargetLayerBuilder), 
+/// a execução do algoritmo (WFCAlgorithm) e o Unity (Corrotinas e Eventos).
 /// </summary>
 public class WFCSolver : MonoBehaviour
 {
-    // =========================================================================
-    // Campos Privados
-    // =========================================================================
+    private const int MAX_ATTEMPT_MULTIPLIER = 10;
 
     [SerializeField] private int _collapsesPerFrame = 10;
+    
+    [Header("Beach Settings")]
+    [SerializeField, Min(1)] private int _minBeachRadius = 1;
+    [SerializeField, Min(1)] private int _maxBeachRadius = 3;
+    [SerializeField] private float _beachNoiseScale = 0.05f;
+    [SerializeField, Min(2)] private int _oceanMaskPadding = 8;
 
+    private TargetLayerBuilder _layerBuilder;
+    private WFCAlgorithm _algorithm;
+    private IslandMapSampler _islandSamplerCache;
     private ChunkCellGrid _grid;
-    private CompatibilityCache _compatibilityCache;
-    private TilesetData _tilesetData;
-
     private Vector2Int _chunkSize;
-    private Vector2Int _currentChunkCoord;
-    private float _currentNoiseScale;
-
-    private readonly Vector2Int[] _directionsArray =
-    {
-        Vector2Int.up,
-        Vector2Int.down,
-        Vector2Int.left,
-        Vector2Int.right
-    };
-
-    // =========================================================================
-    // Propriedades e Eventos
-    // =========================================================================
+    
+    private int _worldSeed;
+    private int _chunkSeed;
+    private Vector2Int _currentChunkCoordinate;
 
     public bool IsGenerating { get; private set; }
     public bool HasGenerationSucceeded { get; private set; }
 
-    public System.Action<bool> OnGenerationComplete;
-    public System.Action OnMapRenderRequested;
+    public event Action<bool> OnGenerationComplete;
+    public event Action OnMapRenderRequested;
 
-    // =========================================================================
-    // Inicialização
-    // =========================================================================
-
-    /// <summary>
-    /// Vincula o solver à grade, ao tamanho do chunk e ao cache de compatibilidade.
-    /// O tileset é recebido separadamente para o cálculo de noise e pesos.
-    /// </summary>
     public void Setup(ChunkCellGrid grid, Vector2Int chunkSize, CompatibilityCache compatibilityCache, TilesetData tilesetData)
     {
-        // Guard: evita sobrescrever o estado se EnsureCache() for chamado mais de uma vez
         if (_grid != null) return;
+        
+        _grid = grid;
+        _chunkSize = chunkSize;
 
-        _grid               = grid;
-        _chunkSize          = chunkSize;
-        _compatibilityCache = compatibilityCache;
-        _tilesetData        = tilesetData;
+        _layerBuilder = new TargetLayerBuilder(chunkSize, _oceanMaskPadding, _minBeachRadius, _maxBeachRadius, _beachNoiseScale);
+        
+        if (_islandSamplerCache != null)
+        {
+            _layerBuilder.SetSampler(_islandSamplerCache);
+        }
+
+        _algorithm = new WFCAlgorithm(grid, chunkSize, compatibilityCache, tilesetData);
     }
 
-    // =========================================================================
-    // Configuração de Parâmetros
-    // =========================================================================
-
-    /// <summary>
-    /// Define a posição do chunk e a escala de ruído antes de qualquer execução
-    /// do algoritmo — síncrona ou assíncrona. Deve ser chamado antes de
-    /// <see cref="RunCollapseSync"/> ou <see cref="StartAsyncGeneration"/>.
-    /// </summary>
-    public void SetParameters(Vector2Int chunkCoord, float noiseScale)
+    public void SetParameters(Vector2Int chunkCoordinate, float noiseScale, int worldSeed)
     {
-        _currentChunkCoord = chunkCoord;
-        _currentNoiseScale = noiseScale;
+        _currentChunkCoordinate = chunkCoordinate;
+        _worldSeed = worldSeed;
+        _chunkSeed = HashChunkSeed(worldSeed, chunkCoordinate.x, chunkCoordinate.y);
+
+        // O Builder cria a Planta (Array) -> Passamos a planta para o Algoritmo
+        int[,] targetLayerMap = _layerBuilder.Build(chunkCoordinate, noiseScale, worldSeed);
+        _algorithm.SetState(targetLayerMap, new System.Random(_chunkSeed), chunkCoordinate);
     }
 
-    // =========================================================================
-    // Execução Síncrona
-    // =========================================================================
-
-    /// <summary>
-    /// Executa o loop WFC de forma síncrona.
-    /// Chame <see cref="SetParameters"/> antes deste método.
-    /// </summary>
-    /// <returns><c>true</c> se o chunk foi colapsado sem contradição.</returns>
-    public bool RunCollapseSync()
+    public void SetIslandSampler(IslandMapSampler islandMapSampler)
     {
-        int totalCells    = _chunkSize.x * _chunkSize.y;
+        _islandSamplerCache = islandMapSampler;
+        
+        // Se o builder já tiver sido criado, atualizamos a referência imediatamente
+        if (_layerBuilder != null)
+        {
+            _layerBuilder.SetSampler(_islandSamplerCache);
+        }
+    }
+    public void PropagateConsequences(Cell startCell) => _algorithm.PropagateConsequences(startCell);
+
+    public bool HasCompletedCollapseSync()
+    {
+        if (!_algorithm.ApplyTargetLayerConstraints()) return false;
+
+        int totalCells = _chunkSize.x * _chunkSize.y;
         int collapsedCount = 0;
-        int maxAttempts   = totalCells * 3;
+        int maxAttempts = totalCells * MAX_ATTEMPT_MULTIPLIER;
         int attemptsCount = 0;
 
         while (collapsedCount < totalCells && attemptsCount < maxAttempts)
         {
-            Cell chosenCell = ChooseCell();
+            Cell chosenCell = _algorithm.ChooseCell();
             if (chosenCell == null) break;
 
-            float cellNoise = CalculateCellNoise(chosenCell.Coordinates);
-            CollapseAndPropagate(chosenCell, cellNoise);
+            _algorithm.CollapseAndPropagate(chosenCell);
 
-            if (HasContradiction())
+            Cell contradictionCell = _algorithm.GetContradictionCell();
+            if (contradictionCell != null)
             {
-                _grid.RestartFromHalo();
-                collapsedCount = 0;
-                attemptsCount++;
-                continue;
-            }
+                if (attemptsCount == 0) _algorithm.LogContradictionContext(contradictionCell);
 
-            collapsedCount++;
+                attemptsCount++;
+                collapsedCount = 0;
+
+                if (!RestartGenerationAttempt(attemptsCount)) break;
+            }
+            else
+            {
+                collapsedCount++;
+            }
         }
 
-        return !HasContradiction();
+        return !_algorithm.HasContradiction();
     }
 
-    // =========================================================================
-    // Execução Assíncrona
-    // =========================================================================
-
-    /// <summary>
-    /// Inicia a geração assíncrona via coroutine.
-    /// Chame <see cref="SetParameters"/> antes deste método.
-    /// Ao concluir, dispara <see cref="OnGenerationComplete"/> com o resultado.
-    /// </summary>
     public void StartAsyncGeneration()
     {
         StartCoroutine(RunCollapseAsyncCoroutine());
@@ -129,28 +117,37 @@ public class WFCSolver : MonoBehaviour
 
     private IEnumerator RunCollapseAsyncCoroutine()
     {
-        IsGenerating           = true;
+        IsGenerating = true;
         HasGenerationSucceeded = false;
 
-        int totalCells         = _chunkSize.x * _chunkSize.y;
-        int collapsedCount     = 0;
-        int maxAttempts        = totalCells * 3;
-        int attemptsCount      = 0;
+        if (!_algorithm.ApplyTargetLayerConstraints())
+        {
+            FailGeneration();
+            yield break;
+        }
+
+        int totalCells = _chunkSize.x * _chunkSize.y;
+        int collapsedCount = 0;
+        int maxAttempts = totalCells * MAX_ATTEMPT_MULTIPLIER;
+        int attemptsCount = 0;
         int collapsesThisFrame = 0;
 
         while (collapsedCount < totalCells && attemptsCount < maxAttempts)
         {
-            Cell chosenCell = ChooseCell();
+            Cell chosenCell = _algorithm.ChooseCell();
             if (chosenCell == null) break;
 
-            float cellNoise = CalculateCellNoise(chosenCell.Coordinates);
-            CollapseAndPropagate(chosenCell, cellNoise);
+            _algorithm.CollapseAndPropagate(chosenCell);
 
-            if (HasContradiction())
+            Cell contradictionCell = _algorithm.GetContradictionCell();
+            if (contradictionCell != null)
             {
-                _grid.RestartFromHalo();
-                collapsedCount = 0;
+                if (attemptsCount == 0) _algorithm.LogContradictionContext(contradictionCell);
+
                 attemptsCount++;
+                collapsedCount = 0;
+
+                if (!RestartGenerationAttempt(attemptsCount)) break;
             }
             else
             {
@@ -166,195 +163,33 @@ public class WFCSolver : MonoBehaviour
             }
         }
 
-        HasGenerationSucceeded = !HasContradiction();
-        IsGenerating           = false;
+        HasGenerationSucceeded = !_algorithm.HasContradiction();
+        IsGenerating = false;
         OnGenerationComplete?.Invoke(HasGenerationSucceeded);
     }
 
-    // =========================================================================
-    // Propagação (Pública — usada pelo ChunkCellGrid na init do halo)
-    // =========================================================================
-
-    /// <summary>
-    /// Propaga as restrições a partir de uma célula modificada usando BFS.
-    /// Exposto publicamente para ser chamado pelo <see cref="ChunkCellGrid"/>
-    /// durante a inicialização das bordas do halo.
-    /// </summary>
-    public void PropagateConsequences(Cell startCell)
+    private bool RestartGenerationAttempt(int attemptsCount)
     {
-        var cellQueue = new Queue<Cell>();
-        cellQueue.Enqueue(startCell);
-
-        while (cellQueue.Count > 0)
-        {
-            Cell currentCell = cellQueue.Dequeue();
-            ProcessNeighbors(currentCell, cellQueue);
-        }
+        _grid.RestartFromHalo();
+        _algorithm.SetState(_algorithm.GetTargetLayerMap(), new System.Random(_chunkSeed + attemptsCount), _currentChunkCoordinate);
+        return _algorithm.ApplyTargetLayerConstraints();
     }
 
-    // =========================================================================
-    // Helpers Privados — Propagação
-    // =========================================================================
-
-    private void ProcessNeighbors(Cell currentCell, Queue<Cell> cellQueue)
+    private void FailGeneration()
     {
-        for (int directionIndex = 0; directionIndex < 4; directionIndex++)
-        {
-            Vector2Int neighborPosition = currentCell.Coordinates + _directionsArray[directionIndex];
-            if (!_grid.IsInsideBounds(neighborPosition)) continue;
-
-            Cell neighborCell = _grid.CellsArray[neighborPosition.x, neighborPosition.y];
-            if (neighborCell.IsCollapsed()) continue;
-
-            if (RemoveUnsupportedTiles(currentCell, neighborCell, directionIndex))
-                cellQueue.Enqueue(neighborCell);
-        }
+        HasGenerationSucceeded = false;
+        IsGenerating = false;
+        OnGenerationComplete?.Invoke(false);
     }
 
-    private bool RemoveUnsupportedTiles(Cell currentCell, Cell neighborCell, int directionIndex)
+    private static int HashChunkSeed(int worldSeed, int chunkX, int chunkY)
     {
-        bool hasChanged = false;
-        int  tileCount  = _tilesetData.TilesetList.Count;
-
-        for (int neighborTileIndex = 0; neighborTileIndex < tileCount; neighborTileIndex++)
-        {
-            if (!neighborCell.PossibleBitsArray[neighborTileIndex]) continue;
-
-            if (!HasSupport(currentCell, neighborTileIndex, directionIndex))
-            {
-                neighborCell.PossibleBitsArray[neighborTileIndex] = false;
-                hasChanged = true;
-            }
-        }
-
-        return hasChanged;
-    }
-
-    private bool HasSupport(Cell currentCell, int neighborTileIndex, int directionIndex)
-    {
-        int tileCount = _tilesetData.TilesetList.Count;
-
-        for (int currentTileIndex = 0; currentTileIndex < tileCount; currentTileIndex++)
-        {
-            if (!currentCell.PossibleBitsArray[currentTileIndex]) continue;
-            if (_compatibilityCache.IsCompatible(currentTileIndex, neighborTileIndex, directionIndex))
-                return true;
-        }
-
-        return false;
-    }
-
-    // =========================================================================
-    // Helpers Privados — WFC
-    // =========================================================================
-
-    /// <summary>
-    /// Seleciona a célula com menor entropia (MRE) ainda não colapsada,
-    /// com desempate aleatório entre candidatas de igual entropia.
-    /// </summary>
-    private Cell ChooseCell()
-    {
-        int minimumPossibilities = int.MaxValue;
-        var candidateCellsList   = new List<Cell>();
-
-        for (int x = 1; x <= _chunkSize.x; x++)
-        {
-            for (int y = 1; y <= _chunkSize.y; y++)
-            {
-                Cell cell = _grid.CellsArray[x, y];
-                if (cell.IsCollapsed()) continue;
-
-                int possibilitiesCount = cell.CountPossible();
-                if (possibilitiesCount == 0) continue;
-
-                if (possibilitiesCount < minimumPossibilities)
-                {
-                    minimumPossibilities = possibilitiesCount;
-                    candidateCellsList.Clear();
-                    candidateCellsList.Add(cell);
-                }
-                else if (possibilitiesCount == minimumPossibilities)
-                {
-                    candidateCellsList.Add(cell);
-                }
-            }
-        }
-
-        return candidateCellsList.Count > 0
-            ? candidateCellsList[Random.Range(0, candidateCellsList.Count)]
-            : null;
-    }
-
-    /// <summary>
-    /// Colapsa a célula em um tile escolhido por rolagem de peso ponderada pelo noise,
-    /// depois propaga as restrições para os vizinhos.
-    /// </summary>
-    private void CollapseAndPropagate(Cell cell, float noiseValue)
-    {
-        int   tileCount   = _tilesetData.TilesetList.Count;
-        float totalWeight = 0;
-
-        for (int i = 0; i < tileCount; i++)
-        {
-            if (!cell.PossibleBitsArray[i]) continue;
-            Tile tile = _tilesetData.TilesetList[i];
-            totalWeight += IsLandTile(tile) ? tile.Weight * (noiseValue * 10) : tile.Weight;
-        }
-
-        float randomRoll  = Random.Range(0, totalWeight);
-        int   chosenIndex = -1;
-
-        for (int i = 0; i < tileCount; i++)
-        {
-            if (!cell.PossibleBitsArray[i]) continue;
-            Tile tile = _tilesetData.TilesetList[i];
-            randomRoll -= IsLandTile(tile) ? tile.Weight * (noiseValue * 10) : tile.Weight;
-            if (randomRoll <= 0) { chosenIndex = i; break; }
-        }
-
-        // Fallback: garante que algum tile seja sempre escolhido
-        if (chosenIndex < 0)
-            for (int i = tileCount - 1; i >= 0; i--)
-                if (cell.PossibleBitsArray[i]) { chosenIndex = i; break; }
-
-        cell.CollapseCell(chosenIndex);
-        PropagateConsequences(cell);
-    }
-
-    /// <summary>
-    /// Retorna <c>true</c> se alguma célula interna estiver sem tiles possíveis.
-    /// Privado — o resultado é exposto apenas via <see cref="HasGenerationSucceeded"/>.
-    /// </summary>
-    private bool HasContradiction()
-    {
-        for (int x = 1; x <= _chunkSize.x; x++)
-            for (int y = 1; y <= _chunkSize.y; y++)
-                if (_grid.CellsArray[x, y].IsEmpty()) return true;
-        return false;
-    }
-
-    // =========================================================================
-    // Helpers Privados — Noise e Tile
-    // =========================================================================
-
-    /// <summary>
-    /// Terra = camada par e diferente de 0 (ex.: 2, 4...).
-    /// Tiles de terra recebem peso amplificado pelo noise para favorecer ilhas.
-    /// </summary>
-    private bool IsLandTile(Tile tile)
-        => tile.Metadata.Layer % 2 == 0 && tile.Metadata.Layer != 0;
-
-    /// <summary>
-    /// Calcula Perlin Noise contínuo entre chunks para a célula informada.
-    /// </summary>
-    private float CalculateCellNoise(Vector2Int localCoordinates)
-    {
-        int localX = localCoordinates.x - 1;
-        int localY = localCoordinates.y - 1;
-
-        float globalX = (_currentChunkCoord.x * _chunkSize.x) + localX;
-        float globalY = (_currentChunkCoord.y * _chunkSize.y) + localY;
-
-        return Mathf.PerlinNoise(globalX * _currentNoiseScale + 100.5f, globalY * _currentNoiseScale + 100.5f);
+        uint hash = (uint)worldSeed * 2654435761u;
+        hash ^= (uint)(chunkX * 1664525 + 1013904223);
+        hash ^= (uint)(chunkY * 22695477 + 1664525);
+        hash ^= hash >> 16;
+        hash *= 0x45d9f3b;
+        hash ^= hash >> 16;
+        return (int)(hash & 0x7FFFFFFF);
     }
 }

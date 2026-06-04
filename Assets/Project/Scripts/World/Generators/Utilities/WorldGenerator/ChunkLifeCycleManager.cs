@@ -36,6 +36,7 @@ public class ChunkLifecycleManager : MonoBehaviour
     private HaloBuilder _haloBuilder;
     private ChunkNeighborNotifier _neighborNotifier;
     private WorldGenerator _worldGenerator;
+    private IslandMapSampler _islandMapSampler;
     private Transform _playerTransform;
     public Transform ActivePlayer => _playerTransform;
 
@@ -48,13 +49,15 @@ public class ChunkLifecycleManager : MonoBehaviour
         HaloBuilder haloBuilder,
         ChunkNeighborNotifier neighborNotifier,
         WorldGenerator worldGenerator,
-        Transform initialPlayerTransform)
+        Transform initialPlayerTransform, 
+        IslandMapSampler islandMapSampler)
     {
         _persistence      = persistence;
         _haloBuilder      = haloBuilder;
         _neighborNotifier = neighborNotifier;
         _worldGenerator   = worldGenerator;
         _playerTransform  = initialPlayerTransform;
+        _islandMapSampler = islandMapSampler;
     }
 
     // =========================================================================
@@ -103,9 +106,9 @@ public class ChunkLifecycleManager : MonoBehaviour
     /// <summary>
     /// Instancia e gera (ou carrega do disco) um chunk de forma síncrona.
     /// </summary>
-    public void CreateOrLoadChunkSync(Vector2Int position, Vector3 worldPosition)
+    public void CreateOrLoadChunkSync(Vector2Int position, Vector3 worldPosition, int worldSeed)
     {
-        MapGenerator mapGenerator = InstantiateChunk(position, worldPosition);
+        MapGenerator mapGenerator = InstantiateChunk(position, worldPosition, worldSeed);
 
         byte[] savedDataArray = _persistence.LoadChunkFromDisk(position);
         if (savedDataArray != null && !_failedChunksSet.Contains(position))
@@ -121,7 +124,7 @@ public class ChunkLifecycleManager : MonoBehaviour
             {
                 mapGenerator.ForceWaterChunk(haloDictionary);
             }
-            else if (mapGenerator.GenerateChunkSync(haloDictionary, position, _noiseScale))
+            else if (mapGenerator.GenerateChunkSync(haloDictionary, position, _noiseScale, worldSeed))
             {
                 _failedChunksSet.Remove(position);
                 _chunksWaitingForDecorationList.Add(position);
@@ -141,7 +144,7 @@ public class ChunkLifecycleManager : MonoBehaviour
     /// Se o chunk já estava pendente (saiu do view distance durante a geração),
     /// reutiliza o objeto existente em vez de criar um novo.
     /// </summary>
-    public void CreateOrLoadChunkAsync(Vector2Int position, Vector3 worldPosition, ChunkGenerationQueue queue)
+    public void CreateOrLoadChunkAsync(Vector2Int position, Vector3 worldPosition, ChunkGenerationQueue queue, int worldSeed)
     {
         // Chunk voltou ao campo de visão enquanto ainda estava pendente
         if (_pendingChunksDictionary.TryGetValue(position, out MapGenerator pendingGenerator))
@@ -154,7 +157,7 @@ public class ChunkLifecycleManager : MonoBehaviour
             return;
         }
 
-        MapGenerator mapGenerator = InstantiateChunk(position, worldPosition);
+        MapGenerator mapGenerator = InstantiateChunk(position, worldPosition, worldSeed);
 
         byte[] savedDataArray = _persistence.LoadChunkFromDisk(position);
         if (savedDataArray != null && !_failedChunksSet.Contains(position))
@@ -195,7 +198,7 @@ public class ChunkLifecycleManager : MonoBehaviour
                 if (queue.CurrentlyGenerating == position) queue.CurrentlyGenerating = null;
             };
 
-            mapGenerator.GenerateChunkAsync(haloDictionary, position, _noiseScale);
+            mapGenerator.GenerateChunkAsync(haloDictionary, position, _noiseScale, worldSeed);
         }
     }
 
@@ -240,11 +243,13 @@ public class ChunkLifecycleManager : MonoBehaviour
     /// <summary>
     /// Instancia o prefab do chunk, configura e registra no dicionário ativo.
     /// </summary>
-    private MapGenerator InstantiateChunk(Vector2Int position, Vector3 worldPosition)
+    private MapGenerator InstantiateChunk(Vector2Int position, Vector3 worldPosition, int worldSeed)
     {
         GameObject chunkObject   = Instantiate(_chunkPrefab, worldPosition, Quaternion.identity, _chunksContainer);
+        chunkObject.name = "Chunk" + position;
         MapGenerator mapGenerator = chunkObject.GetComponent<MapGenerator>();
         mapGenerator.Setup(_playerTransform.gameObject, _worldGenerator);
+        mapGenerator.SetIslandSampler(_islandMapSampler);
         _activeChunksDictionary.Add(position, mapGenerator);
         return mapGenerator;
     }

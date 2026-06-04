@@ -1,0 +1,36 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9951dcfcc219a8f4f934427ea152dbf9, type: 3}
+  m_Name: Water
+  m_EditorClassIdentifier: Assembly-CSharp::Tile
+  _tilemapTile: {fileID: 11400000, guid: 441c235fde2e52a43b95ed12665d57ab, type: 2}
+  _weight: 0.5
+  _spawnableCreaturesList:
+  - _creaturePrefab: {fileID: 8897055980418512927, guid: c1b7338709da5f14ea69e106a99df9c4, type: 3}
+    _quantity: 1
+    _spawnChance: 0.00005
+  - _creaturePrefab: {fileID: 4994657344583832398, guid: b9d13193d694d0a4d8581728bf07c016, type: 3}
+    _quantity: 1
+    _spawnChance: 0.000005
+  - _creaturePrefab: {fileID: 6473111734123772395, guid: df9b7eceddff04947a450719c75cef9d, type: 3}
+    _quantity: 5
+    _spawnChance: 0.001
+  - _creaturePrefab: {fileID: 3166267825794385228, guid: e5a679157031fd646af1c0e67d47b736, type: 3}
+    _quantity: 1
+    _spawnChance: 0.000005
+  - _creaturePrefab: {fileID: 8892446297449537261, guid: 197d5428b73fbf743911a82b2344c7c0, type: 3}
+    _quantity: 1
+    _spawnChance: 0.000005
+  _metadata:
+    _layer: 0
+    _type: 0
+    _direction: 8
