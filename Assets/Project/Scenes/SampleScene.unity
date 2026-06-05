@@ -6602,9 +6602,9 @@ BoxCollider2D:
   m_Offset: {x: 0, y: 0}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0}
-    oldSize: {x: 0.33, y: 0.25}
-    newSize: {x: 0.33, y: 0.25}
+    pivot: {x: 0.5, y: 0.1}
+    oldSize: {x: 0.32, y: 0.23}
+    newSize: {x: 0.32, y: 0.23}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
@@ -6687,12 +6687,12 @@ SpriteRenderer:
   m_SortingLayer: 1
   m_SortingOrder: 0
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 7808028151744729215, guid: 20664fd8321d7be4e9654a5c7a8939ee, type: 3}
+  m_Sprite: {fileID: -832099650, guid: 2d22f03fc776ae8458dde2d391338c35, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 0.33, y: 0.25}
+  m_Size: {x: 0.32, y: 0.23}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 0
@@ -12500,7 +12500,7 @@ MonoBehaviour:
   _menuMusicList:
   - {fileID: 8300000, guid: d84d7dcb6aed87e4699520796ae6a27b, type: 3}
   _seaSound: {fileID: 8300000, guid: 6453971a4ae4d054bb85a4307270f905, type: 3}
-  _ambientVolume: 0.15
+  _ambientVolume: 0.191
   _minInterval: 5
   _maxInterval: 20
   _fadeDuration: 1
@@ -21147,6 +21147,7 @@ MonoBehaviour:
   _playerTransform: {fileID: 679149527}
   _viewDistance: 2
   _tilesetData: {fileID: 11400000, guid: 6b5aba90c8cd3df43b4f44506abd15ea, type: 2}
+  _worldSeed: 99999999
   _shouldClearSaveOnStart: 1
   _creaturesContainer: {fileID: 344813211}
 --- !u!114 &1829302569

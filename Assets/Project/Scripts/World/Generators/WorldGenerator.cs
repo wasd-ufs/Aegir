@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections.Generic;
 
 /// <summary>
 /// Orquestrador central do mundo procedural baseado em chunks.
@@ -17,6 +18,7 @@ public class WorldGenerator : MonoBehaviour
     [SerializeField] private Transform _playerTransform;
     [SerializeField] private int _viewDistance = 2;
     [SerializeField] private TilesetData _tilesetData;
+    [SerializeField] private int _worldSeed = 0;
 
     [Header("Developer Tools")]
     [SerializeField] private bool _shouldClearSaveOnStart = false;
@@ -37,6 +39,7 @@ public class WorldGenerator : MonoBehaviour
     private ChunkLifecycleManager _lifecycleManager;
     private StructureGenerator _structureGenerator;
     private PlayerTransitionController _transitionController;
+    private IslandMapSampler _islandMapSampler;
 
     // =========================================================================
     // Subsistemas — Classes C# puras
@@ -48,6 +51,7 @@ public class WorldGenerator : MonoBehaviour
     private WorldTileQuery _tileQuery;
     private HaloBuilder _haloBuilder;
     private ChunkNeighborNotifier _neighborNotifier;
+    private IslandLocator _islandLocator;
 
     // =========================================================================
     // Estado Interno
@@ -72,6 +76,8 @@ public class WorldGenerator : MonoBehaviour
         _cachedCellSize = _chunkPrefab.GetComponent<Grid>().cellSize.x;
 
         _persistence    = new ChunkPersistence();
+        _islandMapSampler = new IslandMapSampler(_worldSeed);
+        _islandLocator = new IslandLocator(_islandMapSampler, _chunkSize);
         if (_shouldClearSaveOnStart) _persistence.ClearSaveData();
 
         _generationQueue   = new ChunkGenerationQueue();
@@ -80,20 +86,23 @@ public class WorldGenerator : MonoBehaviour
         _neighborNotifier  = new ChunkNeighborNotifier(_lifecycleManager, _chunkSize);
         _visibilityTracker = new ChunkVisibilityTracker(_lifecycleManager, _viewDistance);
 
-        _lifecycleManager.Setup(_persistence, _haloBuilder, _neighborNotifier, this, _playerTransform);
+        _lifecycleManager.Setup(_persistence, _haloBuilder, _neighborNotifier, this, _playerTransform, _islandMapSampler);
         _structureGenerator.Setup(_tileQuery, _lifecycleManager, _chunkSize, _cachedCellSize);
         _transitionController.Setup(_tileQuery, _lifecycleManager, Camera.main, _cachedCellSize);
     }
 
     private void Start()
     {
-        _lastPlayerChunkPosition = _tileQuery.GetPlayerChunkPosition(_playerTransform);
+        _lastPlayerChunkPosition = _tileQuery.GetPlayerChunkPosition(_lifecycleManager.ActivePlayer);
         GenerateInitialChunks(_lastPlayerChunkPosition);
+        Vector3 islandPos = GetRandomIslandPosition(1, 10);
+        if (islandPos != Vector3.zero)
+            Debug.Log($"Ilha encontrada em: {islandPos} | Chunk equivalente: {_tileQuery.GetChunkPositionFromWorld(islandPos)}");
     }
 
     private void Update()
     {
-        Vector2Int currentPlayerChunk = _tileQuery.GetPlayerChunkPosition(_playerTransform);
+        Vector2Int currentPlayerChunk = _tileQuery.GetPlayerChunkPosition(_lifecycleManager.ActivePlayer);
 
         if (currentPlayerChunk != _lastPlayerChunkPosition)
         {
@@ -108,7 +117,7 @@ public class WorldGenerator : MonoBehaviour
         {
             _generationQueue.CurrentlyGenerating = nextPosition;
             Vector3 worldPosition = _tileQuery.GetChunkWorldPosition(nextPosition);
-            _lifecycleManager.CreateOrLoadChunkAsync(nextPosition, worldPosition, _generationQueue);
+            _lifecycleManager.CreateOrLoadChunkAsync(nextPosition, worldPosition, _generationQueue, _worldSeed);
         }
 
         _structureGenerator.ProcessDecorations();
@@ -133,7 +142,7 @@ public class WorldGenerator : MonoBehaviour
                     if (_lifecycleManager.GetActiveChunk(chunkPosition) != null) continue;
 
                     Vector3 worldPosition = _tileQuery.GetChunkWorldPosition(chunkPosition);
-                    _lifecycleManager.CreateOrLoadChunkSync(chunkPosition, worldPosition);
+                    _lifecycleManager.CreateOrLoadChunkSync(chunkPosition, worldPosition, _worldSeed);
                 }
             }
         }
@@ -182,6 +191,23 @@ public class WorldGenerator : MonoBehaviour
     public Vector2Int GetChunkPosFromWorld(Vector3 worldPosition)
     {
         return _tileQuery.GetChunkPositionFromWorld(worldPosition);
+    }
+
+    public Vector3 GetRandomIslandPosition(int minRadius, int maxRadius)
+    {
+        Vector2Int playerChunk = _tileQuery.GetPlayerChunkPosition(_lifecycleManager.ActivePlayer);
+        List<Vector2Int> candidates = _islandLocator.FindIslandsInRange(
+            playerChunk, minRadius, maxRadius);
+
+        if (candidates.Count == 0) return Vector3.zero; // sem ilhas no raio — tratar no chamador
+
+        foreach (Vector2Int candidate in candidates)
+        {
+            Debug.Log(_tileQuery.GetChunkWorldPosition(candidate));
+        }
+
+        Vector2Int chosen = candidates[Random.Range(0, candidates.Count)];
+        return _tileQuery.GetChunkWorldPosition(chosen);
     }
 
     // Redireciona a verificação de chunks para o novo _lifecycleManager (usado pelo NPCsMovement)

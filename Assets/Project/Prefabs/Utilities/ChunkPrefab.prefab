@@ -91,7 +91,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 463a600b36f0ed1459444ef1e703d181, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WFCSolver
-  _collapsesPerFrame: 20
+  _collapsesPerFrame: 30
+  _minBeachRadius: 2
+  _maxBeachRadius: 6
+  _beachNoiseScale: 0.03
+  _oceanMaskPadding: 8
 --- !u!114 &6275219399073290002
 MonoBehaviour:
   m_ObjectHideFlags: 0
