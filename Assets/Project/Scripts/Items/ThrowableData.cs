@@ -4,6 +4,10 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "New Throwable", menuName = "Scriptable Objects/ThrowableData")]
 public class ThrowableData : ItemData
 {
+
+    // A categoria deste item é sempre Throwable, então sobrescreve a propriedade para retornar isso.
+    public override ItemCategory Category => ItemCategory.Throwable;
+
     #region Atributos de Arremesso
     [Header("Restricoes e Alvos")]
     [Tooltip("Lista de classes que tem permissao para arremessar este item.")]

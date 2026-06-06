@@ -8,6 +8,10 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "New Material", menuName = "Scriptable Objects/MaterialData")]
 public class MaterialData : ItemData
 {
+
+    // A categoria deste item é sempre ShipMaterial, então sobrescreve a propriedade para retornar isso.
+    public override ItemCategory Category => ItemCategory.ShipMaterial;
+
     #region Estruturas
     [System.Serializable]
     public struct NpcDropSource

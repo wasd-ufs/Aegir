@@ -3,6 +3,10 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "New Consumable", menuName = "Scriptable Objects/ConsumableData")]
 public class ConsumableData : ItemData
 {
+
+    // A categoria deste item é sempre Consumable, então sobrescreve a propriedade para retornar isso.
+    public override ItemCategory Category => ItemCategory.Consumable;
+
     #region Tipos e Efeitos
     public enum Effect { Heal, Strength }
 

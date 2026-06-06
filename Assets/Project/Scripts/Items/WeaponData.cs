@@ -4,6 +4,11 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "New Weapon", menuName = "Scriptable Objects/WeaponData")]
 public class WeaponData : ItemData
 {
+
+    // A categoria deste item é sempre Weapon, então sobrescreve a propriedade para retornar isso.
+    public override ItemCategory Category => ItemCategory.Weapon;
+
+
     #region Estruturas
     [System.Serializable]
     public struct AttackBonus

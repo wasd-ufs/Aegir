@@ -19,6 +19,7 @@ public abstract class ItemData : ScriptableObject
         ShipMaterial,
         KeyItem,
         Collectible,
+        Throwable,
         Misc
     }
     #endregion

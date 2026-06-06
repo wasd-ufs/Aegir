@@ -5,6 +5,10 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "New Armor", menuName = "Scriptable Objects/ArmorData")]
 public class ArmorData : ItemData
 {
+
+    // A categoria deste item é sempre Armadura, então sobrescreve a propriedade para retornar isso.
+    public override ItemCategory Category => ItemCategory.Armor;
+
     #region Estruturas
     [System.Serializable]
     public struct ResistanceBonus
