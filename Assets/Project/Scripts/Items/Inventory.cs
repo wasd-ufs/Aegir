@@ -199,8 +199,10 @@ public class Inventory : MonoBehaviour
     }
     
     
-    
-    
+    public void FilterByItemType(ItemData.ItemCategory category) 
+    { 
+        _inventorySlots = _inventorySlots.FindAll(slot => slot.item.Category == category); 
+    }
     
     
     public void SortByItemType() 
