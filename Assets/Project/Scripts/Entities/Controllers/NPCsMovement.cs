@@ -367,7 +367,7 @@ public class NPCsMovement : MonoBehaviour
             }
         }
         else if ((collider.gameObject.CompareTag("AgressiveCreature" ) && !isAgressive && Presa == null) ||
-            (nPCs.CreatureType == NPCsData.Type.Animal || nPCs.CreatureType == NPCsData.Type.Monster) && collider.gameObject.CompareTag("PassiveCreature") && isAgressive && Presa == null)
+            (nPCs.CreatureType == NPCsData.Type.Animal || nPCs.CreatureType == NPCsData.Type.Monstro) && collider.gameObject.CompareTag("PassiveCreature") && isAgressive && Presa == null)
         {
             // Inicia Alerta entre ecossistema (carnívoros vs passivos)
             isAlert = true;

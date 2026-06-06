@@ -12,13 +12,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 25e528fdfff2cd44488f19bc95ab3e2e, type: 3}
   m_Name: Bomb
   m_EditorClassIdentifier: Assembly-CSharp::ThrowableData
-  itemName: Bomba
-  description: KABOOOM!!!
-  Icon: {fileID: -2980712377497353079, guid: 961b45b1ead9bfa43b9661aba3fc3db1, type: 3}
-  possibleTypes: 
-  maximumQttPerSlot: 15
-  unitaryPrice: 500
-  throwableBy: 000000000100000002000000030000000400000006000000
-  damageType: 0
-  intensity: 30
-  maxTargetQtt: 2
+  _itemName: Bomba Arremessavel
+  _description: KABOOOOOOM!!!!!!!!!
+  _icon: {fileID: -2980712377497353079, guid: 961b45b1ead9bfa43b9661aba3fc3db1, type: 3}
+  _possibleTypes: 0100000003000000
+  _maximumQuantityPerSlot: 2
+  _unitaryPrice: 50
+  _unitaryWeight: 5
+  _rarity: 2
+  _category: 0
+  _throwableByList: 02000000
+  _maxTargetQuantity: 4
+  _damageType: 2
+  _intensity: 30

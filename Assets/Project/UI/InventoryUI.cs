@@ -1,208 +1,332 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using UnityEngine.InputSystem;
+using UnityEngine.EventSystems;
 
-/// <summary>
-/// Controla a interface gráfica do inventário do jogador.
-/// Gerencia a exibição de itens, seleção de alvos para consumíveis e equipamentos.
-/// </summary>
 public class InventoryUI : MonoBehaviour
 {
-    #region Referências de UI
+    #region Referencias de UI
     [Header("Containers")]
-    [SerializeField] private Transform _container;
-    [SerializeField] private Transform _crewContainer;
+    [SerializeField] private Transform _slotContainer;
+    [SerializeField] private Transform _menuContainer;
+    [SerializeField] private Transform _actionsContainer;
     [SerializeField] private Transform _background;
-    [SerializeField] private Transform _title;
+    [SerializeField] private Transform _inventoryDivs;
+    [SerializeField] private Transform _selectedItemDiv;
+    [SerializeField] private Transform _extras;
+    [SerializeField] private Transform _popUpContainer;
+    [SerializeField] private Transform _popUpItemsContainer;
 
-    [Header("Prefabs e Estética")]
+    [Header("Item Selecionado")]
+    [SerializeField] private Image _itemImage;
+    [SerializeField] private TextMeshProUGUI _selectedItemNameText;
+    [SerializeField] private TextMeshProUGUI _selectedItemDescriptionText;
+    [SerializeField] private TextMeshProUGUI _selectedItemPriceText;
+    [SerializeField] private TextMeshProUGUI _selectedItemFullInfoText;
+
+    [Header("Prefabs")]
     [SerializeField] private GameObject _slotPrefab;
-    [SerializeField] private GameObject _buttonPrefab;
-    [SerializeField] private Sprite _uiSprite;
-    #endregion
+    [SerializeField] private GameObject _actionPrefab;
+    [SerializeField] private GameObject _popUpPrefab;
+    [SerializeField] private GameObject _menuPrefab;
+    [SerializeField] private GameObject _menuBarPrefab;
 
-    #region Estado do Inventário
     [Header("Estado Interno")]
     [SerializeField] private Inventory _inventory;
-
-    private bool _isInventoryOpen = false;
-    private bool _isWaitingForTarget = false;
-    private ItemData _pendingItem; 
-    private PlayerInputActions _inputActions;
+    [SerializeField] private TextMeshProUGUI _totalWeightText;
     #endregion
 
-    #region Inicialização e Ciclo de Vida
+    #region Estado
+    private bool _isInventoryOpen = false;
+    private Inventory.Slot _selectedSlot = new();
+    private List<GameObject> _currentSlotsList = new();
+    private PlayerInputActions _inputActions;
+    private int _lastSelectedSlotIndex;
+
+    // Traducao das categorias para portugues sem acento
+    private static readonly Dictionary<BaseItemData.ItemCategory, string> _categoryNamesDictionary = new()
+    {
+        { BaseItemData.ItemCategory.Weapon,       "Arma"              },
+        { BaseItemData.ItemCategory.Armor,        "Armadura"          },
+        { BaseItemData.ItemCategory.Consumable,   "Consumivel"        },
+        { BaseItemData.ItemCategory.ShipMaterial, "Material do Navio" },
+        { BaseItemData.ItemCategory.KeyItem,      "Item Chave"        },
+        { BaseItemData.ItemCategory.Collectible,  "Colecionavel"      },
+        { BaseItemData.ItemCategory.Misc,         "Misc"              },
+        { BaseItemData.ItemCategory.Throwable,    "Arremessavel"      }
+    };
+    #endregion
+
+    #region Ciclo de Vida
     private void Awake()
     {
         _inputActions = new();
-        UpdateUI();
+        UpdateUI(_inventory.InventorySlots);
 
-        _container.gameObject.SetActive(_isInventoryOpen);
-        _title.gameObject.SetActive(_isInventoryOpen);
-        _crewContainer.gameObject.SetActive(_isInventoryOpen);
-        _background.gameObject.SetActive(_isInventoryOpen);
+        _slotContainer.gameObject.SetActive(false);
+        _background.gameObject.SetActive(false);
+        _inventoryDivs.gameObject.SetActive(false);
+        _extras.gameObject.SetActive(false);
     }
 
     private void Update()
     {
         if (_inputActions.Player.Inventory.WasPressedThisFrame())
-        {
-            UpdateUI();
-            _isInventoryOpen = !_isInventoryOpen;
+            HandleInventoryToggle();
 
-            _container.gameObject.SetActive(_isInventoryOpen);
-            _title.gameObject.SetActive(_isInventoryOpen);
-            _background.gameObject.SetActive(_isInventoryOpen);
+        if (_inputActions.Player.CancelarSelecao.WasPressedThisFrame())
+            HandleCancelSelection();
 
-            if (_isWaitingForTarget && _isInventoryOpen)
-                _crewContainer.gameObject.SetActive(true);
-            else
-                _crewContainer.gameObject.SetActive(false);
-        }
+        if (_inputActions.Player.Descartar.WasPressedThisFrame() && _selectedSlot.item != null)
+            DiscardItem();
 
-        if (_inputActions.Player.CancelarSeleção.WasPressedThisFrame())
-        {
-            CancelSelection();
-        }
+        if (_inputActions.Player.Usar.WasPressedThisFrame() && _selectedSlot.item != null)
+            UseItem();
+
+        if (_inputActions.Player.OrganizarInventario.WasPressedThisFrame())
+            OpenSortPopUp();
     }
 
-    private void OnEnable()
+    private void OnEnable()  => _inputActions.Enable();
+    private void OnDisable() => _inputActions.Disable();
+    #endregion
+
+    #region Handlers de Input
+    private void HandleInventoryToggle()
     {
-        _inputActions.Enable();
+        _isInventoryOpen = !_isInventoryOpen;
+        UpdateUI(_inventory.InventorySlots);
+        UpdateActionsContainer();
+
+        if (!_isInventoryOpen)
+            _selectedSlot = new();
+
+        _slotContainer.gameObject.SetActive(_isInventoryOpen);
+        _background.gameObject.SetActive(_isInventoryOpen);
+        _inventoryDivs.gameObject.SetActive(_isInventoryOpen);
+        _extras.gameObject.SetActive(_isInventoryOpen);
     }
 
-    private void OnDisable()
+    private void HandleCancelSelection()
     {
-        _inputActions.Disable();
+        if (_popUpContainer.gameObject.activeSelf)
+        {
+            _popUpContainer.gameObject.SetActive(false);
+            if (_currentSlotsList.Count > 0)
+                EventSystem.current.SetSelectedGameObject(_currentSlotsList[0]);
+            return;
+        }
+
+        _selectedSlot = new();
+        _selectedItemDiv.gameObject.SetActive(false);
+        EventSystem.current.SetSelectedGameObject(null);
+        UpdateActionsContainer();
     }
     #endregion
 
-    #region Lógica de Negócio (UI)
-    /// <summary>
-    /// Reconstrói visualmente os slots do inventário baseado nos dados da classe Inventory.
-    /// </summary>
-    public void UpdateUI()
+    #region UI Principal
+    public void UpdateUI(List<Inventory.Slot> slots)
     {
-        foreach (Transform inventoryItem in _container)
+        foreach (Transform child in _slotContainer)
+            Destroy(child.gameObject);
+
+        _currentSlotsList = new();
+
+        for (int i = 0; i < slots.Count; i++)
+            BuildSlot(i, slots);
+
+        _selectedItemDiv.gameObject.SetActive(_selectedSlot.item != null);
+
+        if (_currentSlotsList.Count > 0)
+            EventSystem.current.SetSelectedGameObject(_currentSlotsList[0]);
+
+        GameObject allButton = BuildMenu();
+        RefreshWeightText();
+
+        if (_currentSlotsList.Count <= 0)
+            EventSystem.current.SetSelectedGameObject(allButton);
+    }
+
+    private void BuildSlot(int index, List<Inventory.Slot> slots)
+    {
+        Inventory.Slot slot = slots[index];
+
+        GameObject newSlot = Instantiate(_slotPrefab, _slotContainer);
+        _currentSlotsList.Add(newSlot);
+
+        InventorySlotUI slotUI = newSlot.GetComponent<InventorySlotUI>();
+        slotUI.ConfigurateVisual(slot.item, slot.quantity);
+        slotUI.OnSlotSelected.AddListener(() => SelectItem(slot));
+        slotUI.OnSlotSelected.AddListener(() => _lastSelectedSlotIndex = index);
+    }
+
+    public void SelectItem(Inventory.Slot slot)
+    {
+        _itemImage.sprite                = slot.item.Icon;
+        _selectedItemNameText.text       = slot.item.ItemName;
+        _selectedItemDescriptionText.text = slot.item.Description;
+        _selectedItemPriceText.text      = $"Preco: {slot.item.UnitaryPrice:F2}";
+        _selectedItemFullInfoText.text   = slot.item.GetFullDescriptionText();
+
+        _selectedSlot = slot;
+        _selectedItemDiv.gameObject.SetActive(true);
+        UpdateActionsContainer();
+    }
+
+    public void UpdateActionsContainer()
+    {
+        foreach (Transform child in _actionsContainer)
+            Destroy(child.gameObject);
+
+        foreach (InputAction action in GetCurrentActions())
         {
-            Destroy(inventoryItem.gameObject);
-        }
-
-        foreach (Inventory.Slot inventorySlot in _inventory.InventorySlots)
-        {
-            GameObject newSlot = Instantiate(_slotPrefab, _container);
-            newSlot.transform.GetChild(0).GetComponent<Image>().sprite = inventorySlot.item.Icon;
-
-            ItemData selectedItem = inventorySlot.item;
-            newSlot.GetComponent<Button>().onClick.AddListener(() => PrepareItemUsage(selectedItem));
-
-            if (inventorySlot.quantity <= 1)
-                newSlot.transform.GetChild(2).GetComponent<TextMeshProUGUI>().text = "";
-            else
-                newSlot.transform.GetChild(2).GetComponent<TextMeshProUGUI>().text = inventorySlot.quantity + " x";
-        }
-
-        int emptySlotsCount = _inventory.MaxItemsPerInventory - _inventory.InventorySlots.Count;
-
-        for (int i = 0; i < emptySlotsCount; i++)
-        {
-            GameObject newSlot = Instantiate(_slotPrefab, _container);
-            newSlot.transform.GetChild(0).GetComponent<Image>().sprite = _uiSprite;
-            newSlot.transform.GetChild(2).GetComponent<TextMeshProUGUI>().text = "";               
+            GameObject newAction = Instantiate(_actionPrefab, _actionsContainer);
+            newAction.GetComponent<TextMeshProUGUI>().text = $"[{action.GetBindingDisplayString()}] {action.name}";
         }
     }
 
-    /// <summary>
-    /// Atualiza os botões da tripulação elegível para receber o item selecionado.
-    /// </summary>
-    public void UpdateCrewUI()
+    private List<InputAction> GetCurrentActions()
     {
-        foreach (Transform crewMember in _crewContainer)
-            Destroy(crewMember.gameObject);
+        var actionsList = new List<InputAction>();
 
-        foreach (GameObject npcObject in _inventory.GetComponent<CrewData>().CrewList)
+        if (!_isInventoryOpen) return actionsList;
+
+        if (_selectedSlot.item != null)
         {
-            NPCsData npcData = npcObject.GetComponent<NPCsData>();
-
-            if (!_pendingItem.PossibleTypes.Contains(npcData.CreatureType)) continue;
-
-            bool isCompatible = false;
-
-            if (_pendingItem is ConsumableData)
-                isCompatible = true;
-            else if (_pendingItem is WeaponData weaponData && weaponData.AllowedClassList.Contains(npcData.CreatureClass))
-                isCompatible = true;
-            else if (_pendingItem is ArmorData armorData && armorData.AllowedClassList.Contains(npcData.CreatureClass))
-                isCompatible = true;
-
-            if (!isCompatible) continue;
-
-            GameObject newCrewMemberButton = Instantiate(_buttonPrefab, _crewContainer);
-            newCrewMemberButton.GetComponent<Button>().onClick.AddListener(() => ApplyItemToTarget(npcData));
-            newCrewMemberButton.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = npcData.NpcName;
+            actionsList.Add(_inputActions.Player.Usar);
+            actionsList.Add(_inputActions.Player.Descartar);
+            actionsList.Add(_inputActions.Player.CancelarSelecao);
         }
 
-        _crewContainer.gameObject.SetActive(true);
+        actionsList.Add(_inputActions.Player.OrganizarInventario);
+        actionsList.Add(_inputActions.Player.Sair);
+        return actionsList;
     }
 
-    public void ApplyItemToTarget(NPCsData targetNpc)
+    private GameObject BuildMenu()
     {
-        if (!_isWaitingForTarget || _pendingItem == null) return;
+        foreach (Transform child in _menuContainer)
+            Destroy(child.gameObject);
 
-        if (_pendingItem is ConsumableData consumableData)
+        // Botao "Tudo"
+        GameObject allButton = Instantiate(_menuPrefab, _menuContainer);
+        allButton.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = "Tudo";
+        Instantiate(_menuBarPrefab, _menuContainer);
+
+        if (allButton.TryGetComponent<Button>(out Button allBtn))
+            allBtn.onClick.AddListener(() => UpdateUI(_inventory.InventorySlots));
+
+        // Botao por categoria
+        var categoriesArray = (BaseItemData.ItemCategory[]) System.Enum.GetValues(typeof(BaseItemData.ItemCategory));
+
+        foreach (BaseItemData.ItemCategory category in categoriesArray)
         {
-            targetNpc.ApplyConsumable(consumableData);
-            _inventory.RemoveItem(_pendingItem, 1);
-            SFXManager.Instance?.PlayItem();
+            GameObject menuButton = Instantiate(_menuPrefab, _menuContainer);
+            menuButton.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = _categoryNamesDictionary[category];
+
+            if (menuButton.TryGetComponent<Button>(out Button btn))
+                btn.onClick.AddListener(() => UpdateUI(_inventory.FilterByItemType(category)));
+
+            bool isLast = category == categoriesArray[categoriesArray.Length - 1];
+            if (!isLast)
+                Instantiate(_menuBarPrefab, _menuContainer);
         }
-        else if (_pendingItem is WeaponData weaponData)
-        {
-            WeaponData oldWeapon = targetNpc.EquipWeapon(weaponData);
-            _inventory.RemoveItem(_pendingItem, 1);
-
-            if (oldWeapon != null)
-                _inventory.AddItem(oldWeapon, 1);
-
-            SFXManager.Instance?.PlayItem();
-        }
-        else if (_pendingItem is ArmorData armorData)
-        {
-            ArmorData oldArmor = targetNpc.EquipArmor(armorData);
-            _inventory.RemoveItem(_pendingItem, 1);
-
-            if (oldArmor != null)
-                _inventory.AddItem(oldArmor, 1);
-
-            SFXManager.Instance?.PlayItem();
-        }
-
-        _isWaitingForTarget = false;
-        _pendingItem = null;
-        _crewContainer.gameObject.SetActive(false);
-
-        UpdateUI();
+        return allButton;
     }
 
-    public void PrepareItemUsage(ItemData selectedItem)
+    private void RefreshWeightText()
     {
-        if (selectedItem is ConsumableData consumableData 
-         || selectedItem is WeaponData weaponData
-         || selectedItem is ArmorData armorData)
-        {
-            _pendingItem = selectedItem;
-            _isWaitingForTarget = true;
+        _totalWeightText.text = $"peso total: {_inventory.CalculateTotalWeight():F1}/{_inventory.GetMaxInventoryWeight():F1} kg\n[alinhamento: pirata procurado]";
+    }
+    #endregion
 
-            Debug.Log("Selecione o membro da tripulação para aplicar o item!");
+    #region Acoes de Item
+    public void UseItem()
+    {
+        if (_selectedSlot.item == null) return;
 
-            UpdateCrewUI();
-        }
+        _selectedSlot.item.UseItem();
+        _selectedSlot = _inventory.RemoveItemAt(_lastSelectedSlotIndex);
+
+        if (_selectedSlot.quantity > 0)
+            RefreshCurrentSlotUI();
+        else
+            HandleSlotRemoved();
     }
 
-    public void CancelSelection()
+    public void DiscardItem()
     {
-        _isWaitingForTarget = false;
-        _pendingItem = null;
-        _crewContainer.gameObject.SetActive(false);
+        if (_selectedSlot.item == null) return;
+
+        _selectedSlot = _inventory.RemoveItemAt(_lastSelectedSlotIndex);
+
+        if (_selectedSlot.quantity > 0)
+            RefreshCurrentSlotUI();
+        else
+            HandleSlotRemoved();
+    }
+
+    private void RefreshCurrentSlotUI()
+    {
+        InventorySlotUI slotUI = _slotContainer.GetChild(_lastSelectedSlotIndex).GetComponent<InventorySlotUI>();
+        slotUI.ConfigurateVisual(_selectedSlot.item, _selectedSlot.quantity);
+        RefreshWeightText();
+        UpdateActionsContainer();
+    }
+
+    private void HandleSlotRemoved()
+    {
+        UpdateUI(_inventory.InventorySlots);
+        UpdateActionsContainer();
+
+        if (_currentSlotsList.Count == 0) return;
+
+        int targetIndex = _lastSelectedSlotIndex > 0 ? _lastSelectedSlotIndex - 1 : 0;
+        EventSystem.current.SetSelectedGameObject(_currentSlotsList[targetIndex]);
+    }
+    #endregion
+
+    #region PopUp de Ordenacao
+    public void OpenSortPopUp()
+    {
+        foreach (Transform child in _popUpItemsContainer)
+            Destroy(child.gameObject);
+
+        // Titulo do popup esta no primeiro filho do container
+        _popUpContainer.GetChild(0).GetComponentInChildren<TextMeshProUGUI>().text = "Organizar por:";
+
+        var sortOptionsList = new List<(string label, System.Action callback)>
+        {
+            ("Tipo de Item",     () => _inventory.SortByItemType()),
+            ("Ordem Alfabetica", () => _inventory.SortAlphabetically()),
+            ("Raridade / Nivel", () => _inventory.SortByRarityOrLevel()),
+            ("Preco / Valor",    () => _inventory.SortByPrice()),
+        };
+
+        GameObject firstButton = null;
+
+        foreach (var (label, callback) in sortOptionsList)
+        {
+            GameObject option = Instantiate(_popUpPrefab, _popUpItemsContainer);
+            option.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = label;
+
+            if (option.TryGetComponent<Button>(out Button btn))
+            {
+                btn.onClick.AddListener(() =>
+                {
+                    callback.Invoke();
+                    UpdateUI(_inventory.InventorySlots);
+                    _popUpContainer.gameObject.SetActive(false);
+                });
+
+                firstButton ??= option;
+            }
+        }
+
+        _popUpContainer.gameObject.SetActive(true);
+        EventSystem.current.SetSelectedGameObject(firstButton);
     }
     #endregion
 }

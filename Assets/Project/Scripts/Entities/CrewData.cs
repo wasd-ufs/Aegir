@@ -183,10 +183,10 @@ public class CrewData : MonoBehaviour
         if (gameObject.CompareTag("Player"))
         {
             bool isCaptain =
-                npcData.CreatureClass == NPCsData.Class.Captain;
+                npcData.CreatureClass == NPCsData.Class.Capitao;
 
             bool isBoat =
-                npcData.CreatureClass == NPCsData.Class.Ship;
+                npcData.CreatureClass == NPCsData.Class.Barco;
 
             if (isCaptain || isBoat)
             {

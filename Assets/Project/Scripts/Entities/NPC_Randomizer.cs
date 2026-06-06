@@ -103,7 +103,7 @@ public class NPCRandomizer : MonoBehaviour
 
             foreach (Enum classValue in classValues)
             {
-                if ((NPCsData.Class)classValue != NPCsData.Class.Ship)
+                if ((NPCsData.Class)classValue != NPCsData.Class.Barco)
                 {
                     availableClassesList.Add((NPCsData.Class)classValue);
                 }

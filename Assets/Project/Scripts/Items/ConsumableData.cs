@@ -1,17 +1,17 @@
 using UnityEngine;
 
-/// <summary>
-/// Define itens consumíveis (como poções ou comida) que aplicam efeitos temporários 
-/// ou instantâneos (como cura ou bónus de força) em unidades durante o combate ou no mapa.
-/// </summary>
 [CreateAssetMenu(fileName = "New Consumable", menuName = "Scriptable Objects/ConsumableData")]
-public class ConsumableData : ItemData
+public class ConsumableData : BaseItemData
 {
-    #region Tipos e Efeitos
-    public enum Effect {Heal, Strength}
 
-    [Header("Atributos do Consumível")]
-    [Tooltip("A magnitude do efeito aplicado (quantidade de HP curado ou força adicionada).")]
+    // A categoria deste item é sempre Consumable, então sobrescreve a propriedade para retornar isso.
+    public override ItemCategory Category => ItemCategory.Consumable;
+
+    #region Tipos e Efeitos
+    public enum Effect { Heal, Strength }
+
+    [Header("Atributos do Consumivel")]
+    [Tooltip("A magnitude do efeito aplicado.")]
     [SerializeField]
     private float _intensity;
 
@@ -19,16 +19,43 @@ public class ConsumableData : ItemData
     [SerializeField]
     private Effect _effectType;
 
-    [Tooltip("Duração do efeito em turnos de combate. (Use 1 para efeito imediato/único).")]
+    [Tooltip("Duracao do efeito em turnos. Use 1 para efeito imediato.")]
     [SerializeField]
     private int _durationInTurns = 1;
     #endregion
 
-    #region Propriedades Públicas
+    #region Propriedades Publicas
     public float Intensity => _intensity;
-
     public Effect EffectType => _effectType;
-
     public int DurationInTurns => _durationInTurns;
+
+    public override string GetItemType() => "Consumivel";
+
+    public override string GetPerTypeDescriptionText()
+    {
+        System.Text.StringBuilder sb = new System.Text.StringBuilder();
+
+        
+        sb.AppendLine($"Raridade: {Rarity}");
+        sb.AppendLine($"{FormatEffect(_effectType)}: {_intensity:F1}");
+        sb.Append(_durationInTurns <= 1 ? "Imediato" : $"Duracao: {_durationInTurns} turnos");
+
+        return sb.ToString().TrimEnd();
+    }
+
+    public override void UseItem()
+    {
+        // Deve ser feito   
+    }
+
+    private string FormatEffect(Effect effect)
+    {
+        return effect switch
+        {
+            Effect.Heal     => "Cura",
+            Effect.Strength => "Forca",
+            _               => effect.ToString()
+        };
+    }
     #endregion
 }
