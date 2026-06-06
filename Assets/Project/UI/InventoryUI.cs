@@ -55,6 +55,7 @@ public class InventoryUI : MonoBehaviour
         { ItemData.ItemCategory.KeyItem,      "Item Chave"        },
         { ItemData.ItemCategory.Collectible,  "Colecionavel"      },
         { ItemData.ItemCategory.Misc,         "Misc"              },
+        { ItemData.ItemCategory.Throwable,    "Arremessavel"      }
     };
     #endregion
 

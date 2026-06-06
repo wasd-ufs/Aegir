@@ -64,7 +64,7 @@ public abstract class ItemData : ScriptableObject
     [SerializeField]
     private int _rarity;
 
-    private ItemCategory _category;
+    public abstract ItemCategory Category { get; }
 
 
     #endregion
@@ -77,10 +77,6 @@ public abstract class ItemData : ScriptableObject
     public List<NPCsData.Type> PossibleTypes => _possibleTypes;
     public int MaximumQuantityPerSlot => _maximumQuantityPerSlot;
     public int UnitaryPrice => _unitaryPrice;
-    
-    
-    
-    public ItemCategory Category => _category;
     public int Rarity => _rarity;
 
 
