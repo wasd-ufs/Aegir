@@ -39,7 +39,7 @@ public class RecruitmentUI : MonoBehaviour
 
     private void Update()
     {
-        if (_inputActions.Player.CancelarSeleção.WasPressedThisFrame())
+        if (_inputActions.Player.CancelarSelecao.WasPressedThisFrame())
         {
            CloseScreen(); 
         }

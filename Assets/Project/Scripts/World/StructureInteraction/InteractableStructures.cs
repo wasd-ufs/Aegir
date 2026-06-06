@@ -31,7 +31,7 @@ public class InteractableStructures : MonoBehaviour
                 _structuresUI.ShowScreen(this, _structureData.StructureName);
             }
 
-            if (_inputActions.Player.CancelarSeleção.WasPressedThisFrame())
+            if (_inputActions.Player.CancelarSelecao.WasPressedThisFrame())
             {
                 _structuresUI.CloseScreen();
             }

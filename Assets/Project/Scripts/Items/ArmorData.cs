@@ -1,17 +1,11 @@
 using System.Collections.Generic;
+using UnityEditor.Overlays;
 using UnityEngine;
 
-/// <summary>
-/// Define os dados de uma armadura ou equipamento defensivo.
-/// Fornece mitigação de dano global e resistências elementais específicas.
-/// </summary>
 [CreateAssetMenu(fileName = "New Armor", menuName = "Scriptable Objects/ArmorData")]
 public class ArmorData : ItemData
 {
     #region Estruturas
-    /// <summary>
-    /// Bónus de resistência passiva contra um tipo de dano elemental específico.
-    /// </summary>
     [System.Serializable]
     public struct ResistanceBonus
     {
@@ -21,26 +15,67 @@ public class ArmorData : ItemData
     #endregion
 
     #region Atributos de Defesa
-    [Header("Restrições")]
+    [Header("Restricoes")]
     [Tooltip("Classes permitidas a equipar e utilizar esta armadura.")]
     [SerializeField]
     private List<NPCsData.Class> _allowedClassList;
 
     [Header("Status Defensivos")]
-    [Tooltip("Valor de armadura genérica subtraída de forma passiva ao dano recebido.")]
+    [Tooltip("Valor de armadura generica subtraida de forma passiva ao dano recebido.")]
     [SerializeField]
     private float _resistanceBaseValue;
 
-    [Tooltip("Resistências extra calculadas contra tipos específicos de ataque.")]
+    [Tooltip("Resistencias extra calculadas contra tipos especificos de ataque.")]
     [SerializeField]
     private List<ResistanceBonus> _perTypeResistanceBonusList;
     #endregion
 
-    #region Propriedades Públicas
+    #region Propriedades Publicas
     public List<NPCsData.Class> AllowedClassList => _allowedClassList;
-
     public float ResistanceBaseValue => _resistanceBaseValue;
-
     public List<ResistanceBonus> PerTypeResistanceBonusList => _perTypeResistanceBonusList;
+
+    public override string GetItemType() => "Armadura";
+
+    public override string GetPerTypeDescriptionText()
+    {
+        System.Text.StringBuilder sb = new System.Text.StringBuilder();
+
+        sb.AppendLine($"DEF: {_resistanceBaseValue:F1}");
+
+        if (_allowedClassList != null && _allowedClassList.Count > 0)
+            sb.AppendLine($"Pode ser usada por: {FormatClassList(_allowedClassList)}");
+
+        if (_perTypeResistanceBonusList != null && _perTypeResistanceBonusList.Count > 0)
+            foreach (ResistanceBonus bonus in _perTypeResistanceBonusList)
+                sb.AppendLine($"RES {FormatDamageType(bonus.damageType)}: +{bonus.intensity:F1}");
+
+        return sb.ToString().TrimEnd();
+    }
+
+    public override void UseItem()
+    {
+        // Deve ser feito   
+    }
+
+    private string FormatDamageType(NPCsData.DamageType damageType)
+    {
+        return damageType switch
+        {
+            NPCsData.DamageType.Physical => "Fisica",
+            NPCsData.DamageType.Magical  => "Magica",
+            NPCsData.DamageType.Fire     => "a Fogo",
+            NPCsData.DamageType.Ice      => "a Gelo",
+            NPCsData.DamageType.Poison   => "a Veneno",
+            NPCsData.DamageType.Holy     => "ao Sagrado",
+            NPCsData.DamageType.Cursed   => "ao Amaldicoado",
+            _                            => damageType.ToString()
+        };
+    }
+
+    private string FormatClassList(List<NPCsData.Class> classList)
+    {
+        return string.Join(", ", classList);
+    }
     #endregion
 }

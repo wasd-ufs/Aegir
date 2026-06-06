@@ -80,7 +80,7 @@ public class BattleManager : MonoBehaviour
 
     void Update()
     {
-        if (_inputActions.Player.CancelarSeleção.WasPressedThisFrame())
+        if (_inputActions.Player.CancelarSelecao.WasPressedThisFrame())
             CancelAction();
     }
 
@@ -467,10 +467,10 @@ public class BattleManager : MonoBehaviour
     /// <returns>True se a batalha chegou ao fim e não deve continuar o loop.</returns>
     private bool IsBattleOver()
     {
-        bool isPlayerDefeated = _playerCrew.CrewList.Any(g => g.GetComponent<NPCsData>()?.CreatureClass == NPCsData.Class.Ship && g.GetComponent<NPCsData>()?.isAlive == false)
-                             || _playerCrew.CrewList.Where(g => g.GetComponent<NPCsData>().CreatureClass != NPCsData.Class.Ship).All(g => g.GetComponent<NPCsData>().isAlive == false);
-        bool isEnemyDefeated = _enemyCrew.CrewList.Any(g => g.GetComponent<NPCsData>()?.CreatureClass == NPCsData.Class.Ship && g.GetComponent<NPCsData>()?.isAlive == false)
-                             || _enemyCrew.CrewList.Where(g => g.GetComponent<NPCsData>().CreatureClass != NPCsData.Class.Ship).All(g => g.GetComponent<NPCsData>().isAlive == false);
+        bool isPlayerDefeated = _playerCrew.CrewList.Any(g => g.GetComponent<NPCsData>()?.CreatureClass == NPCsData.Class.Barco && g.GetComponent<NPCsData>()?.isAlive == false)
+                             || _playerCrew.CrewList.Where(g => g.GetComponent<NPCsData>().CreatureClass != NPCsData.Class.Barco).All(g => g.GetComponent<NPCsData>().isAlive == false);
+        bool isEnemyDefeated = _enemyCrew.CrewList.Any(g => g.GetComponent<NPCsData>()?.CreatureClass == NPCsData.Class.Barco && g.GetComponent<NPCsData>()?.isAlive == false)
+                             || _enemyCrew.CrewList.Where(g => g.GetComponent<NPCsData>().CreatureClass != NPCsData.Class.Barco).All(g => g.GetComponent<NPCsData>().isAlive == false);
 
         if (isPlayerDefeated)
         {

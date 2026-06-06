@@ -234,12 +234,12 @@ public class CrewUI : MonoBehaviour
 
             switch (npcData.CreatureClass)
             {
-                case NPCsData.Class.Captain:
+                case NPCsData.Class.Capitao:
                     newCaptainHP = npcData.GetCurrentHealth();
                     newCaptainMaxHP = npcData.GetMaxHealth();
                     break;
 
-                case NPCsData.Class.Ship:
+                case NPCsData.Class.Barco:
                     newBoatHP = npcData.GetCurrentHealth();
                     newBoatMaxHP = npcData.GetMaxHealth();
                     break;

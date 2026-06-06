@@ -2,16 +2,13 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// Representa itens base que funcionam como materiais, itens de venda ou espólios (loot) comuns,
-/// registando adicionalmente quais criaturas podem largar este material.
+/// Representa materiais, itens de venda ou espolios comuns,
+/// registando quais criaturas podem largar este material.
 /// </summary>
 [CreateAssetMenu(fileName = "New Material", menuName = "Scriptable Objects/MaterialData")]
 public class MaterialData : ItemData
 {
     #region Estruturas
-    /// <summary>
-    /// Mapeia o NPC que deixa cair o item e a quantidade máxima possível no saque.
-    /// </summary>
     [System.Serializable]
     public struct NpcDropSource
     {
@@ -22,12 +19,41 @@ public class MaterialData : ItemData
 
     #region Atributos do Material
     [Header("Fontes do Material")]
-    [Tooltip("Lista de entidades ou criaturas do jogo que podem largar este material após a sua morte.")]
+    [Tooltip("Criaturas que podem largar este material apos a sua morte.")]
     [SerializeField]
     private List<NpcDropSource> _dropSourceList = new();
     #endregion
 
-    #region Propriedades Públicas
+    #region Propriedades Publicas
     public List<NpcDropSource> DropSourceList => _dropSourceList;
+
+    public override string GetItemType() => "Material";
+
+    /// <summary>
+    /// Lista de NPCs de drop e quantidade maxima por saque.
+    /// </summary>
+    public override string GetPerTypeDescriptionText()
+    {
+        if (_dropSourceList == null || _dropSourceList.Count == 0)
+            return "Drop: None";
+
+        System.Text.StringBuilder sb = new System.Text.StringBuilder();
+
+        sb.AppendLine("Dropped by:");
+        foreach (NpcDropSource source in _dropSourceList)
+            sb.AppendLine($"  {FormatNpcName(source.npc)} (max {source.maxQuantity})");
+
+        return sb.ToString().TrimEnd();
+    }
+
+    public override void UseItem()
+    {
+        // Deve ser feito   
+    }
+
+    private string FormatNpcName(GameObject npc)
+    {
+        return npc != null ? npc.name : "Unknown";
+    }
     #endregion
 }

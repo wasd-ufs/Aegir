@@ -74,8 +74,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4291031235
-  m_fontColor: {r: 0.14901961, g: 0.14901961, b: 0.10980393, a: 1}
+    rgba: 4288919651
+  m_fontColor: {r: 0.38823533, g: 0.72156864, b: 0.6392157, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -151,7 +151,7 @@ GameObject:
   - component: {fileID: 6162919510590103466}
   - component: {fileID: 6437792944228945850}
   m_Layer: 5
-  m_Name: MenuItem
+  m_Name: PopUpItem
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

@@ -15,9 +15,9 @@ MonoBehaviour:
   _structureName: Porto
   _structureDimensions: {x: 3, y: 3}
   _structurePrefab: {fileID: 4306527351568153791, guid: 9a8ca1d343fea6149a9b162feab2a042, type: 3}
-  _spawnChance: 0.2
+  _spawnChance: 0.5
   _validBaseLayersList: 020000000300000004000000
-  _isolationRadius: 30
+  _isolationRadius: 3
   _layerOverridesList:
   - _localCoordinatesList:
     - {x: 3, y: 3}

@@ -120,7 +120,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""CancelarSeleção"",
+                    ""name"": ""Cancelar Selecao"",
                     ""type"": ""Button"",
                     ""id"": ""769cddf3-5e66-4bce-90b7-80a29f2fe1bf"",
                     ""expectedControlType"": """",
@@ -132,6 +132,42 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""name"": ""Contatar"",
                     ""type"": ""Button"",
                     ""id"": ""45d64cc0-3cd7-466c-b848-9bbda9a5f133"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Usar"",
+                    ""type"": ""Button"",
+                    ""id"": ""0c805f2c-0434-4e0f-aca8-ff4dbedf367b"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Organizar Inventario"",
+                    ""type"": ""Button"",
+                    ""id"": ""231bc50b-3bdc-428b-b203-49d8994ef6d1"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Descartar"",
+                    ""type"": ""Button"",
+                    ""id"": ""2c052d79-0a96-4329-ba80-27da467ff52e"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Sair"",
+                    ""type"": ""Button"",
+                    ""id"": ""56204f92-d2a9-4d75-858d-837f6ab5d542"",
                     ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": """",
@@ -278,7 +314,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""CancelarSeleção"",
+                    ""action"": ""Cancelar Selecao"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -292,6 +328,50 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""action"": ""Contatar"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""24cb2b4b-4768-414f-afdd-d325b0ba6a05"",
+                    ""path"": ""<Keyboard>/q"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Usar"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""8897a5d7-cc86-42d0-a9b0-4f484e9c5ed1"",
+                    ""path"": ""<Keyboard>/e"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Organizar Inventario"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""f70b54da-be10-4b47-9ebc-3f1b91310a33"",
+                    ""path"": ""<Keyboard>/f"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Descartar"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""31a5ed66-465e-40c1-9479-8d60e2654a20"",
+                    ""path"": ""<Keyboard>/i"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Sair"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -303,8 +383,12 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         m_Player_Move = m_Player.FindAction("Move", throwIfNotFound: true);
         m_Player_EnterGetOut = m_Player.FindAction("Enter/GetOut", throwIfNotFound: true);
         m_Player_Inventory = m_Player.FindAction("Inventory", throwIfNotFound: true);
-        m_Player_CancelarSeleção = m_Player.FindAction("CancelarSeleção", throwIfNotFound: true);
+        m_Player_CancelarSelecao = m_Player.FindAction("Cancelar Selecao", throwIfNotFound: true);
         m_Player_Contatar = m_Player.FindAction("Contatar", throwIfNotFound: true);
+        m_Player_Usar = m_Player.FindAction("Usar", throwIfNotFound: true);
+        m_Player_OrganizarInventario = m_Player.FindAction("Organizar Inventario", throwIfNotFound: true);
+        m_Player_Descartar = m_Player.FindAction("Descartar", throwIfNotFound: true);
+        m_Player_Sair = m_Player.FindAction("Sair", throwIfNotFound: true);
     }
 
     ~@PlayerInputActions()
@@ -388,8 +472,12 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Move;
     private readonly InputAction m_Player_EnterGetOut;
     private readonly InputAction m_Player_Inventory;
-    private readonly InputAction m_Player_CancelarSeleção;
+    private readonly InputAction m_Player_CancelarSelecao;
     private readonly InputAction m_Player_Contatar;
+    private readonly InputAction m_Player_Usar;
+    private readonly InputAction m_Player_OrganizarInventario;
+    private readonly InputAction m_Player_Descartar;
+    private readonly InputAction m_Player_Sair;
     /// <summary>
     /// Provides access to input actions defined in input action map "Player".
     /// </summary>
@@ -414,13 +502,29 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         /// </summary>
         public InputAction @Inventory => m_Wrapper.m_Player_Inventory;
         /// <summary>
-        /// Provides access to the underlying input action "Player/CancelarSeleção".
+        /// Provides access to the underlying input action "Player/CancelarSelecao".
         /// </summary>
-        public InputAction @CancelarSeleção => m_Wrapper.m_Player_CancelarSeleção;
+        public InputAction @CancelarSelecao => m_Wrapper.m_Player_CancelarSelecao;
         /// <summary>
         /// Provides access to the underlying input action "Player/Contatar".
         /// </summary>
         public InputAction @Contatar => m_Wrapper.m_Player_Contatar;
+        /// <summary>
+        /// Provides access to the underlying input action "Player/Usar".
+        /// </summary>
+        public InputAction @Usar => m_Wrapper.m_Player_Usar;
+        /// <summary>
+        /// Provides access to the underlying input action "Player/OrganizarInventario".
+        /// </summary>
+        public InputAction @OrganizarInventario => m_Wrapper.m_Player_OrganizarInventario;
+        /// <summary>
+        /// Provides access to the underlying input action "Player/Descartar".
+        /// </summary>
+        public InputAction @Descartar => m_Wrapper.m_Player_Descartar;
+        /// <summary>
+        /// Provides access to the underlying input action "Player/Sair".
+        /// </summary>
+        public InputAction @Sair => m_Wrapper.m_Player_Sair;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -456,12 +560,24 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @Inventory.started += instance.OnInventory;
             @Inventory.performed += instance.OnInventory;
             @Inventory.canceled += instance.OnInventory;
-            @CancelarSeleção.started += instance.OnCancelarSeleção;
-            @CancelarSeleção.performed += instance.OnCancelarSeleção;
-            @CancelarSeleção.canceled += instance.OnCancelarSeleção;
+            @CancelarSelecao.started += instance.OnCancelarSelecao;
+            @CancelarSelecao.performed += instance.OnCancelarSelecao;
+            @CancelarSelecao.canceled += instance.OnCancelarSelecao;
             @Contatar.started += instance.OnContatar;
             @Contatar.performed += instance.OnContatar;
             @Contatar.canceled += instance.OnContatar;
+            @Usar.started += instance.OnUsar;
+            @Usar.performed += instance.OnUsar;
+            @Usar.canceled += instance.OnUsar;
+            @OrganizarInventario.started += instance.OnOrganizarInventario;
+            @OrganizarInventario.performed += instance.OnOrganizarInventario;
+            @OrganizarInventario.canceled += instance.OnOrganizarInventario;
+            @Descartar.started += instance.OnDescartar;
+            @Descartar.performed += instance.OnDescartar;
+            @Descartar.canceled += instance.OnDescartar;
+            @Sair.started += instance.OnSair;
+            @Sair.performed += instance.OnSair;
+            @Sair.canceled += instance.OnSair;
         }
 
         /// <summary>
@@ -482,12 +598,24 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @Inventory.started -= instance.OnInventory;
             @Inventory.performed -= instance.OnInventory;
             @Inventory.canceled -= instance.OnInventory;
-            @CancelarSeleção.started -= instance.OnCancelarSeleção;
-            @CancelarSeleção.performed -= instance.OnCancelarSeleção;
-            @CancelarSeleção.canceled -= instance.OnCancelarSeleção;
+            @CancelarSelecao.started -= instance.OnCancelarSelecao;
+            @CancelarSelecao.performed -= instance.OnCancelarSelecao;
+            @CancelarSelecao.canceled -= instance.OnCancelarSelecao;
             @Contatar.started -= instance.OnContatar;
             @Contatar.performed -= instance.OnContatar;
             @Contatar.canceled -= instance.OnContatar;
+            @Usar.started -= instance.OnUsar;
+            @Usar.performed -= instance.OnUsar;
+            @Usar.canceled -= instance.OnUsar;
+            @OrganizarInventario.started -= instance.OnOrganizarInventario;
+            @OrganizarInventario.performed -= instance.OnOrganizarInventario;
+            @OrganizarInventario.canceled -= instance.OnOrganizarInventario;
+            @Descartar.started -= instance.OnDescartar;
+            @Descartar.performed -= instance.OnDescartar;
+            @Descartar.canceled -= instance.OnDescartar;
+            @Sair.started -= instance.OnSair;
+            @Sair.performed -= instance.OnSair;
+            @Sair.canceled -= instance.OnSair;
         }
 
         /// <summary>
@@ -550,12 +678,12 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnInventory(InputAction.CallbackContext context);
         /// <summary>
-        /// Method invoked when associated input action "CancelarSeleção" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// Method invoked when associated input action "Cancelar Selecao" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>
         /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
-        void OnCancelarSeleção(InputAction.CallbackContext context);
+        void OnCancelarSelecao(InputAction.CallbackContext context);
         /// <summary>
         /// Method invoked when associated input action "Contatar" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>
@@ -563,5 +691,33 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnContatar(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Usar" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnUsar(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Organizar Inventario" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnOrganizarInventario(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Descartar" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnDescartar(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Sair" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnSair(InputAction.CallbackContext context);
     }
 }

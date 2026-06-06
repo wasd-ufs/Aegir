@@ -4,13 +4,13 @@ using UnityEngine;
 
 /// <summary>
 /// Classe base abstrata para todos os itens do jogo.
-/// Define os dados fundamentais que qualquer item (arma, armadura, consumível, etc.)
-/// deve ter para interagir com o inventário e a interface gráfica.
+/// Define os dados fundamentais que qualquer item deve ter
+/// para interagir com o inventario e a interface grafica.
 /// </summary>
 public abstract class ItemData : ScriptableObject
 {
-    #region Propriedades Básicas
-    [Header("Informações do Item")]
+    #region Propriedades Basicas
+    [Header("Informacoes do Item")]
     [SerializeField] private string _itemName;
 
     [SerializeField]
@@ -26,23 +26,42 @@ public abstract class ItemData : ScriptableObject
     [SerializeField]
     private List<NPCsData.Type> _possibleTypes;
 
-    [Tooltip("Quantidade máxima deste item que pode ser acumulada num único slot do inventário.")]
+    [Tooltip("Quantidade maxima deste item acumulada num unico slot do inventario.")]
     [SerializeField]
     private int _maximumQuantityPerSlot;
 
     [Tooltip("Valor comercial base do item.")]
     [SerializeField]
     private int _unitaryPrice;
+    private float _unitaryWeight;
     #endregion
 
-    #region Propriedades Públicas
+    #region Propriedades Publicas
     public string ItemName => _itemName;
     public string Description => _description;
+    public float UnitaryWeight => _unitaryWeight;
     public Sprite Icon => _icon;
-
     public List<NPCsData.Type> PossibleTypes => _possibleTypes;
-
     public int MaximumQuantityPerSlot => _maximumQuantityPerSlot;
     public int UnitaryPrice => _unitaryPrice;
+
+    public abstract string GetItemType();
+    public abstract string GetPerTypeDescriptionText();
+    public abstract void UseItem();
+
+    /// <summary>
+    /// Retorna o bloco de texto completo exibido na UI ao selecionar um item:
+    /// tipo, peso unitario e atributos especificos do item.
+    /// </summary>
+    public string GetFullDescriptionText()
+    {
+        System.Text.StringBuilder sb = new System.Text.StringBuilder();
+
+        sb.AppendLine($"Tipo: {GetItemType()}");
+        sb.AppendLine($"Peso Unitario: {_unitaryWeight:F1}");
+        sb.Append(GetPerTypeDescriptionText());
+
+        return sb.ToString().TrimEnd();
+    }
     #endregion
 }

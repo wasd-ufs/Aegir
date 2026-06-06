@@ -121,7 +121,7 @@ public class BattleData : MonoBehaviour
                             NPCsData data = npc.GetComponent<NPCsData>();
                             data.isAlive = true;
                             data.Heal(data.MaxHealth / 2);
-                            data.gameObject.SetActive(data.CreatureClass != NPCsData.Class.Captain);
+                            data.gameObject.SetActive(data.CreatureClass != NPCsData.Class.Capitao);
                         }
 
                         foreach (GameObject npc in enemyCrew.CrewList)

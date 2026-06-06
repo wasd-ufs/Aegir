@@ -15,7 +15,7 @@ MonoBehaviour:
   _itemName: Bomba Arremessavel
   _description: KABOOOOOOM!!!!!!!!!
   _icon: {fileID: -2980712377497353079, guid: 961b45b1ead9bfa43b9661aba3fc3db1, type: 3}
-  _possibleTypes: 
+  _possibleTypes: 0100000003000000
   _maximumQuantityPerSlot: 2
   _unitaryPrice: 50
   _throwableByList: 02000000

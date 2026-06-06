@@ -14,8 +14,8 @@ using Unity.VisualScripting;
 public class NPCsData : MonoBehaviour
 {
     #region Estruturas e Enumerações
-    public enum Class { Navigator, Cannoneer, Shooter, Warrior, Cook, Medic, Captain, Ship }
-    public enum Type { Animal, Human, Ghost, Skeleton, Monster, Structure }
+    public enum Class { Navegador, Canhoneiro, Atirador, Guerreiro, Cozinheiro, Medico, Capitao, Barco }
+    public enum Type { Animal, Humano, Fantasma, Esqueleto, Monstro, Estrutura }
     public enum DamageType { Physical, Magical, Fire, Ice, Poison, Holy, Cursed }
 
     /// <summary>
@@ -34,7 +34,7 @@ public class NPCsData : MonoBehaviour
                 { DamageType.Holy, 1.0f },
                 { DamageType.Cursed, 0.8f },
             }},
-            { Type.Human, new Dictionary<DamageType, float> {
+            { Type.Humano, new Dictionary<DamageType, float> {
                 { DamageType.Physical, 1.0f },
                 { DamageType.Magical, 1.0f },
                 { DamageType.Fire, 1.0f },
@@ -43,7 +43,7 @@ public class NPCsData : MonoBehaviour
                 { DamageType.Holy, 1.0f },
                 { DamageType.Cursed, 1.0f },
             }},
-            { Type.Ghost, new Dictionary<DamageType, float> {
+            { Type.Fantasma, new Dictionary<DamageType, float> {
                 { DamageType.Physical, 0.0f },
                 { DamageType.Magical, 1.0f },
                 { DamageType.Fire, 0.5f },
@@ -52,7 +52,7 @@ public class NPCsData : MonoBehaviour
                 { DamageType.Holy, 2.0f },
                 { DamageType.Cursed, 0.5f },
             }},
-            { Type.Skeleton, new Dictionary<DamageType, float> {
+            { Type.Esqueleto, new Dictionary<DamageType, float> {
                 { DamageType.Physical, 0.5f },
                 { DamageType.Magical, 1.0f },
                 { DamageType.Fire, 1.0f },
@@ -61,7 +61,7 @@ public class NPCsData : MonoBehaviour
                 { DamageType.Holy, 2.0f },
                 { DamageType.Cursed, 0.5f },
             }},
-            { Type.Monster, new Dictionary<DamageType, float> {
+            { Type.Monstro, new Dictionary<DamageType, float> {
                 { DamageType.Physical, 0.8f },
                 { DamageType.Magical, 0.8f },
                 { DamageType.Fire, 1.2f },
@@ -70,7 +70,7 @@ public class NPCsData : MonoBehaviour
                 { DamageType.Holy, 1.5f },
                 { DamageType.Cursed, 1.5f },
             }},
-            { Type.Structure, new Dictionary<DamageType, float> {
+            { Type.Estrutura, new Dictionary<DamageType, float> {
                 { DamageType.Physical, 1.0f },
                 { DamageType.Magical, 0.5f },
                 { DamageType.Fire, 1.5f },

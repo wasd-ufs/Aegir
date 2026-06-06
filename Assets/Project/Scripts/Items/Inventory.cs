@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using Unity.VisualScripting;
+using UnityEditor.PackageManager;
 using UnityEngine;
 
 /// <summary>
@@ -30,6 +32,7 @@ public class Inventory : MonoBehaviour
     [Tooltip("O número limite de slots totais (células) que este inventário pode comportar.")]
     [SerializeField]
     private int _maxItemsPerInventory;
+    private float _maxInventoryWeight = 50f;
     #endregion
 
     #region Propriedades Públicas
@@ -105,7 +108,7 @@ public class Inventory : MonoBehaviour
     /// </summary>
     /// <param name="item">A base de dados (ScriptableObject) do item a remover.</param>
     /// <param name="quantity">Total de itens a ser debitado.</param>
-    public void RemoveItem(ItemData item, int quantity = 1)
+    public Slot RemoveItem(ItemData item, int quantity = 1)
     {
         int quantityToRemove = quantity;
 
@@ -124,18 +127,78 @@ public class Inventory : MonoBehaviour
                 if (tempSlot.quantity <= 0)
                 {
                     _inventorySlots.RemoveAt(i);
+                    return new();
                 }
                 else
                 {
                     _inventorySlots[i] = tempSlot;
+                    return _inventorySlots[i];
                 }
             }
 
             if (quantityToRemove <= 0)
             {
-                return;
+                return _inventorySlots[i];
             }
         }
+        return _inventorySlots[0];
     }
+
+    public Slot RemoveItemAt(int index, int quantity = 1)
+    {
+        if (_inventorySlots.Count > index)
+        {
+            int quantityToRemove = quantity;
+            Slot tempSlot = _inventorySlots[index];
+
+            int removedQuantity = Mathf.Min(quantityToRemove, tempSlot.quantity);
+
+            tempSlot.quantity -= removedQuantity;
+            quantityToRemove -= removedQuantity;
+
+            // Se o slot ficou sem nenhum item, o próprio index é obliterado da List
+            if (tempSlot.quantity <= 0)
+            {
+                _inventorySlots.RemoveAt(index);
+                return new();
+            }
+            else
+            {
+                _inventorySlots[index] = tempSlot;
+                return _inventorySlots[index];
+            }
+        }
+        else
+        {
+            throw new IndexOutOfRangeException();
+        }
+    }
+
+    /// <summary>
+    /// Soma o peso total de todos os itens no inventario (peso unitario * quantidade por slot).
+    /// </summary>
+    public float CalculateTotalWeight()
+    {
+        float totalWeight = 0f;
+
+        foreach (Slot slot in _inventorySlots)
+            totalWeight += slot.item.UnitaryWeight * slot.quantity;
+
+        return totalWeight;
+    }
+
+    public float GetMaxInventoryWeight()
+    {
+        return _maxInventoryWeight;
+    }
+
+    public void SetNewMaxInventoryWeight(float newMaxWeight)
+    {
+        _maxInventoryWeight = newMaxWeight;
+    }
+    public void SortByItemType()      { /* TODO */ }
+    public void SortAlphabetically()  { /* TODO */ }
+    public void SortByRarityOrLevel() { /* TODO */ }
+    public void SortByPrice()         { /* TODO */ }
     #endregion
 }

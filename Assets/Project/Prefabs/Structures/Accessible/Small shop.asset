@@ -15,7 +15,7 @@ MonoBehaviour:
   _structureName: Vendinha
   _structureDimensions: {x: 3, y: 2}
   _structurePrefab: {fileID: 4540174133025460802, guid: 645a1d9fe47d31844878a80d0c92e622, type: 3}
-  _spawnChance: 0.2
+  _spawnChance: 0.5
   _validBaseLayersList: 020000000300000004000000
-  _isolationRadius: 30
+  _isolationRadius: 3
   _layerOverridesList: []
