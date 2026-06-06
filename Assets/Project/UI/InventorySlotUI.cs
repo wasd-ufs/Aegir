@@ -10,7 +10,7 @@ public class InventorySlotUI : MonoBehaviour, ISelectHandler
     [SerializeField] private UnityEngine.UI.Image _image;
     
     public UnityEvent OnSlotSelected = new();
-    public void ConfigurateVisual(ItemData item, int quantity)
+    public void ConfigurateVisual(BaseItemData item, int quantity)
     {
         _image.sprite = item.Icon;
         _itemNameText.text = item.ItemName;

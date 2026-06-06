@@ -6,7 +6,7 @@ using UnityEngine;
 /// registando quais criaturas podem largar este material.
 /// </summary>
 [CreateAssetMenu(fileName = "New Material", menuName = "Scriptable Objects/MaterialData")]
-public class MaterialData : ItemData
+public class MaterialData : BaseItemData
 {
 
     // A categoria deste item é sempre ShipMaterial, então sobrescreve a propriedade para retornar isso.

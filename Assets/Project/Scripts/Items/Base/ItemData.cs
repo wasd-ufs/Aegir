@@ -7,7 +7,7 @@ using UnityEngine;
 /// Define os dados fundamentais que qualquer item deve ter
 /// para interagir com o inventario e a interface grafica.
 /// </summary>
-public abstract class ItemData : ScriptableObject
+public abstract class BaseItemData : ScriptableObject
 {
 
     #region Enumerações
@@ -42,7 +42,7 @@ public abstract class ItemData : ScriptableObject
     [Header("Regras do Item")]
     [Tooltip("Tipos de criatura que podem interagir ou utilizar este item.")]
     [SerializeField]
-    private List<NPCsData.Type> _possibleTypes;
+    private List<NPCsData.Type> _possibleTypesList;
 
     [Tooltip("Quantidade maxima deste item acumulada num unico slot do inventario.")]
     [SerializeField]
@@ -74,7 +74,7 @@ public abstract class ItemData : ScriptableObject
     public string Description => _description;
     public float UnitaryWeight => _unitaryWeight;
     public Sprite Icon => _icon;
-    public List<NPCsData.Type> PossibleTypes => _possibleTypes;
+    public List<NPCsData.Type> PossibleTypes => _possibleTypesList;
     public int MaximumQuantityPerSlot => _maximumQuantityPerSlot;
     public int UnitaryPrice => _unitaryPrice;
     public int Rarity => _rarity;

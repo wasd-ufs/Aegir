@@ -7,7 +7,7 @@ using UnityEngine;
 /// <summary>
 /// Sistema gestor do inventário de um grupo (como a tripulação via CrewData).
 /// Controla a adição e a remoção segura de itens, limitando o empilhamento 
-/// de acordo com a configuração de cada ItemData (maximumQttPerSlot).
+/// de acordo com a configuração de cada BaseItemData (maximumQttPerSlot).
 /// </summary>
 public class Inventory : MonoBehaviour
 {
@@ -19,7 +19,7 @@ public class Inventory : MonoBehaviour
     [Serializable]
     public struct Slot
     {
-        public ItemData item;
+        public BaseItemData item;
         public int quantity;
     }
     #endregion
@@ -28,7 +28,7 @@ public class Inventory : MonoBehaviour
     [Header("Estado Interno")]
     [Tooltip("Lista com a disposição atual dos itens no inventário.")]
     [SerializeField]
-    private List<Slot> _inventorySlots = new();
+    private List<Slot> _inventorySlotsList = new();
 
     [Tooltip("O número limite de slots totais (células) que este inventário pode comportar.")]
     [SerializeField]
@@ -37,7 +37,7 @@ public class Inventory : MonoBehaviour
     #endregion
 
     #region Propriedades Públicas
-    public List<Slot> InventorySlots => _inventorySlots;
+    public List<Slot> InventorySlots => _inventorySlotsList;
     public int MaxItemsPerInventory => _maxItemsPerInventory;
     #endregion
 
@@ -49,27 +49,27 @@ public class Inventory : MonoBehaviour
     /// </summary>
     /// <param name="item">A base de dados (ScriptableObject) do item a adicionar.</param>
     /// <param name="quantity">O volume de itens a inserir no total.</param>
-    public void AddItem(ItemData item, int quantity)
+    public void AddItem(BaseItemData item, int quantity)
     {
         int remainingQuantity = quantity;
 
         // Passo 1: Inserir nos slots que já contêm este tipo de item, se não estiverem cheios
-        for (int i = 0; i < _inventorySlots.Count; i++)
+        for (int i = 0; i < _inventorySlotsList.Count; i++)
         {
-            if (_inventorySlots[i].item == item &&
-                _inventorySlots[i].item.MaximumQuantityPerSlot > _inventorySlots[i].quantity)
+            if (_inventorySlotsList[i].item == item &&
+                _inventorySlotsList[i].item.MaximumQuantityPerSlot > _inventorySlotsList[i].quantity)
             {
                 int maxItemsToAddHere =
-                    _inventorySlots[i].item.MaximumQuantityPerSlot - _inventorySlots[i].quantity;
+                    _inventorySlotsList[i].item.MaximumQuantityPerSlot - _inventorySlotsList[i].quantity;
 
                 int addedItems = Mathf.Min(remainingQuantity, maxItemsToAddHere);
 
-                Slot slot = _inventorySlots[i];
+                Slot slot = _inventorySlotsList[i];
 
                 slot.quantity += addedItems;
                 remainingQuantity -= addedItems;
 
-                _inventorySlots[i] = slot;
+                _inventorySlotsList[i] = slot;
             }
 
             if (remainingQuantity <= 0)
@@ -82,7 +82,7 @@ public class Inventory : MonoBehaviour
         while (remainingQuantity > 0)
         {
             // Bloqueio se o inventário não comportar a abertura de mais espaços
-            if (_maxItemsPerInventory == _inventorySlots.Count)
+            if (_maxItemsPerInventory == _inventorySlotsList.Count)
             {
                 return;
             }
@@ -93,7 +93,7 @@ public class Inventory : MonoBehaviour
                 quantity = Mathf.Min(remainingQuantity, item.MaximumQuantityPerSlot)
             };
 
-            _inventorySlots.Add(slot);
+            _inventorySlotsList.Add(slot);
 
             remainingQuantity -= Mathf.Min(
                 remainingQuantity,
@@ -109,15 +109,15 @@ public class Inventory : MonoBehaviour
     /// </summary>
     /// <param name="item">A base de dados (ScriptableObject) do item a remover.</param>
     /// <param name="quantity">Total de itens a ser debitado.</param>
-    public Slot RemoveItem(ItemData item, int quantity = 1)
+    public Slot RemoveItem(BaseItemData item, int quantity = 1)
     {
         int quantityToRemove = quantity;
 
-        for (int i = _inventorySlots.Count - 1; i >= 0; i--)
+        for (int i = _inventorySlotsList.Count - 1; i >= 0; i--)
         {
-            if (_inventorySlots[i].item == item)
+            if (_inventorySlotsList[i].item == item)
             {
-                Slot tempSlot = _inventorySlots[i];
+                Slot tempSlot = _inventorySlotsList[i];
 
                 int removedQuantity = Mathf.Min(quantityToRemove, tempSlot.quantity);
 
@@ -127,30 +127,30 @@ public class Inventory : MonoBehaviour
                 // Se o slot ficou sem nenhum item, o próprio index é obliterado da List
                 if (tempSlot.quantity <= 0)
                 {
-                    _inventorySlots.RemoveAt(i);
+                    _inventorySlotsList.RemoveAt(i);
                     return new();
                 }
                 else
                 {
-                    _inventorySlots[i] = tempSlot;
-                    return _inventorySlots[i];
+                    _inventorySlotsList[i] = tempSlot;
+                    return _inventorySlotsList[i];
                 }
             }
 
             if (quantityToRemove <= 0)
             {
-                return _inventorySlots[i];
+                return _inventorySlotsList[i];
             }
         }
-        return _inventorySlots[0];
+        return _inventorySlotsList[0];
     }
 
     public Slot RemoveItemAt(int index, int quantity = 1)
     {
-        if (_inventorySlots.Count > index)
+        if (_inventorySlotsList.Count > index)
         {
             int quantityToRemove = quantity;
-            Slot tempSlot = _inventorySlots[index];
+            Slot tempSlot = _inventorySlotsList[index];
 
             int removedQuantity = Mathf.Min(quantityToRemove, tempSlot.quantity);
 
@@ -160,13 +160,13 @@ public class Inventory : MonoBehaviour
             // Se o slot ficou sem nenhum item, o próprio index é obliterado da List
             if (tempSlot.quantity <= 0)
             {
-                _inventorySlots.RemoveAt(index);
+                _inventorySlotsList.RemoveAt(index);
                 return new();
             }
             else
             {
-                _inventorySlots[index] = tempSlot;
-                return _inventorySlots[index];
+                _inventorySlotsList[index] = tempSlot;
+                return _inventorySlotsList[index];
             }
         }
         else
@@ -182,7 +182,7 @@ public class Inventory : MonoBehaviour
     {
         float totalWeight = 0f;
 
-        foreach (Slot slot in _inventorySlots)
+        foreach (Slot slot in _inventorySlotsList)
             totalWeight += slot.item.UnitaryWeight * slot.quantity;
 
         return totalWeight;
@@ -199,9 +199,9 @@ public class Inventory : MonoBehaviour
     }
     
     
-    public List<Slot> FilterByItemType(ItemData.ItemCategory category) 
+    public List<Slot> FilterByItemType(BaseItemData.ItemCategory category) 
     { 
-        return _inventorySlots.FindAll(slot => slot.item.Category == category); 
+        return _inventorySlotsList.FindAll(slot => slot.item.Category == category); 
     }
 
     public void ShowAllItems()
@@ -211,15 +211,15 @@ public class Inventory : MonoBehaviour
     
     public void SortByItemType() 
     { 
-        _inventorySlots.Sort((a, b) => a.item.Category.CompareTo(b.item.Category)); 
+        _inventorySlotsList.Sort((a, b) => a.item.Category.CompareTo(b.item.Category)); 
     }
     public void SortAlphabetically()  
     { 
-        _inventorySlots.Sort((a, b) => string.Compare(a.item.ItemName, b.item.ItemName, StringComparison.Ordinal));
+        _inventorySlotsList.Sort((a, b) => string.Compare(a.item.ItemName, b.item.ItemName, StringComparison.Ordinal));
     }
     public void SortByRarityOrLevel()
     {
-        _inventorySlots.Sort((a, b) =>
+        _inventorySlotsList.Sort((a, b) =>
         {
             int rarityComparison = b.item.Rarity.CompareTo(a.item.Rarity);
             if (rarityComparison != 0)
@@ -231,7 +231,7 @@ public class Inventory : MonoBehaviour
     }
     public void SortByPrice()
     {
-        _inventorySlots.Sort((a, b) => b.item.UnitaryPrice.CompareTo(a.item.UnitaryPrice));
+        _inventorySlotsList.Sort((a, b) => b.item.UnitaryPrice.CompareTo(a.item.UnitaryPrice));
     }
     #endregion
 }

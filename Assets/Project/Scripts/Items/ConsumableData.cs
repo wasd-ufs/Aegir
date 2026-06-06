@@ -1,7 +1,7 @@
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "New Consumable", menuName = "Scriptable Objects/ConsumableData")]
-public class ConsumableData : ItemData
+public class ConsumableData : BaseItemData
 {
 
     // A categoria deste item é sempre Consumable, então sobrescreve a propriedade para retornar isso.

@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "New Throwable", menuName = "Scriptable Objects/ThrowableData")]
-public class ThrowableData : ItemData
+public class ThrowableData : BaseItemData
 {
 
     // A categoria deste item é sempre Throwable, então sobrescreve a propriedade para retornar isso.

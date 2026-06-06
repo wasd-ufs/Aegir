@@ -46,16 +46,16 @@ public class InventoryUI : MonoBehaviour
     private int _lastSelectedSlotIndex;
 
     // Traducao das categorias para portugues sem acento
-    private static readonly Dictionary<ItemData.ItemCategory, string> _categoryNamesDictionary = new()
+    private static readonly Dictionary<BaseItemData.ItemCategory, string> _categoryNamesDictionary = new()
     {
-        { ItemData.ItemCategory.Weapon,       "Arma"              },
-        { ItemData.ItemCategory.Armor,        "Armadura"          },
-        { ItemData.ItemCategory.Consumable,   "Consumivel"        },
-        { ItemData.ItemCategory.ShipMaterial, "Material do Navio" },
-        { ItemData.ItemCategory.KeyItem,      "Item Chave"        },
-        { ItemData.ItemCategory.Collectible,  "Colecionavel"      },
-        { ItemData.ItemCategory.Misc,         "Misc"              },
-        { ItemData.ItemCategory.Throwable,    "Arremessavel"      }
+        { BaseItemData.ItemCategory.Weapon,       "Arma"              },
+        { BaseItemData.ItemCategory.Armor,        "Armadura"          },
+        { BaseItemData.ItemCategory.Consumable,   "Consumivel"        },
+        { BaseItemData.ItemCategory.ShipMaterial, "Material do Navio" },
+        { BaseItemData.ItemCategory.KeyItem,      "Item Chave"        },
+        { BaseItemData.ItemCategory.Collectible,  "Colecionavel"      },
+        { BaseItemData.ItemCategory.Misc,         "Misc"              },
+        { BaseItemData.ItemCategory.Throwable,    "Arremessavel"      }
     };
     #endregion
 
@@ -219,9 +219,9 @@ public class InventoryUI : MonoBehaviour
             allBtn.onClick.AddListener(() => UpdateUI(_inventory.InventorySlots));
 
         // Botao por categoria
-        var categoriesArray = (ItemData.ItemCategory[]) System.Enum.GetValues(typeof(ItemData.ItemCategory));
+        var categoriesArray = (BaseItemData.ItemCategory[]) System.Enum.GetValues(typeof(BaseItemData.ItemCategory));
 
-        foreach (ItemData.ItemCategory category in categoriesArray)
+        foreach (BaseItemData.ItemCategory category in categoriesArray)
         {
             GameObject menuButton = Instantiate(_menuPrefab, _menuContainer);
             menuButton.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = _categoryNamesDictionary[category];

@@ -3,7 +3,7 @@ using UnityEditor.Overlays;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "New Armor", menuName = "Scriptable Objects/ArmorData")]
-public class ArmorData : ItemData
+public class ArmorData : BaseItemData
 {
 
     // A categoria deste item é sempre Armadura, então sobrescreve a propriedade para retornar isso.

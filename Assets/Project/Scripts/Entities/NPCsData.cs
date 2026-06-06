@@ -84,7 +84,7 @@ public class NPCsData : MonoBehaviour
     [Serializable]
     public struct PossibleDrop
     {
-        public ItemData itemData;
+        public BaseItemData itemData;
 
         [Range(0.0f, 1.0f)]
         public float dropChance;

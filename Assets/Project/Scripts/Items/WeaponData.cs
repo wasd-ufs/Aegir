@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "New Weapon", menuName = "Scriptable Objects/WeaponData")]
-public class WeaponData : ItemData
+public class WeaponData : BaseItemData
 {
 
     // A categoria deste item é sempre Weapon, então sobrescreve a propriedade para retornar isso.
