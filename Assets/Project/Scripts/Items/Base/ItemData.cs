@@ -63,7 +63,6 @@ public abstract class ItemData : ScriptableObject
     [SerializeField]
     private int _rarity;
 
-    [SerializeField]
     private ItemCategory _category;
 
 
