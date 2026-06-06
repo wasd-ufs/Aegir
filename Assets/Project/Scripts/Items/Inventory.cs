@@ -11,6 +11,7 @@ using UnityEngine;
 /// </summary>
 public class Inventory : MonoBehaviour
 {
+
     #region Estruturas de Dados
     /// <summary>
     /// Representa um espaço no inventário contendo a referência do item e a sua quantidade em pilha.
@@ -196,9 +197,35 @@ public class Inventory : MonoBehaviour
     {
         _maxInventoryWeight = newMaxWeight;
     }
-    public void SortByItemType()      { /* TODO */ }
-    public void SortAlphabetically()  { /* TODO */ }
-    public void SortByRarityOrLevel() { /* TODO */ }
-    public void SortByPrice()         { /* TODO */ }
+    
+    
+    
+    
+    
+    
+    public void SortByItemType() 
+    { 
+        _inventorySlots.Sort((a, b) => a.item.Category.CompareTo(b.item.Category)); 
+    }
+    public void SortAlphabetically()  
+    { 
+        _inventorySlots.Sort((a, b) => string.Compare(a.item.ItemName, b.item.ItemName, StringComparison.Ordinal));
+    }
+    public void SortByRarityOrLevel()
+    {
+        _inventorySlots.Sort((a, b) =>
+        {
+            int rarityComparison = b.item.Rarity.CompareTo(a.item.Rarity);
+            if (rarityComparison != 0)
+                return rarityComparison;
+
+            // Se a raridade for igual, ordena por nome
+            return string.Compare(a.item.ItemName, b.item.ItemName, StringComparison.Ordinal);
+        });
+    }
+    public void SortByPrice()
+    {
+        _inventorySlots.Sort((a, b) => b.item.UnitaryPrice.CompareTo(a.item.UnitaryPrice));
+    }
     #endregion
 }

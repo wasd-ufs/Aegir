@@ -9,6 +9,21 @@ using UnityEngine;
 /// </summary>
 public abstract class ItemData : ScriptableObject
 {
+
+    #region Enumerações
+    public enum ItemCategory
+    {
+        Weapon,
+        Armor,
+        Consumable,
+        ShipMaterial,
+        KeyItem,
+        Collectible,
+        Misc
+    }
+    #endregion
+
+
     #region Propriedades Basicas
     [Header("Informacoes do Item")]
     [SerializeField] private string _itemName;
@@ -18,6 +33,8 @@ public abstract class ItemData : ScriptableObject
     private string _description;
 
     [SerializeField] private Sprite _icon;
+
+
     #endregion
 
     #region Regras de Uso e Valor
@@ -33,7 +50,23 @@ public abstract class ItemData : ScriptableObject
     [Tooltip("Valor comercial base do item.")]
     [SerializeField]
     private int _unitaryPrice;
+    
+    [Tooltip("Peso unitário do item.")]
+    [SerializeField]
     private float _unitaryWeight;
+
+
+
+
+
+    [Tooltip("Raridade do item.")]
+    [SerializeField]
+    private int _rarity;
+
+    [SerializeField]
+    private ItemCategory _category;
+
+
     #endregion
 
     #region Propriedades Publicas
@@ -44,6 +77,13 @@ public abstract class ItemData : ScriptableObject
     public List<NPCsData.Type> PossibleTypes => _possibleTypes;
     public int MaximumQuantityPerSlot => _maximumQuantityPerSlot;
     public int UnitaryPrice => _unitaryPrice;
+    
+    
+    
+    public ItemCategory Category => _category;
+    public int Rarity => _rarity;
+
+
 
     public abstract string GetItemType();
     public abstract string GetPerTypeDescriptionText();
