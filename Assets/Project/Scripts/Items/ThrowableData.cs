@@ -36,6 +36,8 @@ public class ThrowableData : ItemData
     {
         System.Text.StringBuilder sb = new System.Text.StringBuilder();
 
+    
+        sb.AppendLine($"Raridade: {Rarity}");
         sb.AppendLine($"Dano {FormatDamageType(_damageType)}: {_intensity:F1}");
         sb.AppendLine($"Alvos Max: {_maxTargetQuantity}");
 

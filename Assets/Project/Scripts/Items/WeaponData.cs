@@ -40,6 +40,7 @@ public class WeaponData : ItemData
     {
         System.Text.StringBuilder sb = new System.Text.StringBuilder();
 
+        sb.AppendLine($"Raridade: {Rarity}");
         sb.AppendLine($"ATQ: {_attackBaseValue:F1}");
 
         if (_allowedClassList != null && _allowedClassList.Count > 0)

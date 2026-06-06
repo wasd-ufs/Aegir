@@ -89,6 +89,7 @@ public class InventoryUI : MonoBehaviour
             if (_popUpContainer.gameObject.activeSelf)
             {
                 _popUpContainer.gameObject.SetActive(false);
+                EventSystem.current.SetSelectedGameObject(currentSlots[0]);
                 return;
             }
 
@@ -138,7 +139,7 @@ public class InventoryUI : MonoBehaviour
             _selectedItemDiv.gameObject.SetActive(false);    
 
         if(currentSlots.Count > 0)
-            EventSystem.current.SetSelectedGameObject(currentSlots[currentSlots.Count - 1]);
+            EventSystem.current.SetSelectedGameObject(currentSlots[0]);
 
         _totalWeight.text = $"peso total: {_inventory.CalculateTotalWeight():F1}/{_inventory.GetMaxInventoryWeight():F1} kg\n[alinhamento: pirata procurado]";
     }
@@ -219,7 +220,7 @@ public class InventoryUI : MonoBehaviour
             if (currentSlots.Count > 0 && _lastSelectedSlotIndex > 0)
                     EventSystem.current.SetSelectedGameObject(currentSlots[_lastSelectedSlotIndex - 1]);
                 else if (currentSlots.Count > 0 && _lastSelectedSlotIndex == 0)
-                    EventSystem.current.SetSelectedGameObject(currentSlots[currentSlots.Count - 1]);
+                    EventSystem.current.SetSelectedGameObject(currentSlots[0]);
         }
     }
     public void DiscardItem()
@@ -237,7 +238,7 @@ public class InventoryUI : MonoBehaviour
             if (currentSlots.Count > 0 && _lastSelectedSlotIndex > 0)
                 EventSystem.current.SetSelectedGameObject(currentSlots[_lastSelectedSlotIndex - 1]);
             else if (currentSlots.Count > 0 && _lastSelectedSlotIndex == 0)
-                EventSystem.current.SetSelectedGameObject(currentSlots[currentSlots.Count - 1]);
+                EventSystem.current.SetSelectedGameObject(currentSlots[0]);
         }
     }
 

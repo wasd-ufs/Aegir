@@ -8016,6 +8016,10 @@ MonoBehaviour:
     quantity: 1
   - item: {fileID: 11400000, guid: c8358b0af8dba2f42b1c065f21dc04c4, type: 2}
     quantity: 2
+  - item: {fileID: 11400000, guid: 70d81fe6627dc8a468f94ed868eed00b, type: 2}
+    quantity: 31
+  - item: {fileID: 11400000, guid: c7061b46607c9f0439ddeff3067e260f, type: 2}
+    quantity: 13
   _maxItemsPerInventory: 28
 --- !u!114 &679149534
 MonoBehaviour:
@@ -12845,7 +12849,7 @@ MonoBehaviour:
   m_ChildControlHeight: 0
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 1
-  m_ReverseArrangement: 1
+  m_ReverseArrangement: 0
 --- !u!114 &969567418
 MonoBehaviour:
   m_ObjectHideFlags: 0

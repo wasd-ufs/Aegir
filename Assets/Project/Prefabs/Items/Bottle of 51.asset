@@ -12,10 +12,28 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2be41944c1fb52e4cb4e5fd6e35b16d9, type: 3}
   m_Name: Bottle of 51
   m_EditorClassIdentifier: Assembly-CSharp::ConsumableData
-  itemName: Garrafa de 51
-  description: Cura a vida de um personagem
-  Icon: {fileID: -2804422678760828670, guid: 961b45b1ead9bfa43b9661aba3fc3db1, type: 3}
-  possibleTypes: 010000000000000004000000
-  maximumQttPerSlot: 5
-  unitaryPrice: 100
-  intensity: 20
+  _itemName: Garrafa de 51
+  _description: "Botija marcada com o n\xFAmero Cinquenta e Um (51)\n\nO recipiente
+    e um cilindro perfeito, feito de um vidro tao liso e cristalino que mais parece
+    agua congelada por artes magicas, sem qualquer bolha ou imperfeicao. N\xE3o possui
+    as formas arredondadas dos garrafoes, e em seu ventre traz colado um pergaminho
+    que n\xE3o parece feito de pele de animal nem de trapos comuns. Tem cores vivas,
+    amarelas e negras, e ostenta os algarismos arabicos 51. Inquiri os sabios se
+    tal numero seria uma cifra cabalistica, talvez a marca de um mestre de engenho
+    ou o numero de vezes que o destilado foi fervido nos alambiques.\n\nO mais espantoso,
+    no entanto, e o seu selo. N\xE3o ha rolha de cortica nem cera a selar a boca,
+    mas sim uma carapa\xE7a de um metal finissimo, dourado, que obedece a sulcos
+    no gargalo e gira para abrir, estalando como se quebrasse um feitico. O l\xEDquido
+    que guarda \xE9 claro como agua de nascente, mas ao tocar os beicos, queima como
+    o fogo do purgatorio. \xC9 uma aguardente da terra, decerto feita dos melacos
+    da cana-de-acucar, mas de um odor inebriante."
+  _icon: {fileID: -2804422678760828670, guid: 961b45b1ead9bfa43b9661aba3fc3db1, type: 3}
+  _possibleTypes: 
+  _maximumQuantityPerSlot: 30
+  _unitaryPrice: 20
+  _unitaryWeight: 0.5
+  _rarity: 1
+  _category: 2
+  _intensity: 3
+  _effectType: 1
+  _durationInTurns: 1

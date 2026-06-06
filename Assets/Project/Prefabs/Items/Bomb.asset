@@ -18,6 +18,9 @@ MonoBehaviour:
   _possibleTypes: 0100000003000000
   _maximumQuantityPerSlot: 2
   _unitaryPrice: 50
+  _unitaryWeight: 5
+  _rarity: 2
+  _category: 0
   _throwableByList: 02000000
   _maxTargetQuantity: 4
   _damageType: 2

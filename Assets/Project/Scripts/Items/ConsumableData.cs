@@ -31,6 +31,8 @@ public class ConsumableData : ItemData
     {
         System.Text.StringBuilder sb = new System.Text.StringBuilder();
 
+        
+        sb.AppendLine($"Raridade: {Rarity}");
         sb.AppendLine($"{FormatEffect(_effectType)}: {_intensity:F1}");
         sb.Append(_durationInTurns <= 1 ? "Imediato" : $"Duracao: {_durationInTurns} turnos");
 
