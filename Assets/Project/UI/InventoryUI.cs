@@ -14,6 +14,7 @@ public class InventoryUI : MonoBehaviour
     #region Referencias de UI
     [Header("Containers")]
     [SerializeField] private Transform _slotContainer;
+    [SerializeField] private Transform _menuContainer;
     [SerializeField] private Transform _actionsContainer;
     [SerializeField] private Transform _background;
     [SerializeField] private Transform _inventoryDivs;
@@ -39,6 +40,8 @@ public class InventoryUI : MonoBehaviour
     [SerializeField] private GameObject _slotPrefab;
     [SerializeField] private GameObject _actionPrefab;
     [SerializeField] private GameObject _popUpPrefab;
+    [SerializeField] private GameObject _menuPrefab;
+    [SerializeField] private GameObject _menuBarPrefab;
     #endregion
 
     #region Estado do Inventario
@@ -141,6 +144,7 @@ public class InventoryUI : MonoBehaviour
         if(currentSlots.Count > 0)
             EventSystem.current.SetSelectedGameObject(currentSlots[0]);
 
+        ConfigurateMenu();
         _totalWeight.text = $"peso total: {_inventory.CalculateTotalWeight():F1}/{_inventory.GetMaxInventoryWeight():F1} kg\n[alinhamento: pirata procurado]";
     }
 
@@ -286,12 +290,67 @@ public class InventoryUI : MonoBehaviour
         EventSystem.current.SetSelectedGameObject(firstButton);
     }
 
+    private static readonly Dictionary<ItemData.ItemCategory, string> _categoryNames = new()
+    {
+        { ItemData.ItemCategory.Weapon,       "Arma"               },
+        { ItemData.ItemCategory.Armor,        "Armadura"           },
+        { ItemData.ItemCategory.Consumable,   "Consumivel"         },
+        { ItemData.ItemCategory.ShipMaterial, "Material do Navio"  },
+        { ItemData.ItemCategory.KeyItem,      "Item Chave"         },
+        { ItemData.ItemCategory.Collectible,  "Colecionavel"       },
+        { ItemData.ItemCategory.Misc,         "Misc"               },
+    };
+
     private void UpdateIndividualSlotUI()
     {
         InventorySlotUI slotUI = _slotContainer.GetChild(_lastSelectedSlotIndex).GetComponent<InventorySlotUI>();
         slotUI.ConfigurateVisual(_selectedSlot.item, _selectedSlot.quantity);
         _totalWeight.text = $"peso total: {_inventory.CalculateTotalWeight():F1}/{_inventory.GetMaxInventoryWeight():F1} kg\n[alinhamento: pirata procurado]";
         UpdateActionsContainer();
+    }
+
+    private void ConfigurateMenu()
+    {
+        foreach (Transform menu in _menuContainer)
+        {
+            Destroy(menu.gameObject);
+        }
+
+        ItemData.ItemCategory[] itemCategories = (ItemData.ItemCategory[]) System.Enum.GetValues(typeof(ItemData.ItemCategory));
+
+        GameObject firstMenuPrefab = Instantiate(_menuPrefab, _menuContainer);
+        Instantiate(_menuBarPrefab, _menuContainer);
+        firstMenuPrefab.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = "Tudo";
+
+        if (firstMenuPrefab.TryGetComponent<Button>(out Button btnTudo))
+        {
+            btnTudo.onClick.AddListener(() =>
+            {
+                _inventory.ShowAllItems();
+                UpdateUI();
+            });
+        }
+
+
+        foreach(ItemData.ItemCategory itemType in itemCategories)
+        {
+            GameObject newMenuPrefab = Instantiate(_menuPrefab, _menuContainer);
+
+            if(itemType != itemCategories[itemCategories.Length - 1])
+            {
+                Instantiate(_menuBarPrefab, _menuContainer);
+            }
+            newMenuPrefab.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = _categoryNames[itemType];
+
+            if (newMenuPrefab.TryGetComponent<Button>(out Button btn))
+            {
+                btn.onClick.AddListener(() =>
+                {
+                    _inventory.FilterByItemType(itemType);
+                    UpdateUI();
+                });
+            }
+        }
     }
     #endregion
 }

@@ -203,7 +203,11 @@ public class Inventory : MonoBehaviour
     { 
         _inventorySlots = _inventorySlots.FindAll(slot => slot.item.Category == category); 
     }
-    
+
+    public void ShowAllItems()
+    {
+
+    }
     
     public void SortByItemType() 
     { 
