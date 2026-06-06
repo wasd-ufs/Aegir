@@ -38,7 +38,8 @@ public class MaterialData : ItemData
             return "Drop: None";
 
         System.Text.StringBuilder sb = new System.Text.StringBuilder();
-
+        
+        sb.AppendLine($"Raridade: {Rarity}");
         sb.AppendLine("Dropped by:");
         foreach (NpcDropSource source in _dropSourceList)
             sb.AppendLine($"  {FormatNpcName(source.npc)} (max {source.maxQuantity})");

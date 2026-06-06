@@ -41,6 +41,8 @@ public class ArmorData : ItemData
     {
         System.Text.StringBuilder sb = new System.Text.StringBuilder();
 
+        
+        sb.AppendLine($"Raridade: {Rarity}");
         sb.AppendLine($"DEF: {_resistanceBaseValue:F1}");
 
         if (_allowedClassList != null && _allowedClassList.Count > 0)

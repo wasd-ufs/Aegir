@@ -20,6 +20,9 @@ MonoBehaviour:
   _possibleTypes: 
   _maximumQuantityPerSlot: 1
   _unitaryPrice: 100
+  _unitaryWeight: 10
+  _rarity: 1
+  _category: 0
   _allowedClassList: 030000000600000004000000
   _attackBaseValue: 10
   _perTypeAttackBonusList: []

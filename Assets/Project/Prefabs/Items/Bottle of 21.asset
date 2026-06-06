@@ -12,10 +12,28 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2be41944c1fb52e4cb4e5fd6e35b16d9, type: 3}
   m_Name: Bottle of 21
   m_EditorClassIdentifier: Assembly-CSharp::ConsumableData
-  itemName: Garrafa de 21
-  description: "Pirata tiste, pirata qu\xE9 fica lel\xE9"
-  Icon: {fileID: 4160602952601969893, guid: 961b45b1ead9bfa43b9661aba3fc3db1, type: 3}
-  possibleTypes: 000000000100000004000000
-  maximumQttPerSlot: 1
-  unitaryPrice: 500
-  intensity: 10
+  _itemName: Garrafa de 21
+  _description: "Botija marcada com o numero Vinte e Um (21)\n\nO artefato e irmao
+    do primeiro (Garrafa de 51), de feitio e clareza muito semelhantes. Tambem nao
+    apresenta as grosserias do barro ou as impurezas do vidro verde. No seu rotulo,
+    contudo, figura o algarismo 21. Algumas destas botijas, segundo me relataram
+    os marinheiros, nem sequer sao feitas de vidro, mas de uma materia estranhissima,
+    uma resina transparente que cede ao aperto dos dedos e n\xE3o estilha\xE7a ao
+    cair no conves do navio, um verdadeiro assombro que contraria as leis de Deus.\n\nA
+    agua-ardente em seu interior \xE9 igualmente ardilosa, capaz de aquecer as entranhas
+    num dia de inverno rigoroso ou de deitar por terra o mais valente dos soldados
+    de Sua Majestade com apenas alguns tragos. Os algarismos \"21\" e \"51\" devem,
+    decerto, representar diferentes seitas de boticarios dessas terras distantes,
+    que engarrafam o fogo da cana nestes recipientes do futuro.\n\nGuardo ambos os
+    exemplares trancados na minha arca, pois temo que o Santo Of\xEDcio n\xE3o compreenda
+    a natureza destes selos de metal que giram, nem destes vidros que n\xE3o se quebram."
+  _icon: {fileID: 4160602952601969893, guid: 961b45b1ead9bfa43b9661aba3fc3db1, type: 3}
+  _possibleTypes: 0100000000000000
+  _maximumQuantityPerSlot: 30
+  _unitaryPrice: 20
+  _unitaryWeight: 0.5
+  _rarity: 1
+  _category: 2
+  _intensity: 3
+  _effectType: 1
+  _durationInTurns: 1
