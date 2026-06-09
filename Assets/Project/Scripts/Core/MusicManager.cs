@@ -58,6 +58,8 @@ public class MusicManager : MonoBehaviour
     {
         if (Instance != null && Instance != this) { Destroy(gameObject); return; }
         Instance = this;
+
+        transform.SetParent(null);
         DontDestroyOnLoad(gameObject);
 
         // Inicialização de fontes de áudio dinâmicas

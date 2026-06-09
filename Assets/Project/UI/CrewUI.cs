@@ -303,15 +303,15 @@ public class CrewUI : MonoBehaviour
     {
         int currentRow = 0;
 
-        if (_captainMaxHP > 0)
-        {
-            DrawHearts(_captainHP, _captainMaxHP, currentRow, _captainHPSprite, _captainContainer);
-            currentRow++;
-        }
-
         if (_boatMaxHP > 0)
         {
             DrawHearts(_boatHP, _boatMaxHP, currentRow, _boatHPSprite, _boatContainer);
+            currentRow++;
+        }
+
+        if (_captainMaxHP > 0)
+        {
+            DrawHearts(_captainHP, _captainMaxHP, currentRow, _captainHPSprite, _captainContainer);
             currentRow++;
         }
 

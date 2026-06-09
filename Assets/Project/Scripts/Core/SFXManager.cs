@@ -1,3 +1,4 @@
+using Unity.Hierarchy;
 using UnityEngine;
 
 /// <summary>
@@ -32,6 +33,8 @@ public class SFXManager : MonoBehaviour
     {
         if (Instance != null && Instance != this) { Destroy(gameObject); return; }
         Instance = this;
+
+        transform.SetParent(null);
         DontDestroyOnLoad(gameObject);
 
         _audioSource = gameObject.AddComponent<AudioSource>();
