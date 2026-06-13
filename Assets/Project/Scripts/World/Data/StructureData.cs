@@ -16,6 +16,7 @@ public class StructureData : ScriptableObject
     [SerializeField] private List<int> _validBaseLayersList;
     [SerializeField] private float _isolationRadius;
     [SerializeField] private List<LayerOverride> _layerOverridesList;
+    [SerializeField, Min(1)] private int _maxPerChunk = 1;
 
     public string StructureName => _structureName;
     public Vector2Int StructureDimensions => _structureDimensions;
@@ -23,6 +24,7 @@ public class StructureData : ScriptableObject
     public float SpawnChance => _spawnChance;
     public List<int> ValidBaseLayersList => _validBaseLayersList;
     public float IsolationRadius => _isolationRadius;
+    public int MaxPerChunk => _maxPerChunk;
     public List<LayerOverride> LayerOverridesList => _layerOverridesList;
 
     /// <summary>

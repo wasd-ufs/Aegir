@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a916f4fd7835f5d43b449c8f44b1a5c6, type: 3}
+  m_Name: LayerStack V 1.0
+  m_EditorClassIdentifier: Assembly-CSharp::LayerStack
+  _layers:
+  - {fileID: 11400000, guid: daa7a774746f7c14e830befaa066a357, type: 2}
+  - {fileID: 11400000, guid: cf40d440a713a754aa52c775600c5e74, type: 2}
+  - {fileID: 11400000, guid: eef20a3cc2dfb65418f19fbd0da3773e, type: 2}

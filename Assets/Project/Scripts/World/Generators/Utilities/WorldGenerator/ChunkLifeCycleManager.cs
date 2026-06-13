@@ -33,6 +33,7 @@ public class ChunkLifecycleManager : MonoBehaviour
     // =========================================================================
 
     private ChunkPersistence _persistence;
+    private StructureGenerator _structureGenerator;
     private HaloBuilder _haloBuilder;
     private ChunkNeighborNotifier _neighborNotifier;
     private WorldGenerator _worldGenerator;
@@ -50,7 +51,8 @@ public class ChunkLifecycleManager : MonoBehaviour
         ChunkNeighborNotifier neighborNotifier,
         WorldGenerator worldGenerator,
         Transform initialPlayerTransform, 
-        IslandMapSampler islandMapSampler)
+        IslandMapSampler islandMapSampler,
+        StructureGenerator structureGenerator)
     {
         _persistence      = persistence;
         _haloBuilder      = haloBuilder;
@@ -58,6 +60,7 @@ public class ChunkLifecycleManager : MonoBehaviour
         _worldGenerator   = worldGenerator;
         _playerTransform  = initialPlayerTransform;
         _islandMapSampler = islandMapSampler;
+        _structureGenerator = structureGenerator;
     }
 
     // =========================================================================
@@ -261,6 +264,7 @@ public class ChunkLifecycleManager : MonoBehaviour
             byte[] chunkDataArray = mapGenerator.GetChunkData();
             _persistence.SaveChunkToDisk(position, chunkDataArray);
         }
+        _structureGenerator?.ClearStructuresForChunk(position);
 
         Destroy(mapGenerator.gameObject);
     }

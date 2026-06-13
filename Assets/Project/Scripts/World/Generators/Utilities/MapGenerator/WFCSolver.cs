@@ -18,6 +18,7 @@ public class WFCSolver : MonoBehaviour
     [SerializeField, Min(1)] private int _maxBeachRadius = 3;
     [SerializeField] private float _beachNoiseScale = 0.05f;
     [SerializeField, Min(2)] private int _oceanMaskPadding = 8;
+    [SerializeField] private LayerStack _layerStack;
 
     private TargetLayerBuilder _layerBuilder;
     private WFCAlgorithm _algorithm;
@@ -43,6 +44,8 @@ public class WFCSolver : MonoBehaviour
         _chunkSize = chunkSize;
 
         _layerBuilder = new TargetLayerBuilder(chunkSize, _oceanMaskPadding, _minBeachRadius, _maxBeachRadius, _beachNoiseScale);
+        if (_layerStack != null)
+            _layerBuilder.SetLayerStack(_layerStack);
         
         if (_islandSamplerCache != null)
         {

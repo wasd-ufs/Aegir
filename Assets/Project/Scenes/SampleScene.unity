@@ -625,6 +625,7 @@ MonoBehaviour:
   _defeatSfx: {fileID: 8300000, guid: faef1888d33c6f34aa6fc9e1f6f854f0, type: 3}
   _itemConsumedSfx: {fileID: 8300000, guid: fa00fc0c0ec74c84599c09a6d7179ad6, type: 3}
   _npcHiredSfx: {fileID: 8300000, guid: 7961d652c050886438caa6a3766ffe5a, type: 3}
+  _sfxVolume: 0.177
 --- !u!4 &49030894
 Transform:
   m_ObjectHideFlags: 0
@@ -10612,6 +10613,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 831789435}
+  - component: {fileID: 831789436}
   m_Layer: 0
   m_Name: '- HP Container -'
   m_TagString: Untagged
@@ -10619,14 +10621,13 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &831789435
-Transform:
+--- !u!224 &831789435
+RectTransform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 831789434}
-  serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
@@ -10636,6 +10637,19 @@ Transform:
   - {fileID: 1557339530}
   m_Father: {fileID: 1210806608}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!222 &831789436
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 831789434}
+  m_CullTransparentMesh: 1
 --- !u!1 &832599289
 GameObject:
   m_ObjectHideFlags: 0
@@ -14952,8 +14966,9 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 0be4daaec2ce1a84bbf723cbb078b02a, type: 3}
   _menuMusicList:
   - {fileID: 8300000, guid: d84d7dcb6aed87e4699520796ae6a27b, type: 3}
+  _musicVolume: 0.11
   _seaSound: {fileID: 8300000, guid: 6453971a4ae4d054bb85a4307270f905, type: 3}
-  _ambientVolume: 0.191
+  _ambientVolume: 0.121
   _minInterval: 5
   _maxInterval: 20
   _fadeDuration: 1
@@ -19562,6 +19577,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   _openingSound: {fileID: 8300000, guid: cc748703a18ba5647b69c9a2e8fdf7b5, type: 3}
+  _transitionVolume: 0.177
 --- !u!82 &1483774936
 AudioSource:
   m_ObjectHideFlags: 0
