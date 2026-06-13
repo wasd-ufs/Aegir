@@ -10,16 +10,20 @@ public class IslandMapSampler
     #region Limites do Terreno (Nível do Mar)
 
     /// <summary>
-    /// O "nível da água". Qualquer valor de ruído gerado abaixo disto torna-se oceano. 
+    /// O "nível do oceano". Qualquer valor de ruído gerado abaixo disto torna-se oceano. 
+    /// </summary>
+    public const float WATER_EDGE_THRESHOLD = 0.6f;
+
+    /// <summary>
+    /// O "nível do oceano profundo". Qualquer valor de ruído gerado abaixo disto torna-se oceano profundo. 
+    /// </summary>
+    public const float SEA_EDGE_THRESHOLD = 0.5f;
+    
+    /// <summary>
+    /// O "nível da água". Qualquer valor de ruído gerado abaixo disto torna-se água. 
     /// Aumentar este valor submerge a ilha (deixando-a menor). Diminuir faz a ilha crescer e ligar-se a outras.
     /// </summary>
     public const float ISLAND_EDGE_THRESHOLD = 0.62f;
-
-    /// <summary>
-    /// Constante de leitura pública usada pelo WFC para identificar onde a terra firme começa.
-    /// </summary>
-    public const float LAND_THRESHOLD = ISLAND_EDGE_THRESHOLD;
-
     #endregion
 
     #region Configurações do Ruído Principal (FBM)

@@ -15,7 +15,8 @@ MonoBehaviour:
   _structureName: House
   _structureDimensions: {x: 2, y: 2}
   _structurePrefab: {fileID: 5821326706256582854, guid: 9e0f367ce9c25534db327371e6c829f4, type: 3}
-  _spawnChance: 0.5
-  _validBaseLayersList: 020000000300000004000000
+  _spawnChance: 0.005
+  _validBaseLayersList: 0300000004000000
   _isolationRadius: 3
   _layerOverridesList: []
+  _maxPerChunk: 2

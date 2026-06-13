@@ -22,6 +22,9 @@ public class SFXManager : MonoBehaviour
 
     [Header("Recrutamento")]
     [SerializeField] private AudioClip _npcHiredSfx;
+
+    [Header("Configurações")]
+    [SerializeField][Range(0f, 1f)] private float _sfxVolume;
     #endregion
 
     #region Componentes
@@ -38,6 +41,7 @@ public class SFXManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
 
         _audioSource = gameObject.AddComponent<AudioSource>();
+        _audioSource.volume = _sfxVolume;
         _audioSource.loop = false;
     }
     #endregion
@@ -60,7 +64,7 @@ public class SFXManager : MonoBehaviour
         if (MusicManager.Instance != null)
             yield return StartCoroutine(MusicManager.Instance.FadeOutMusic());
 
-        _audioSource.PlayOneShot(clip);
+        _audioSource.PlayOneShot(clip, _sfxVolume);
     }
     #endregion
 }

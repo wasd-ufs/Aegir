@@ -96,6 +96,7 @@ MonoBehaviour:
   _maxBeachRadius: 6
   _beachNoiseScale: 0.03
   _oceanMaskPadding: 8
+  _layerStack: {fileID: 11400000, guid: fcbed5bf434735a43b9a25c0bc43e751, type: 2}
 --- !u!114 &6275219399073290002
 MonoBehaviour:
   m_ObjectHideFlags: 0

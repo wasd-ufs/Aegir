@@ -25,6 +25,10 @@ public class MusicManager : MonoBehaviour
     #endregion
 
     #region Configurações Dinâmicas e Ambiente
+    
+    [Header("Configurações das Músicas")]
+    [SerializeField][Range(0f, 1f)] private float _musicVolume;
+    
     [Header("Som Ambiente")]
     [SerializeField] private AudioClip _seaSound;
     [SerializeField][Range(0f, 1f)] private float _ambientVolume = 0.4f;
@@ -145,7 +149,7 @@ public class MusicManager : MonoBehaviour
         _remainingIndexesDictionary[state].RemoveAt(randomIndex);
 
         _musicSource.clip = musicList[index];
-        _musicSource.volume = 1f;
+        _musicSource.volume = _musicVolume;
         _musicSource.Play();
     }
 
@@ -222,10 +226,10 @@ public class MusicManager : MonoBehaviour
         while (elapsedIn < _fadeDuration)
         {
             elapsedIn += Time.deltaTime;
-            _musicSource.volume = Mathf.Lerp(0f, 1f, elapsedIn / _fadeDuration);
+            _musicSource.volume = Mathf.Lerp(0f, _musicVolume, elapsedIn / _fadeDuration);
             yield return null;
         }
-        _musicSource.volume = 1f;
+        _musicSource.volume = _musicVolume;
     }
 
     private IEnumerator WaitAndPlayNext(MusicState state)

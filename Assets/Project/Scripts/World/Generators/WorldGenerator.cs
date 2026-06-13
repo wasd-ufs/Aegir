@@ -86,8 +86,8 @@ public class WorldGenerator : MonoBehaviour
         _neighborNotifier  = new ChunkNeighborNotifier(_lifecycleManager, _chunkSize);
         _visibilityTracker = new ChunkVisibilityTracker(_lifecycleManager, _viewDistance);
 
-        _lifecycleManager.Setup(_persistence, _haloBuilder, _neighborNotifier, this, _playerTransform, _islandMapSampler);
-        _structureGenerator.Setup(_tileQuery, _lifecycleManager, _chunkSize, _cachedCellSize);
+        _structureGenerator.Setup(_tileQuery, _lifecycleManager, _chunkSize, _cachedCellSize, _worldSeed);
+        _lifecycleManager.Setup(_persistence, _haloBuilder, _neighborNotifier, this, _playerTransform, _islandMapSampler, _structureGenerator);
         _transitionController.Setup(_tileQuery, _lifecycleManager, Camera.main, _cachedCellSize);
     }
 
