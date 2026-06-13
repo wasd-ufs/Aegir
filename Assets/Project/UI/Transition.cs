@@ -42,6 +42,7 @@ public class GameBoyTransition : MonoBehaviour
     [SerializeField] private UnityEvent _onComplete;
 
     [SerializeField] private AudioClip _openingSound;
+    [SerializeField][Range(0f, 1f)] private float _transitionVolume;
     
     private AudioSource _audioSource;
 
@@ -107,7 +108,7 @@ public class GameBoyTransition : MonoBehaviour
         MeasureScreen();
 
         if (_openingSound != null)
-            _audioSource.PlayOneShot(_openingSound);
+            _audioSource.PlayOneShot(_openingSound, _transitionVolume);
 
         _transitionContainer.gameObject.SetActive(true);
 

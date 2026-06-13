@@ -1,3 +1,4 @@
+using UnityEditor.PackageManager.UI;
 using UnityEngine;
 
 /// <summary>
@@ -7,6 +8,10 @@ using UnityEngine;
 /// </summary>
 public class TargetLayerBuilder
 {
+    private const int DEEP_SEA_LAYER = -4;
+    private const int DEEP_SEA_TO_SEA_TRANSITION_LAYER = -3;
+    private const int SEA_LAYER = -2;
+    private const int SEA_TO_WATER_TRANSITION_LAYER = -1;
     private const int WATER_LAYER = 0;
     private const int WATER_TO_SAND_TRANSITION_LAYER = 1;
     private const int SAND_LAYER = 2;
@@ -74,7 +79,7 @@ public class TargetLayerBuilder
         int groupX = Mathf.FloorToInt(globalPosition.x) & ~1;
         int groupY = Mathf.FloorToInt(globalPosition.y) & ~1;
         
-        if (!IsMathematicallyLand(groupX, groupY)) return WATER_LAYER;
+        if (!IsMathematicallyLand(groupX, groupY)) return ChooseWaterProfundity(globalPosition);
 
         float organicNoise = GetBeachNoise(groupX, groupY);
         int targetBeachWidth = Mathf.RoundToInt(Mathf.Lerp(_minBeachRadius, maxEffectiveRadius, organicNoise));
@@ -113,7 +118,7 @@ public class TargetLayerBuilder
         int py = localY + oceanMaskPadding;
         int centerSolidLayer = _solidLayerMap[px, py];
         
-        if (centerSolidLayer == WATER_LAYER) return WATER_LAYER;
+        if (centerSolidLayer == DEEP_SEA_LAYER) return DEEP_SEA_LAYER;
 
         int solidWidth = _solidLayerMap.GetLength(0);
         int solidHeight = _solidLayerMap.GetLength(1);
@@ -140,6 +145,8 @@ public class TargetLayerBuilder
     {
         return upperSolidLayer switch
         {
+            SEA_LAYER => DEEP_SEA_TO_SEA_TRANSITION_LAYER,
+            WATER_LAYER => SEA_TO_WATER_TRANSITION_LAYER,
             SAND_LAYER => WATER_TO_SAND_TRANSITION_LAYER,
             GRASS_LAYER => SAND_TO_GRASS_TRANSITION_LAYER,
             _ => upperSolidLayer
@@ -148,12 +155,12 @@ public class TargetLayerBuilder
 
     private bool IsMathematicallyLand(int groupX, int groupY)
     {
-        if (SampleIslandHeight(groupX, groupY) >= IslandMapSampler.LAND_THRESHOLD) return true;
+        if (SampleIslandHeight(groupX, groupY) >= IslandMapSampler.ISLAND_EDGE_THRESHOLD) return true;
 
-        bool landUp = SampleIslandHeight(groupX, groupY + 2) >= IslandMapSampler.LAND_THRESHOLD;
-        bool landDown = SampleIslandHeight(groupX, groupY - 2) >= IslandMapSampler.LAND_THRESHOLD;
-        bool landRight = SampleIslandHeight(groupX + 2, groupY) >= IslandMapSampler.LAND_THRESHOLD;
-        bool landLeft = SampleIslandHeight(groupX - 2, groupY) >= IslandMapSampler.LAND_THRESHOLD;
+        bool landUp = SampleIslandHeight(groupX, groupY + 2) >= IslandMapSampler.ISLAND_EDGE_THRESHOLD;
+        bool landDown = SampleIslandHeight(groupX, groupY - 2) >= IslandMapSampler.ISLAND_EDGE_THRESHOLD;
+        bool landRight = SampleIslandHeight(groupX + 2, groupY) >= IslandMapSampler.ISLAND_EDGE_THRESHOLD;
+        bool landLeft = SampleIslandHeight(groupX - 2, groupY) >= IslandMapSampler.ISLAND_EDGE_THRESHOLD;
 
         return (landUp && landRight) || (landRight && landDown) || (landDown && landLeft) || (landLeft && landUp);
     }
@@ -177,5 +184,14 @@ public class TargetLayerBuilder
     private Vector2 GetGlobalPosition(int localX, int localY)
     {
         return new Vector2(_currentChunkCoordinate.x * _chunkSize.x + localX - 1, _currentChunkCoordinate.y * _chunkSize.y + localY - 1);
+    }
+
+    private int ChooseWaterProfundity(Vector2 globalPosition)
+    {
+        float threshold = SampleIslandHeight(globalPosition.x, globalPosition.y);
+
+        if (threshold > IslandMapSampler.WATER_EDGE_THRESHOLD) return WATER_LAYER;
+        else if (threshold > IslandMapSampler.SEA_EDGE_THRESHOLD) return SEA_LAYER;
+        else return DEEP_SEA_LAYER;
     }
 }

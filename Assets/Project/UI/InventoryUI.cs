@@ -79,13 +79,13 @@ public class InventoryUI : MonoBehaviour
         if (_inputActions.Player.CancelarSelecao.WasPressedThisFrame())
             HandleCancelSelection();
 
-        if (_inputActions.Player.Descartar.WasPressedThisFrame() && _selectedSlot.item != null)
+        if (_inputActions.Player.Descartar.WasPressedThisFrame() && _selectedSlot.item != null && _isInventoryOpen)
             DiscardItem();
 
-        if (_inputActions.Player.Usar.WasPressedThisFrame() && _selectedSlot.item != null)
+        if (_inputActions.Player.Usar.WasPressedThisFrame() && _selectedSlot.item != null && _isInventoryOpen)
             UseItem();
 
-        if (_inputActions.Player.OrganizarInventario.WasPressedThisFrame())
+        if (_inputActions.Player.OrganizarInventario.WasPressedThisFrame() && _isInventoryOpen)
             OpenSortPopUp();
     }
 

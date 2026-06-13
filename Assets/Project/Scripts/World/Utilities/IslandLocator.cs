@@ -5,7 +5,7 @@ public class IslandLocator
 {
     private IslandMapSampler _sampler;
     private Vector2Int _chunkSize;
-    private float _landThreshold = IslandMapSampler.LAND_THRESHOLD;
+    private float _landThreshold = IslandMapSampler.ISLAND_EDGE_THRESHOLD;
 
     public IslandLocator(IslandMapSampler sampler, Vector2Int chunkSize)
     {
