@@ -12,13 +12,13 @@ O projeto é particionado em assemblies independentes para desacoplamento estrit
 
 ```mermaid
 graph TD
-    subgraph Engine & Packages
+    subgraph Subgraph_Engine ["Engine e Packages"]
         UnityCore["UnityEngine / URP"]
         NewInput["com.unity.inputsystem"]
         UTF["Unity Test Framework / NUnit"]
     end
 
-    subgraph Aegir Assemblies
+    subgraph Subgraph_Aegir ["Aegir Assemblies"]
         EditorAssembly["Aegir.Editor.asmdef<br/>(Editor Tools, WFC Window)"]
         RuntimeAssembly["Aegir.Runtime.asmdef<br/>(Core, World, Entities, Combat, Items, UI)"]
         TestsAssembly["Aegir.Tests.asmdef<br/>(EditMode Unit Tests)"]
@@ -49,7 +49,7 @@ O ecossistema procedural é orquestrado pelo `WorldGenerator`, que decompõe o c
 
 ```mermaid
 graph TD
-    subgraph Orquestração e Ciclo de Vida
+    subgraph Subgraph_Orchestration ["Orquestração e Ciclo de Vida"]
         WG["WorldGenerator<br/>(Monobehaviour Central)"]
         CLM["ChunkLifecycleManager<br/>(Active/Pending Dictionaries)"]
         CGQ["ChunkGenerationQueue<br/>(Ordenação por Distância)"]
@@ -61,15 +61,15 @@ graph TD
         IL["IslandLocator<br/>(Busca e Agrupamento de Ilhas)"]
     end
 
-    subgraph Pipeline WFC por Chunk
+    subgraph Subgraph_WFC ["Pipeline WFC por Chunk"]
         MG["MapGenerator<br/>(Geração de 1 Chunk)"]
         WFC["WFCAlgorithm<br/>(Motor Entropia MRE / Propagação)"]
         CCG["ChunkCellGrid<br/>(Grade de Células + Snapshot Halo)"]
-        CC["CompatibilityCache<br/>(Matriz 3D bool[a,b,dir])"]
+        CC["CompatibilityCache<br/>(Matriz 3D de Compatibilidade)"]
         RM["RuleManager<br/>(Regras de Adjacência / Bloqueios)"]
     end
 
-    subgraph Dados e Modelos
+    subgraph Subgraph_Data ["Dados e Modelos"]
         TD["TilesetData (ScriptableObject)"]
         T["Tile (ScriptableObject / Sockets)"]
         C["Cell (BitArray de Estados)"]
@@ -114,19 +114,19 @@ O controle do jogador implementa o padrão State Pattern (`IPlayerState`), alter
 
 ```mermaid
 graph TD
-    subgraph Inputs & Câmera
+    subgraph Subgraph_Inputs ["Inputs e Câmera"]
         PIA["PlayerInputActions<br/>(New Input System)"]
         CF["CameraFollow<br/>(Seguimento Suave e Zoom)"]
     end
 
-    subgraph Núcleo do Jogador
+    subgraph Subgraph_Player ["Núcleo do Jogador"]
         PM["PlayerMovement<br/>(Controlador Central)"]
-        IPS["«interface»<br/>IPlayerState"]
+        IPS["IPlayerState<br/>(Interface de Estado)"]
         BS["BoatState<br/>(Física Marítima, Inércia e Ondas)"]
         CS["CaptainState<br/>(Locomoção Top-Down em Terra)"]
     end
 
-    subgraph Integração de Mundo
+    subgraph Subgraph_WorldIntegration ["Integração de Mundo"]
         PTC["PlayerTransitionController"]
         WG["WorldGenerator"]
         GS["GameState"]
@@ -134,12 +134,13 @@ graph TD
 
     PIA --> PM
     PM --> IPS
-    IPS <|.. BS
-    IPS <|.. CS
+    BS -.->|implementa| IPS
+    CS -.->|implementa| IPS
     PM --> BS
     PM --> CS
     PM --> CF
-    PM <--> PTC
+    PM --> PTC
+    PTC --> PM
     PTC --> WG
     PM --> GS
 
@@ -157,25 +158,25 @@ O combate opera como um fluxo tático isolado via Singleton (`BattleManager`), e
 
 ```mermaid
 graph TD
-    subgraph Gatilho e Transição
+    subgraph Subgraph_Trigger ["Gatilho e Transição"]
         SF["StartFight<br/>(Gatilho por Colisão)"]
         GBT["GameBoyTransition<br/>(Animação Estilo Game Boy)"]
         BD["BattleData<br/>(Setup Visual de Cenário)"]
     end
 
-    subgraph Orquestração do Combate
-        BM["BattleManager<br/>(Singleton / Turnos & UI)"]
+    subgraph Subgraph_CombatCore ["Orquestração do Combate"]
+        BM["BattleManager<br/>(Singleton / Turnos e UI)"]
         CB["CombatBase<br/>(Lógica Abstrata de Efeitos)"]
         CA["CrewAttacks<br/>(Implementação Concreta de Ações)"]
     end
 
-    subgraph Entidades e Dados
+    subgraph Subgraph_Entities ["Entidades e Dados"]
         CD_Ally["CrewData (Aliados)"]
         CD_Enemy["CrewData (Inimigos)"]
         NPC["NPCsData<br/>(Vida, Matriz Elemental, Buffs, Ações)"]
     end
 
-    subgraph Interface de Combate
+    subgraph Subgraph_UI ["Interface de Combate"]
         CUI["CrewUI<br/>(Escuta Reativa OnHealthChanged)"]
     end
 
@@ -188,14 +189,14 @@ graph TD
     BM --> CD_Enemy
     BM --> CUI
 
-    CA -- herda --> CB
+    CA -->|herda| CB
     CB --> CD_Ally
     CB --> CD_Enemy
     CB --> NPC
 
     CD_Ally --> NPC
     CD_Enemy --> NPC
-    NPC -- eventos --> CUI
+    NPC -->|eventos| CUI
 
     style BM fill:#991b1b,stroke:#f87171,stroke-width:2px,color:#fff
     style CA fill:#b91c1c,stroke:#fca5a5,stroke-width:2px,color:#fff
@@ -211,22 +212,22 @@ Gerenciamento individual e coletivo dos tripulantes e criaturas do mapa:
 
 ```mermaid
 graph TD
-    subgraph IA e Mundo
-        NM["NPCsMovement<br/>(Patrulha & Perseguição)"]
+    subgraph Subgraph_AI ["IA e Mundo"]
+        NM["NPCsMovement<br/>(Patrulha e Perseguição)"]
         RNPC["RecruitableNPC<br/>(Interação de Recrutamento)"]
         NR["NPC_Randomizer<br/>(Variação de Atributos no Spawn)"]
     end
 
-    subgraph Tripulação e Atributos
-        CD["CrewData<br/>(Coletivo da Tripulação & Permadeath)"]
+    subgraph Subgraph_Crew ["Tripulação e Atributos"]
+        CD["CrewData<br/>(Coletivo da Tripulação e Permadeath)"]
         NPC["NPCsData<br/>(Vida, XP, Nível, Tabela de Resistências)"]
         INV["Inventory<br/>(Inventário Compartilhado do Grupo)"]
     end
 
-    subgraph Eventos Reativos
-        E1["OnHealthChanged(npc, cur, max)"]
-        E2["OnDeath(npc)"]
-        E3["OnCrewChanged()"]
+    subgraph Subgraph_Events ["Eventos Reativos"]
+        E1["OnHealthChanged"]
+        E2["OnDeath"]
+        E3["OnCrewChanged"]
     end
 
     NM --> NPC
@@ -254,12 +255,12 @@ Arquitetura ScriptableObject extensível com empilhamento dinâmico e controle d
 
 ```mermaid
 graph TD
-    subgraph Armazenamento & UI
-        INV["Inventory<br/>(Gestão de Slots & Pilhas)"]
+    subgraph Subgraph_Storage ["Armazenamento e UI"]
+        INV["Inventory<br/>(Gestão de Slots e Pilhas)"]
         IUI["InventoryUI<br/>(Tela do Inventário)"]
     end
 
-    subgraph Definição de Dados
+    subgraph Subgraph_ItemTypes ["Definição de Dados"]
         BID["BaseItemData<br/>(ScriptableObject Base)"]
         WD["WeaponData<br/>(Ataque Base, Raridade)"]
         AD["ArmorData<br/>(Defesa Flat, Resistência)"]
@@ -268,17 +269,17 @@ graph TD
         MD["MaterialData<br/>(Materiais de Craft/Reparo)"]
     end
 
-    subgraph Utilização
+    subgraph Subgraph_ItemUsage ["Utilização"]
         NPC["NPCsData<br/>(EquipWeapon, EquipArmor, ApplyConsumable)"]
     end
 
     INV --> BID
     IUI --> INV
-    BID <|-- WD
-    BID <|-- AD
-    BID <|-- CD
-    BID <|-- TD
-    BID <|-- MD
+    WD -->|herda| BID
+    AD -->|herda| BID
+    CD -->|herda| BID
+    TD -->|herda| BID
+    MD -->|herda| BID
 
     NPC --> WD
     NPC --> AD
@@ -315,19 +316,19 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph Aegir.Tests.asmdef
-        T_World["World Tests<br/>• CellTests<br/>• WFCAlgorithmTests<br/>• TileCompatibilityTests<br/>• IslandAndWorldUtilitiesTests"]
-        T_Items["Items Tests<br/>• InventoryTests<br/>• ItemDataTests"]
-        T_Entities["Entities Tests<br/>• NPCsDataTests<br/>• CrewDataTests<br/>• PlayerMovementStateTests"]
-        T_Combat["Combat Tests<br/>• CombatBaseTests<br/>• BattleLogicTests"]
-        T_Core["Core Tests<br/>• GameStateTests"]
+    subgraph Subgraph_Tests ["Aegir.Tests.asmdef"]
+        T_World["World Tests<br/>(Cell, WFC, Sockets, Island)"]
+        T_Items["Items Tests<br/>(Inventory, ItemData)"]
+        T_Entities["Entities Tests<br/>(NPCs, Crew, PlayerState)"]
+        T_Combat["Combat Tests<br/>(CombatBase, BattleLogic)"]
+        T_Core["Core Tests<br/>(GameState)"]
     end
 
-    subgraph Aegir.Runtime.asmdef
-        R_World["World & WFC Engine"]
-        R_Items["Inventory & ScriptableObjects"]
+    subgraph Subgraph_Runtime ["Aegir.Runtime.asmdef"]
+        R_World["World e WFC Engine"]
+        R_Items["Inventory e ScriptableObjects"]
         R_Entities["NPCs, Crew, Player State"]
-        R_Combat["BattleManager & CrewAttacks"]
+        R_Combat["BattleManager e CrewAttacks"]
         R_Core["GameState Flags"]
     end
 
