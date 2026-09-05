@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 
 /// <summary>
 /// Controlador principal de movimento da entidade do Jogador. 
@@ -12,27 +13,45 @@ public class PlayerMovement : MonoBehaviour
 {
     #region Configurações de Movimento
     [Header("Speeds")]
-    public float boatSpeed;
-    public float captainSpeed;
+    [FormerlySerializedAs("boatSpeed")]
+    [SerializeField] private float _boatSpeed;
+    public float BoatSpeed { get => _boatSpeed; set => _boatSpeed = value; }
+    public float boatSpeed { get => _boatSpeed; set => _boatSpeed = value; }
+
+    [FormerlySerializedAs("captainSpeed")]
+    [SerializeField] private float _captainSpeed;
+    public float CaptainSpeed { get => _captainSpeed; set => _captainSpeed = value; }
+    public float captainSpeed { get => _captainSpeed; set => _captainSpeed = value; }
     
     [Header("Física da Água")]
-    public float amplitude = 0.05f; // O quanto ele sobe/desce
-    public float frequencia = 2f;   // A velocidade do balanço
-    public float tempoAteOVentoMudar = 10;
+    [FormerlySerializedAs("amplitude")]
+    [SerializeField] private float _amplitude = 0.05f; // O quanto ele sobe/desce
+    public float Amplitude { get => _amplitude; set => _amplitude = value; }
+    public float amplitude { get => _amplitude; set => _amplitude = value; }
+
+    [FormerlySerializedAs("frequencia")]
+    [SerializeField] private float _waveFrequency = 2f;   // A velocidade do balanço
+    public float WaveFrequency { get => _waveFrequency; set => _waveFrequency = value; }
+    public float frequencia { get => _waveFrequency; set => _waveFrequency = value; }
+
+    [FormerlySerializedAs("tempoAteOVentoMudar")]
+    [SerializeField] private float _timeUntilWindChanges = 10f;
+    public float TimeUntilWindChanges { get => _timeUntilWindChanges; set => _timeUntilWindChanges = value; }
+    public float tempoAteOVentoMudar { get => _timeUntilWindChanges; set => _timeUntilWindChanges = value; }
     #endregion
 
     #region Estado Interno e Física
     [Header("Internal State")]
     public bool isOnWater = true;
     public Vector2 moveInput;
-    private Vector3 lastValidPosition;
-    private float intervaloEntreMudancas = 0;
-    private float dirVentoX = 1, dirVentoY = 1;
+    private Vector3 _lastValidPosition;
+    private float _windChangeInterval = 0;
+    private float _windDirX = 1, _windDirY = 1;
     #endregion
 
     #region Referências
     [Header("References")]
-    [UnityEngine.Serialization.FormerlySerializedAs("capitão")]
+    [FormerlySerializedAs("capitão")]
     public GameObject captain;
     public GameObject capitão => captain;
     public Camera mainCamera;
@@ -40,8 +59,8 @@ public class PlayerMovement : MonoBehaviour
 
     public Rigidbody2D rb;
     public Rigidbody2D crb;
-    private Animator animator;
-    private Animator cAnimator;
+    private Animator _animator;
+    private Animator _cAnimator;
     public PlayerInputActions inputActions;
     #endregion
 
@@ -70,16 +89,16 @@ public class PlayerMovement : MonoBehaviour
         inputActions = new PlayerInputActions();
         rb = GetComponent<Rigidbody2D>();
         crb = captain.GetComponent<Rigidbody2D>();
-        animator = GetComponent<Animator>();
-        cAnimator = captain.GetComponent<Animator>();
+        _animator = GetComponent<Animator>();
+        _cAnimator = captain.GetComponent<Animator>();
         GameState.IsOnWater = isOnWater;
     }
 
     void Start()
     {
-        lastValidPosition = transform.position;
+        _lastValidPosition = transform.position;
 
-        if(isOnWater)
+        if (isOnWater)
             ChangeState(new BoatState(this));
         else
             ChangeState(new CaptainState(this));
@@ -87,32 +106,31 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
-         if (GameState.IsInBattle || !GameState.IsGameStarted) return;
+        if (GameState.IsInBattle || !GameState.IsGameStarted) return;
 
-    moveInput = inputActions.Player.Move.ReadValue<Vector2>();
+        moveInput = inputActions.Player.Move.ReadValue<Vector2>();
 
-    if (inputActions.Player.EnterGetOut.WasPressedThisFrame())
-    {
-        worldGenerator.TryGoOut(mainCamera);
-    }
+        if (inputActions.Player.EnterGetOut.WasPressedThisFrame())
+        {
+            worldGenerator.TryGoOut(mainCamera);
+        }
 
-    SimularVentos();
-    currentState?.Update();
+        SimulateWind();
+        currentState?.Update();
 
-    // sincroniza com GameState
-    if (GameState.IsOnWater && !(currentState is BoatState))
-        ChangeState(new BoatState(this));
+        // sincroniza com GameState
+        if (GameState.IsOnWater && !(currentState is BoatState))
+            ChangeState(new BoatState(this));
 
-    if (!GameState.IsOnWater && !(currentState is CaptainState))
-        ChangeState(new CaptainState(this));
-
+        if (!GameState.IsOnWater && !(currentState is CaptainState))
+            ChangeState(new CaptainState(this));
     }
     #endregion
 
     #region Física e Movimento (FixedUpdate)
     void FixedUpdate()
     {
-        if(GameState.IsInBattle || !GameState.IsGameStarted)
+        if (GameState.IsInBattle || !GameState.IsGameStarted)
         {
             rb.linearVelocity = Vector2.zero;
             crb.linearVelocity = Vector2.zero;
@@ -127,53 +145,63 @@ public class PlayerMovement : MonoBehaviour
     public void ApplyWaterMovement(Vector2 direction)
     {
         // Efeito de balanço das ondas cruzado com a direção do vento
-        float waveX = Mathf.Sin(Time.fixedTime * frequencia) * amplitude * dirVentoX, 
-              waveY = Mathf.Cos(Time.fixedTime * frequencia) * amplitude * dirVentoY;
+        float waveX = Mathf.Sin(Time.fixedTime * _waveFrequency) * _amplitude * _windDirX;
+        float waveY = Mathf.Cos(Time.fixedTime * _waveFrequency) * _amplitude * _windDirY;
 
         Vector2 waveForce = new Vector2(waveX, waveY);
         rb.linearVelocity += waveForce * Time.fixedDeltaTime;
 
-        rb.linearVelocity = Vector2.Lerp(rb.linearVelocity, direction * boatSpeed, Time.fixedDeltaTime * 1);
-        lastValidPosition = transform.position;
+        rb.linearVelocity = Vector2.Lerp(rb.linearVelocity, direction * _boatSpeed, Time.fixedDeltaTime * 1);
+        _lastValidPosition = transform.position;
     }
 
-    private void SimularVentos()
+    private void SimulateWind()
     {
-        intervaloEntreMudancas += Time.deltaTime;
-        if(intervaloEntreMudancas >= tempoAteOVentoMudar)
+        _windChangeInterval += Time.deltaTime;
+        if (_windChangeInterval >= _timeUntilWindChanges)
         {
-            intervaloEntreMudancas = 0;
-            dirVentoX = Random.Range(-1f, 1f);
-            dirVentoY = Random.Range(-1f, 1f);
+            _windChangeInterval = 0;
+            _windDirX = Random.Range(-1f, 1f);
+            _windDirY = Random.Range(-1f, 1f);
         }
     }
 
-    public void AtualizarAnimacoes()
+    private void SimularVentos() => SimulateWind();
+
+    /// <summary>
+    /// Atualiza as variáveis do Animator de acordo com o estado e velocidade atuais.
+    /// </summary>
+    public void UpdateAnimations()
     {
-        if(moveInput.sqrMagnitude >= 0.01f)
+        if (moveInput.sqrMagnitude >= 0.01f)
         {
             if (currentState is BoatState)
             {
-                animator.SetFloat("Horizontal", rb.linearVelocity.x);
-                animator.SetFloat("Vertical", rb.linearVelocity.y);        
-                animator.SetFloat("MoveSpeed", rb.linearVelocity.sqrMagnitude);
+                _animator.SetFloat("Horizontal", rb.linearVelocity.x);
+                _animator.SetFloat("Vertical", rb.linearVelocity.y);        
+                _animator.SetFloat("MoveSpeed", rb.linearVelocity.sqrMagnitude);
             }
             else
             {
-                cAnimator.SetFloat("Horizontal", moveInput.x);
-                cAnimator.SetFloat("Vertical", moveInput.y);       
+                _cAnimator.SetFloat("Horizontal", moveInput.x);
+                _cAnimator.SetFloat("Vertical", moveInput.y);       
             }
         }
 
         if (captain.activeSelf)
-            cAnimator.SetFloat("MoveSpeed", crb.linearVelocity.sqrMagnitude);
-        animator.SetFloat("MoveSpeed", rb.linearVelocity.sqrMagnitude);
+            _cAnimator.SetFloat("MoveSpeed", crb.linearVelocity.sqrMagnitude);
+        _animator.SetFloat("MoveSpeed", rb.linearVelocity.sqrMagnitude);
     }
+
+    /// <summary>
+    /// Alias para manter compatibilidade com chamadas legadas de atualização de animações.
+    /// </summary>
+    public void AtualizarAnimacoes() => UpdateAnimations();
 
     public void StopAndReset()
     {
         rb.linearVelocity = Vector2.zero;
-        transform.position = lastValidPosition;
+        transform.position = _lastValidPosition;
     }
     #endregion
 
@@ -182,4 +210,4 @@ public class PlayerMovement : MonoBehaviour
     void OnDisable() => inputActions.Disable();
     public PlayerInputActions GetInputActions() => inputActions;
     #endregion
-} 
+}

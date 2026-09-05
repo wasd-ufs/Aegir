@@ -5,6 +5,10 @@ using TMPro;
 using UnityEngine.InputSystem;
 using UnityEngine.EventSystems;
 
+/// <summary>
+/// Controlador principal da tela de inventário do jogador.
+/// Exibe slots, detalhes do item selecionado, filtros por categoria e painel de ações/descarte.
+/// </summary>
 public class InventoryUI : MonoBehaviour
 {
     #region Referencias de UI

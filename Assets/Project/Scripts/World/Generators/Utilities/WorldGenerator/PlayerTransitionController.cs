@@ -1,5 +1,9 @@
 using UnityEngine;
 
+/// <summary>
+/// Controlador responsável pela transição do jogador entre o barco (navegação aquática)
+/// e o capitão a pé (exploração de terra firme em ilhas).
+/// </summary>
 public class PlayerTransitionController : MonoBehaviour
 {
     private WorldTileQuery _tileQuery;

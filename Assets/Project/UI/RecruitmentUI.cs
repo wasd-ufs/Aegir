@@ -100,7 +100,7 @@ public class RecruitmentUI : MonoBehaviour
     {
         if (shouldRecruit)
         {
-            _recruitableNpc.GetComponent<NPCsMovement>().IrParaOBarco(_playerCrew.transform);
+            _recruitableNpc.GetComponent<NPCsMovement>().MoveToBoat(_playerCrew.transform);
             _playerCrew.CrewList.Add(_recruitableNpc.gameObject);
 
             SFXManager.Instance?.PlayContract();

@@ -2,6 +2,10 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
+/// <summary>
+/// Componente de interface que representa visualmente um único slot no inventário.
+/// Exibe ícone, nome, peso acumulado e quantidade do item.
+/// </summary>
 public class InventorySlotUI : MonoBehaviour, ISelectHandler
 {
     [SerializeField] private TextMeshProUGUI _itemQuantityText;

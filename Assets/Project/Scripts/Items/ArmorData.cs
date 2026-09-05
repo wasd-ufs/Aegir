@@ -1,6 +1,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Representa os dados de armaduras e itens de proteção no jogo.
+/// Define bônus de resistência base, resistências elementais e restrições por classe.
+/// </summary>
 [CreateAssetMenu(fileName = "New Armor", menuName = "Scriptable Objects/ArmorData")]
 public class ArmorData : BaseItemData
 {

@@ -1,5 +1,9 @@
 using UnityEngine;
 
+/// <summary>
+/// Cache de compatibilidade direcional entre tiles no algoritmo WFC.
+/// Pré-calcula matriz tridimensional de adjacências para otimizar tempo de propagação.
+/// </summary>
 public class CompatibilityCache
 {
     private bool[,,] _compatibilityCacheArray;

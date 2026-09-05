@@ -1,6 +1,10 @@
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
+/// <summary>
+/// Componente responsável pela renderização visual de uma chunk no Tilemap da Unity
+/// após o colapso completo das células pelo algoritmo WFC.
+/// </summary>
 public class ChunkRenderer : MonoBehaviour
 {
     [SerializeField] private Tilemap _tilemap;

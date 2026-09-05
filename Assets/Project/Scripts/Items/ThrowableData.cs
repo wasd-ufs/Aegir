@@ -1,6 +1,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Representa itens arremessáveis em combate (bombas, frascos incendiários, etc.).
+/// Configura quantidade máxima de alvos, dano em área e classes permitidas a arremessá-los.
+/// </summary>
 [CreateAssetMenu(fileName = "New Throwable", menuName = "Scriptable Objects/ThrowableData")]
 public class ThrowableData : BaseItemData
 {

@@ -1,5 +1,6 @@
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 /// <summary>
 /// A Máquina de Estados de IA responsável pela movimentação de todos os NPCs do jogo.
@@ -16,103 +17,132 @@ public class NPCsMovement : MonoBehaviour
 {
     #region Configurações de IA
     [Header("Settings")]
-    public float moveSpeed = 2.8f;
-    public float timeUntilAggressive = 4f;
-    public bool isAgressive = true;
-    public float maxChaseTime = 10f;
-    public float maxTimeUntilChangingDirection = 5f;
-    public float viewRadius = 1f;
-    public bool isMaritime = true;
+    [FormerlySerializedAs("moveSpeed")]
+    [SerializeField] private float _moveSpeed = 2.8f;
+    public float MoveSpeed { get => _moveSpeed; set => _moveSpeed = value; }
+    public float moveSpeed { get => _moveSpeed; set => _moveSpeed = value; }
+
+    [FormerlySerializedAs("timeUntilAggressive")]
+    [SerializeField] private float _timeUntilAggressive = 4f;
+    public float TimeUntilAggressive { get => _timeUntilAggressive; set => _timeUntilAggressive = value; }
+    public float timeUntilAggressive { get => _timeUntilAggressive; set => _timeUntilAggressive = value; }
+
+    [FormerlySerializedAs("isAgressive")]
+    [SerializeField] private bool _isAgressive = true;
+    public bool IsAgressive { get => _isAgressive; set => _isAgressive = value; }
+    public bool isAgressive { get => _isAgressive; set => _isAgressive = value; }
+
+    [FormerlySerializedAs("maxChaseTime")]
+    [SerializeField] private float _maxChaseTime = 10f;
+    public float MaxChaseTime { get => _maxChaseTime; set => _maxChaseTime = value; }
+    public float maxChaseTime { get => _maxChaseTime; set => _maxChaseTime = value; }
+
+    [FormerlySerializedAs("maxTimeUntilChangingDirection")]
+    [SerializeField] private float _maxTimeUntilChangingDirection = 5f;
+    public float MaxTimeUntilChangingDirection { get => _maxTimeUntilChangingDirection; set => _maxTimeUntilChangingDirection = value; }
+    public float maxTimeUntilChangingDirection { get => _maxTimeUntilChangingDirection; set => _maxTimeUntilChangingDirection = value; }
+
+    [FormerlySerializedAs("viewRadius")]
+    [SerializeField] private float _viewRadius = 1f;
+    public float ViewRadius { get => _viewRadius; set => _viewRadius = value; }
+    public float viewRadius { get => _viewRadius; set => _viewRadius = value; }
+
+    [FormerlySerializedAs("isMaritime")]
+    [SerializeField] private bool _isMaritime = true;
+    public bool IsMaritime { get => _isMaritime; set => _isMaritime = value; }
+    public bool isMaritime { get => _isMaritime; set => _isMaritime = value; }
     #endregion
 
     #region Estado Interno e Componentes
     [Header("References")]
-    private WorldGenerator worldGenerator;
+    private WorldGenerator _worldGenerator;
 
     // Estado Interno
-    private GameObject Presa = null;
-    private Vector2 direction = Vector2.zero;
-    private Vector3 lastValidPosition;
-    private float agressionTimer;
-    private float timeUntilChangeDirection;
-    private float chaseTimer, wanderingTimer;
-    private bool StopAgressivity = false, isAlert = false;
-    private float boundaryCheckTimer;
+    private GameObject _prey = null;
+    private Vector2 _direction = Vector2.zero;
+    private Vector3 _lastValidPosition;
+    private float _aggressionTimer;
+    private float _timeUntilChangeDirection;
+    private float _chaseTimer;
+    private float _wanderingTimer;
+    private bool _shouldStopAggression = false;
+    private bool _isAlert = false;
+    private float _boundaryCheckTimer;
     private const float BoundaryCheckInterval = 0.05f;
-    private float borderCooldownTimer = 0f;
-    private bool hasBorderCooldown = false;
+    private float _borderCooldownTimer = 0f;
+    private bool _hasBorderCooldown = false;
     private const float BorderChaseCooldown = 20f; // segundos até poder perseguir novamente    
-    private bool indoParaOBarco = false;
-    private Transform alvoBarco = null;
+    private bool _isHeadingToBoat = false;
+    private Transform _boatTarget = null;
 
     // Componentes Acoplados
-    private Rigidbody2D rb;
-    private NPCsData nPCs;
-    private Animator animator;
-    private CircleCollider2D circleCollider2D;
-    private Vector2Int currentChunk;
-    private SpriteRenderer spriteRenderer;
+    private Rigidbody2D _rigidbody2D;
+    private NPCsData _npcsData;
+    private Animator _animator;
+    private CircleCollider2D _circleCollider2D;
+    private Vector2Int _currentChunk;
+    private SpriteRenderer _spriteRenderer;
     #endregion
 
     #region Ciclo de Vida (Unity)
     void Awake()
     {
-        animator = GetComponent<Animator>();
-        rb = GetComponent<Rigidbody2D>();
-        nPCs = GetComponent<NPCsData>();
-        circleCollider2D = GetComponent<CircleCollider2D>();
-        spriteRenderer = GetComponent<SpriteRenderer>();
+        _animator = GetComponent<Animator>();
+        _rigidbody2D = GetComponent<Rigidbody2D>();
+        _npcsData = GetComponent<NPCsData>();
+        _circleCollider2D = GetComponent<CircleCollider2D>();
+        _spriteRenderer = GetComponent<SpriteRenderer>();
 
-        if (isAgressive) gameObject.tag = "AgressiveCreature";
+        if (_isAgressive) gameObject.tag = "AgressiveCreature";
         else gameObject.tag = "PassiveCreature";
         
-        rb.gravityScale = 0;
-        rb.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
+        _rigidbody2D.gravityScale = 0;
+        _rigidbody2D.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
         
-        circleCollider2D.radius = viewRadius;
-        circleCollider2D.isTrigger = true;
+        _circleCollider2D.radius = _viewRadius;
+        _circleCollider2D.isTrigger = true;
     }
 
     void Start()
     {
         SetRandomDirection();
-        timeUntilChangeDirection = Random.Range(0, maxTimeUntilChangingDirection);
+        _timeUntilChangeDirection = Random.Range(0, _maxTimeUntilChangingDirection);
     }
 
     public void Setup(GameObject player, WorldGenerator worldGenerator)
     {
-        this.worldGenerator = worldGenerator;
-        lastValidPosition = transform.position;
-        currentChunk = worldGenerator.GetChunkPosFromWorld(transform.position);
+        _worldGenerator = worldGenerator;
+        _lastValidPosition = transform.position;
+        _currentChunk = worldGenerator.GetChunkPosFromWorld(transform.position);
     }
 
     void Update()
     {
-        if (GameState.IsInBattle|| !GameState.IsGameStarted) return;
+        if (GameState.IsInBattle || !GameState.IsGameStarted) return;
 
         // Tick do cooldown de borda (impedido de dar agro caso ele acabe de fugir de uma fronteira que não pode atravessar)
-        if (hasBorderCooldown)
+        if (_hasBorderCooldown)
         {
-            borderCooldownTimer -= Time.deltaTime;
-            if (borderCooldownTimer <= 0)
+            _borderCooldownTimer -= Time.deltaTime;
+            if (_borderCooldownTimer <= 0)
             {
-                borderCooldownTimer = 0;
-                hasBorderCooldown = false;
+                _borderCooldownTimer = 0;
+                _hasBorderCooldown = false;
             }
         }
 
         // Hierarquia de Comportamento
-        if (indoParaOBarco && alvoBarco != null) HandleGoingToShip();
-        else if (Presa != null) HandleChasing();
+        if (_isHeadingToBoat && _boatTarget != null) HandleGoingToShip();
+        else if (_prey != null) HandleChasing();
         else HandleWandering();
 
-        if (StopAgressivity)
+        if (_shouldStopAggression)
         {
-            agressionTimer -= Time.deltaTime;
-            if (agressionTimer <= 0)
+            _aggressionTimer -= Time.deltaTime;
+            if (_aggressionTimer <= 0)
             {
-                agressionTimer = 0;
-                StopAgressivity = false;
+                _aggressionTimer = 0;
+                _shouldStopAggression = false;
             }
         }
     }
@@ -121,21 +151,21 @@ public class NPCsMovement : MonoBehaviour
     {
         if (GameState.IsInBattle || !GameState.IsGameStarted)
         {
-            rb.linearVelocity = Vector2.zero;
+            _rigidbody2D.linearVelocity = Vector2.zero;
             return; // ← trava física completamente em combates
         }
         
-        if (worldGenerator == null) return;
+        if (_worldGenerator == null) return;
         
         ApplyMovement();
         UpdateAnimations();
 
-        if (!indoParaOBarco)
+        if (!_isHeadingToBoat)
         {
-            boundaryCheckTimer += Time.fixedDeltaTime;
-            if (boundaryCheckTimer >= BoundaryCheckInterval)
+            _boundaryCheckTimer += Time.fixedDeltaTime;
+            if (_boundaryCheckTimer >= BoundaryCheckInterval)
             {
-                boundaryCheckTimer = 0;
+                _boundaryCheckTimer = 0;
                 CheckWorldBoundaries();
                 CheckDespawn();
             }
@@ -144,7 +174,7 @@ public class NPCsMovement : MonoBehaviour
     
     void OnDestroy()
     {
-        if (Presa != null && Presa.CompareTag("Player"))
+        if (_prey != null && _prey.CompareTag("Player"))
             GameState.ChasersCount = Mathf.Max(0, GameState.ChasersCount - 1);
     }
     #endregion
@@ -154,32 +184,37 @@ public class NPCsMovement : MonoBehaviour
     /// Comportamento adotado assim que um RecruitableNPC é contratado, fazendo com
     /// que ele marche em direção ao barco e suma visualmente.
     /// </summary>
-    public void IrParaOBarco(Transform navio)
+    public void MoveToBoat(Transform boatTransform)
     {
-        alvoBarco = navio;
-        indoParaOBarco = true;
+        _boatTarget = boatTransform;
+        _isHeadingToBoat = true;
         
-        Presa = null; 
-        isAlert = false;
-        StopAgressivity = false;
+        _prey = null; 
+        _isAlert = false;
+        _shouldStopAggression = false;
         
-        circleCollider2D.enabled = false; 
+        _circleCollider2D.enabled = false; 
     }
+
+    /// <summary>
+    /// Alias para manter compatibilidade com chamadas legadas de movimentação em direção ao barco.
+    /// </summary>
+    public void IrParaOBarco(Transform navio) => MoveToBoat(navio);
 
     private void HandleGoingToShip()
     {
-        Vector2 distanceToShip = alvoBarco.position - transform.position;
-        direction = distanceToShip.normalized;
+        Vector2 distanceToShip = _boatTarget.position - transform.position;
+        _direction = distanceToShip.normalized;
 
         if (distanceToShip.magnitude < 1.5f)
         {
-            Color corTemp = spriteRenderer.color;
+            Color corTemp = _spriteRenderer.color;
             corTemp.a = Mathf.MoveTowards(corTemp.a, 0f, Time.fixedDeltaTime);
-            spriteRenderer.color = corTemp;
+            _spriteRenderer.color = corTemp;
             
-            if (spriteRenderer.color.a <= 0)
+            if (_spriteRenderer.color.a <= 0)
             {
-                gameObject.transform.SetParent(alvoBarco);
+                gameObject.transform.SetParent(_boatTarget);
                 gameObject.SetActive(false);
             }
         }
@@ -190,51 +225,51 @@ public class NPCsMovement : MonoBehaviour
     /// </summary>
     private void HandleChasing()
     {
-        if (Presa == null || Presa.Equals(null)) 
+        if (_prey == null || _prey.Equals(null)) 
         {
             StopChasing();
             return; 
         }
 
-        if(isAgressive)
+        if (_isAgressive)
         {
-            Vector2 distanceToPlayer = Presa.transform.position - transform.position;
-            direction = distanceToPlayer.normalized;
+            Vector2 distanceToPlayer = _prey.transform.position - transform.position;
+            _direction = distanceToPlayer.normalized;
         }
         else
         {
-            Vector2 distanceToCreature = transform.position - Presa.transform.position;
-            direction = distanceToCreature.normalized;        
+            Vector2 distanceToCreature = transform.position - _prey.transform.position;
+            _direction = distanceToCreature.normalized;        
         }
-        chaseTimer += Time.deltaTime;
+        _chaseTimer += Time.deltaTime;
         
-        if (chaseTimer >= maxChaseTime) StopChasing();
+        if (_chaseTimer >= _maxChaseTime) StopChasing();
     }
 
     private void HandleWandering()
     {
-        wanderingTimer += Time.deltaTime;
-        if (wanderingTimer >= timeUntilChangeDirection)
+        _wanderingTimer += Time.deltaTime;
+        if (_wanderingTimer >= _timeUntilChangeDirection)
         {
-            wanderingTimer = 0;
-            timeUntilChangeDirection = Random.Range(0, maxTimeUntilChangingDirection);
+            _wanderingTimer = 0;
+            _timeUntilChangeDirection = Random.Range(0, _maxTimeUntilChangingDirection);
             SetRandomDirection();
         }
     }
 
     private void StopChasing()
     {
-        if (Presa != null && Presa.CompareTag("Player"))
+        if (_prey != null && _prey.CompareTag("Player"))
             GameState.ChasersCount = Mathf.Max(0, GameState.ChasersCount - 1);
 
-        Presa = null;
-        chaseTimer = 0;
+        _prey = null;
+        _chaseTimer = 0;
         SetRandomDirection();
     }
 
     private void SetRandomDirection()
     {
-        direction = new Vector2(Random.Range(-1f, 1f), Random.Range(-1f, 1f)).normalized;
+        _direction = new Vector2(Random.Range(-1f, 1f), Random.Range(-1f, 1f)).normalized;
     }
     #endregion
 
@@ -242,32 +277,32 @@ public class NPCsMovement : MonoBehaviour
     private void ApplyMovement()
     {
         // Criaturas passivas sendo perseguidas ganham um boost de velocidade na fuga
-        float realSpeed = (!isAgressive && Presa != null)? moveSpeed * 1.4f: moveSpeed;
+        float realSpeed = (!_isAgressive && _prey != null) ? _moveSpeed * 1.4f : _moveSpeed;
         
-        if (!isAlert)
+        if (!_isAlert)
         {
-            rb.linearVelocity = Vector2.Lerp(rb.linearVelocity, direction * realSpeed, Time.fixedDeltaTime);
+            _rigidbody2D.linearVelocity = Vector2.Lerp(_rigidbody2D.linearVelocity, _direction * realSpeed, Time.fixedDeltaTime);
         }
         else
         {
             // Fica parado "alertado" analisando a situação antes de iniciar perseguição
-            rb.linearVelocity = Vector2.Lerp(rb.linearVelocity, Vector2.zero, Time.fixedDeltaTime);
+            _rigidbody2D.linearVelocity = Vector2.Lerp(_rigidbody2D.linearVelocity, Vector2.zero, Time.fixedDeltaTime);
         }
     }
 
     private void UpdateAnimations()
     {
-        if (!isAlert)
+        if (!_isAlert)
         {
-            animator.SetFloat("Horizontal", rb.linearVelocity.x);
-            animator.SetFloat("Vertical", rb.linearVelocity.y);
-            animator.SetFloat("MoveSpeed", rb.linearVelocity.sqrMagnitude);
+            _animator.SetFloat("Horizontal", _rigidbody2D.linearVelocity.x);
+            _animator.SetFloat("Vertical", _rigidbody2D.linearVelocity.y);
+            _animator.SetFloat("MoveSpeed", _rigidbody2D.linearVelocity.sqrMagnitude);
         }
         else
         {
-            animator.SetFloat("Horizontal", direction.x);
-            animator.SetFloat("Vertical", direction.y);
-            animator.SetFloat("MoveSpeed", rb.linearVelocity.sqrMagnitude);
+            _animator.SetFloat("Horizontal", _direction.x);
+            _animator.SetFloat("Vertical", _direction.y);
+            _animator.SetFloat("MoveSpeed", _rigidbody2D.linearVelocity.sqrMagnitude);
         }
     }
     #endregion
@@ -279,39 +314,39 @@ public class NPCsMovement : MonoBehaviour
     /// </summary>
     private void CheckWorldBoundaries()
     {
-        Tile actualTile = worldGenerator.GetTileAtWorldPosition(transform.position);
+        Tile actualTile = _worldGenerator.GetTileAtWorldPosition(transform.position);
 
         if (actualTile == null) return;
 
-        bool isInvalidTile = isMaritime
+        bool isInvalidTile = _isMaritime
             ? actualTile.Metadata.Layer != 0
             : actualTile.Metadata.Layer == 0;
 
         if (isInvalidTile)
         {
-            rb.linearVelocity = Vector2.zero;
-            transform.position = lastValidPosition;
+            _rigidbody2D.linearVelocity = Vector2.zero;
+            transform.position = _lastValidPosition;
 
-            if (Presa != null && Presa.CompareTag("Player"))
+            if (_prey != null && _prey.CompareTag("Player"))
                 GameState.ChasersCount = Mathf.Max(0, GameState.ChasersCount - 1);
 
-            Presa = null;
-            chaseTimer = 0;
-            isAlert = false;
-            StopAgressivity = false;
-            agressionTimer = 0;
+            _prey = null;
+            _chaseTimer = 0;
+            _isAlert = false;
+            _shouldStopAggression = false;
+            _aggressionTimer = 0;
 
-            if (isAgressive)
+            if (_isAgressive)
             {
-                hasBorderCooldown = true;
-                borderCooldownTimer = BorderChaseCooldown;
+                _hasBorderCooldown = true;
+                _borderCooldownTimer = BorderChaseCooldown;
             }
 
-            direction = GetEscapeDirection();
+            _direction = GetEscapeDirection();
         }
         else
         {
-            lastValidPosition = transform.position;
+            _lastValidPosition = transform.position;
         }
     }
     
@@ -328,12 +363,12 @@ public class NPCsMovement : MonoBehaviour
 
         foreach (Vector2 dir in candidates)
         {
-            Vector2 probePos = (Vector2)lastValidPosition + dir * probeDistance;
-            Tile probeTile = worldGenerator.GetTileAtWorldPosition(probePos);
+            Vector2 probePos = (Vector2)_lastValidPosition + dir * probeDistance;
+            Tile probeTile = _worldGenerator.GetTileAtWorldPosition(probePos);
 
             if (probeTile == null) continue;
 
-            bool isValid = isMaritime
+            bool isValid = _isMaritime
                 ? probeTile.Metadata.Layer == 0
                 : probeTile.Metadata.Layer != 0;
 
@@ -348,10 +383,10 @@ public class NPCsMovement : MonoBehaviour
     /// </summary>
     private void CheckDespawn()
     {
-        Vector2Int newChunk = worldGenerator.GetChunkPosFromWorld(transform.position);
+        Vector2Int newChunk = _worldGenerator.GetChunkPosFromWorld(transform.position);
 
-        if (newChunk != currentChunk) currentChunk = newChunk;
-        if (!worldGenerator.IsChunkActive(currentChunk)) Destroy(gameObject);
+        if (newChunk != _currentChunk) _currentChunk = newChunk;
+        if (!_worldGenerator.IsChunkActive(_currentChunk)) Destroy(gameObject);
     }
     #endregion
 
@@ -362,45 +397,45 @@ public class NPCsMovement : MonoBehaviour
         if (playerMovement != null)
         {
             // Inicia o estado de Alerta no Player
-            if (collider.gameObject.CompareTag("Player") && isAgressive && playerMovement.isOnWater)
+            if (collider.gameObject.CompareTag("Player") && _isAgressive && playerMovement.isOnWater)
             {
-                isAlert = true;
-                StopAgressivity = false;
-                Presa = null;
-                agressionTimer = 0;
+                _isAlert = true;
+                _shouldStopAggression = false;
+                _prey = null;
+                _aggressionTimer = 0;
                 return;
             }
         }
-        else if ((collider.gameObject.CompareTag("AgressiveCreature" ) && !isAgressive && Presa == null) ||
-            (nPCs.CreatureType == NPCsData.Type.Animal || nPCs.CreatureType == NPCsData.Type.Monstro) && collider.gameObject.CompareTag("PassiveCreature") && isAgressive && Presa == null)
+        else if ((collider.gameObject.CompareTag("AgressiveCreature") && !_isAgressive && _prey == null) ||
+            (_npcsData.CreatureType == NPCsData.Type.Animal || _npcsData.CreatureType == NPCsData.Type.Monstro) && collider.gameObject.CompareTag("PassiveCreature") && _isAgressive && _prey == null)
         {
             // Inicia Alerta entre ecossistema (carnívoros vs passivos)
-            isAlert = true;
-            StopAgressivity = false;
+            _isAlert = true;
+            _shouldStopAggression = false;
         }
     }
     
     void OnTriggerStay2D(Collider2D collider)
     {
-        if (collider.gameObject.CompareTag("Player") && isAgressive)
+        if (collider.gameObject.CompareTag("Player") && _isAgressive)
         {
-            agressionTimer += Time.fixedDeltaTime;
+            _aggressionTimer += Time.fixedDeltaTime;
 
-            if (isAlert && Presa != collider.gameObject)
+            if (_isAlert && _prey != collider.gameObject)
             {
                 Vector2 distanceToPlayer = collider.transform.position - transform.position;
-                direction = Vector2.Lerp(direction, distanceToPlayer.normalized, Time.fixedDeltaTime);
+                _direction = Vector2.Lerp(_direction, distanceToPlayer.normalized, Time.fixedDeltaTime);
             }
             
             // Fixa a presa caso o timer de alerta termine
-            if (agressionTimer >= timeUntilAggressive && hasBorderCooldown == false)
+            if (_aggressionTimer >= _timeUntilAggressive && _hasBorderCooldown == false)
             {
-                if (Presa != collider.gameObject)
+                if (_prey != collider.gameObject)
                 {
-                    isAlert = false;
-                    Presa = collider.gameObject;
+                    _isAlert = false;
+                    _prey = collider.gameObject;
 
-                    if (Presa.CompareTag("Player")) 
+                    if (_prey.CompareTag("Player")) 
                         GameState.ChasersCount++;
                 }
             }
@@ -408,32 +443,32 @@ public class NPCsMovement : MonoBehaviour
             return;
         }
 
-        if ((collider.gameObject.CompareTag("PassiveCreature") && isAgressive
-        || (collider.gameObject.CompareTag("AgressiveCreature" ) && !isAgressive)) && Presa == null)
+        if ((collider.gameObject.CompareTag("PassiveCreature") && _isAgressive
+        || (collider.gameObject.CompareTag("AgressiveCreature") && !_isAgressive)) && _prey == null)
         {
-            agressionTimer += Time.fixedDeltaTime;
+            _aggressionTimer += Time.fixedDeltaTime;
 
-            if (isAlert && Presa == null)
+            if (_isAlert && _prey == null)
             {
                 Vector2 distanceToPlayer = collider.transform.position - transform.position;
-                direction = Vector2.Lerp(direction, distanceToPlayer.normalized, Time.fixedDeltaTime);
+                _direction = Vector2.Lerp(_direction, distanceToPlayer.normalized, Time.fixedDeltaTime);
             }
 
-            if (agressionTimer >= timeUntilAggressive && hasBorderCooldown == false)
+            if (_aggressionTimer >= _timeUntilAggressive && _hasBorderCooldown == false)
             {
-                isAlert = false;
-                Presa = collider.gameObject;
+                _isAlert = false;
+                _prey = collider.gameObject;
             }
         }
     }
 
     void OnTriggerExit2D(Collider2D collider)
     {
-        if ((collider.gameObject.CompareTag("AgressiveCreature" ) && !isAgressive && Presa == null) ||
-            ((collider.gameObject.CompareTag("Player") || collider.gameObject.CompareTag("PassiveCreature")) && isAgressive && Presa == null))
+        if ((collider.gameObject.CompareTag("AgressiveCreature") && !_isAgressive && _prey == null) ||
+            ((collider.gameObject.CompareTag("Player") || collider.gameObject.CompareTag("PassiveCreature")) && _isAgressive && _prey == null))
         {
-            StopAgressivity = true;
-            isAlert = false;
+            _shouldStopAggression = true;
+            _isAlert = false;
         }
     }
     #endregion

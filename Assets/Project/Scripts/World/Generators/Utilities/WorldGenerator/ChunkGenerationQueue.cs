@@ -1,6 +1,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Fila de prioridade para geração assíncrona de chunks do mundo procedimental.
+/// Ordena chunks pendentes pela distância euclidiana até a posição do jogador.
+/// </summary>
 public class ChunkGenerationQueue
 {
     public Vector2Int? CurrentlyGenerating { get; set; }

@@ -1,5 +1,9 @@
 using UnityEngine;
 
+/// <summary>
+/// Representa itens consumíveis, como poções de cura ou buffs de força.
+/// Define intensidade do efeito, tipo de benefício e duração em turnos.
+/// </summary>
 [CreateAssetMenu(fileName = "New Consumable", menuName = "Scriptable Objects/ConsumableData")]
 public class ConsumableData : BaseItemData
 {

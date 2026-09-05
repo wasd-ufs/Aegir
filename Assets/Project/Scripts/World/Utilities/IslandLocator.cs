@@ -1,6 +1,10 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
+/// <summary>
+/// Utilitário de localização e agrupamento espacial de ilhas no mapa oceânico.
+/// Detecta clusters de terra e calcula centros de massa para posicionamento de POIs.
+/// </summary>
 public class IslandLocator
 {
     private IslandMapSampler _sampler;

@@ -2,6 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Estrutura de grade de células para geração procedural de chunks via Wave Function Collapse (WFC).
+/// Inclui margem de borda (halo) para garantir continuidade perfeita entre chunks vizinhos.
+/// </summary>
 public class ChunkCellGrid
 {
     public Cell[,] CellsArray { get; private set; }

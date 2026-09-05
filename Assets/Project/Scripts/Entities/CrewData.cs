@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 /// <summary>
 /// Mantém o registro do coletivo da tripulação (seja a do jogador ou a de um grupo de inimigos).
@@ -11,11 +12,15 @@ public class CrewData : MonoBehaviour
 {
     #region Membros e Inventário
     [Header("Membros da Tripulação")]
-    public List<GameObject> CrewList = new();
-    [SerializeField] private int _maxCrewLength;
+    [FormerlySerializedAs("CrewList")]
+    [SerializeField] private List<GameObject> _crewList = new();
+    public List<GameObject> CrewList { get => _crewList; set => _crewList = value; }
 
-    [HideInInspector]
-    public Inventory Inventory;
+    [SerializeField] private int _maxCrewLength;
+    public int MaxCrewLength { get => _maxCrewLength; set => _maxCrewLength = value; }
+
+    [field: SerializeField, HideInInspector]
+    public Inventory Inventory { get; set; }
 
     private bool _isManuallyInitialized = false;
 

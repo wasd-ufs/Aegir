@@ -1,6 +1,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Representa as armas equipáveis por membros da tripulação.
+/// Define valor de ataque base, bônus elementais e quais classes podem equipá-la.
+/// </summary>
 [CreateAssetMenu(fileName = "New Weapon", menuName = "Scriptable Objects/WeaponData")]
 public class WeaponData : BaseItemData
 {

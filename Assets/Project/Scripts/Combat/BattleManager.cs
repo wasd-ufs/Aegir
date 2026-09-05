@@ -23,7 +23,8 @@ public class BattleManager : MonoBehaviour
 
     [Header("Crews")]
     [SerializeField] private CrewData _playerCrew;
-    [HideInInspector] public CrewData _enemyCrew;
+    [HideInInspector] [SerializeField] private CrewData _enemyCrew;
+    public CrewData EnemyCrew => _enemyCrew;
 
     #endregion
 
@@ -57,10 +58,21 @@ public class BattleManager : MonoBehaviour
     #region Estado de Batalha
 
     [Header("Estado Interno")]
-    public bool isActiveBattle = false;
-    public bool shouldPassTurn = false;
-    public bool isShowingMessage = false;
-    public bool isShowingLogMessage = false;
+    [SerializeField] private bool _isActiveBattle = false;
+    public bool IsActiveBattle { get => _isActiveBattle; set => _isActiveBattle = value; }
+    public bool isActiveBattle { get => _isActiveBattle; set => _isActiveBattle = value; }
+
+    [SerializeField] private bool _shouldPassTurn = false;
+    public bool ShouldPassTurn { get => _shouldPassTurn; set => _shouldPassTurn = value; }
+    public bool shouldPassTurn { get => _shouldPassTurn; set => _shouldPassTurn = value; }
+
+    [SerializeField] private bool _isShowingMessage = false;
+    public bool IsShowingMessage { get => _isShowingMessage; set => _isShowingMessage = value; }
+    public bool isShowingMessage { get => _isShowingMessage; set => _isShowingMessage = value; }
+
+    [SerializeField] private bool _isShowingLogMessage = false;
+    public bool IsShowingLogMessage { get => _isShowingLogMessage; set => _isShowingLogMessage = value; }
+    public bool isShowingLogMessage { get => _isShowingLogMessage; set => _isShowingLogMessage = value; }
 
     private GameObject _selectedActor;
     private Coroutine _fadeCoroutine;
@@ -99,11 +111,11 @@ public class BattleManager : MonoBehaviour
     /// <summary>
     /// Configura os dados do inimigo e inicializa a corrotina do loop de combate.
     /// </summary>
-    /// <param name="inimigos">O CrewData representante da equipe inimiga gerada no embate.</param>
-    public void IniciateBattle(CrewData enemies)
+    /// <param name="enemies">O CrewData representante da equipe inimiga gerada no embate.</param>
+    public void InitiateBattle(CrewData enemies)
     {
-        _enemyCrew    = enemies;
-        isActiveBattle = true;
+        _enemyCrew = enemies;
+        _isActiveBattle = true;
 
         _enemyAttacks = enemies.GetComponent<CrewAttacks>();
         if (_enemyAttacks == null)
@@ -116,6 +128,11 @@ public class BattleManager : MonoBehaviour
 
         StartCoroutine(BattleLoop());
     }
+
+    /// <summary>
+    /// Alias para manter compatibilidade com chamadas legadas de inicialização de batalha.
+    /// </summary>
+    public void IniciateBattle(CrewData enemies) => InitiateBattle(enemies);
     #endregion
 
     #region Loop Principal
@@ -217,14 +234,14 @@ public class BattleManager : MonoBehaviour
 
         if (canAffectEnemies)
         {
-            var vivos = _playerCrew.CrewList.Where(g => g.GetComponent<NPCsData>()?.isAlive == true).ToList();
-            if (vivos.Count > 0) targets.AddRange(Shuffle(vivos));
+            var livingMembers = _playerCrew.CrewList.Where(g => g.GetComponent<NPCsData>()?.isAlive == true).ToList();
+            if (livingMembers.Count > 0) targets.AddRange(Shuffle(livingMembers));
         }
 
         if (canAffectAllies)
         {
-            var vivos = _enemyCrew.CrewList.Where(g => g.GetComponent<NPCsData>()?.isAlive == true).ToList();
-            if (vivos.Count > 0) targets.AddRange(Shuffle(vivos));
+            var livingMembers = _enemyCrew.CrewList.Where(g => g.GetComponent<NPCsData>()?.isAlive == true).ToList();
+            if (livingMembers.Count > 0) targets.AddRange(Shuffle(livingMembers));
         }
 
         return targets;
@@ -310,10 +327,13 @@ public class BattleManager : MonoBehaviour
         return eligible[Random.Range(0, eligible.Count)];
     }
 
-    public void SelectTarget(GameObject alvo)
+    /// <summary>
+    /// Adiciona um alvo à lista de alvos da ação do jogador.
+    /// </summary>
+    public void SelectTarget(GameObject target)
     {
-        if (!_playerTargets.Contains(alvo))
-            _playerTargets.Add(alvo);
+        if (!_playerTargets.Contains(target))
+            _playerTargets.Add(target);
     }
 
     public void ClearTargets() => _playerTargets.Clear();
@@ -363,12 +383,12 @@ public class BattleManager : MonoBehaviour
     private void GenerateActionButtons()
     {
         if (_selectedActor == null) return;
-        NPCsData.Class classeDoAtor = _selectedActor.GetComponent<NPCsData>().CreatureClass;
+        NPCsData.Class actorClass = _selectedActor.GetComponent<NPCsData>().CreatureClass;
 
         int buttonIndex = 0;
         foreach (CombatBase.ActionData action in _playerAttacks.Actions)
         {
-            if (action.allowedClasses != null && action.allowedClasses.Count > 0 && !action.allowedClasses.Contains(classeDoAtor)) continue;
+            if (action.allowedClasses != null && action.allowedClasses.Count > 0 && !action.allowedClasses.Contains(actorClass)) continue;
 
             GameObject buttonObject;
             if (buttonIndex < _actionButtonContainer.childCount)
@@ -523,7 +543,7 @@ public class BattleManager : MonoBehaviour
 
         if (isEnemyDefeated)
         {
-            Dictionary<string, int> itensSaqueados = new Dictionary<string, int>();
+            Dictionary<string, int> lootedItems = new Dictionary<string, int>();
             foreach (GameObject npc in _enemyCrew.CrewList)
             {
                 NPCsData data = npc.GetComponent<NPCsData>();
@@ -533,17 +553,17 @@ public class BattleManager : MonoBehaviour
                     foreach (Inventory.Slot slot in drops)
                     {
                         _playerCrew.Inventory.AddItem(slot.item, slot.quantity);
-                        if (itensSaqueados.ContainsKey(slot.item.ItemName))
-                            itensSaqueados[slot.item.ItemName] += slot.quantity;
+                        if (lootedItems.ContainsKey(slot.item.ItemName))
+                            lootedItems[slot.item.ItemName] += slot.quantity;
                         else
-                            itensSaqueados.Add(slot.item.ItemName, slot.quantity);
+                            lootedItems.Add(slot.item.ItemName, slot.quantity);
                     }
                 }
             }
 
             string messageLoot = "";
-            foreach (string i in itensSaqueados.Keys)
-                messageLoot += itensSaqueados[i] + "x " + i + "\n";
+            foreach (string i in lootedItems.Keys)
+                messageLoot += lootedItems[i] + "x " + i + "\n";
 
             isActiveBattle = false;
             Debug.Log("Vitória!");

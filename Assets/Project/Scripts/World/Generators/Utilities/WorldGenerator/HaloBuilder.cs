@@ -1,6 +1,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Construtor de halo/borda para chunks procedimentais.
+/// Coleta os tiles das fronteiras dos chunks vizinhos já gerados para impor continuidade no WFC.
+/// </summary>
 public class HaloBuilder
 {
     private ChunkLifecycleManager _lifecycleManager;

@@ -1,38 +1,43 @@
 using UnityEngine;
+
+/// <summary>
+/// Estado de movimentação do jogador ao navegar no barco pela água.
+/// Gerencia a física de ondas, inércia marítima e colisão com terra firme.
+/// </summary>
 public class BoatState : PlayerMovement.IPlayerState
 {
-    private PlayerMovement player;
+    private readonly PlayerMovement _player;
 
     public BoatState(PlayerMovement player)
     {
-        this.player = player;
+        _player = player;
     }
 
     public void Enter()
     {
-        player.rb.linearVelocity = Vector2.zero;
+        _player.rb.linearVelocity = Vector2.zero;
     }
 
     public void Update()
     {
-        player.AtualizarAnimacoes();
+        _player.UpdateAnimations();
     }
 
     public void FixedUpdate()
     {
-        Vector3 currentPos = player.transform.position;
-        Tile tile = player.worldGenerator.GetTileAtWorldPosition(currentPos);
+        Vector3 currentPos = _player.transform.position;
+        Tile tile = _player.worldGenerator.GetTileAtWorldPosition(currentPos);
 
         if (tile == null) return;
 
-        Vector2 direction = player.moveInput.sqrMagnitude > 1
-            ? player.moveInput.normalized
-            : player.moveInput;
+        Vector2 direction = _player.moveInput.sqrMagnitude > 1
+            ? _player.moveInput.normalized
+            : _player.moveInput;
 
         if (tile.Metadata.Layer == 0)
-            player.ApplyWaterMovement(direction);
+            _player.ApplyWaterMovement(direction);
         else
-            player.StopAndReset();
+            _player.StopAndReset();
     }
 
     public void Exit() {}

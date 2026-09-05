@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 
 /// <summary>
 /// Gatilho posicionado em criaturas/inimigos no mapa do mundo.
@@ -8,11 +9,21 @@ public class StartFight : MonoBehaviour
 {
     #region Configurações de Encontro
     [Header("Visual da Batalha")]
-    public Sprite background;
-    public Sprite creature;
+    [FormerlySerializedAs("background")]
+    [SerializeField] private Sprite _background;
+    public Sprite Background { get => _background; set => _background = value; }
+    public Sprite background { get => _background; set => _background = value; }
+
+    [FormerlySerializedAs("creature")]
+    [SerializeField] private Sprite _creature;
+    public Sprite Creature { get => _creature; set => _creature = value; }
+    public Sprite creature { get => _creature; set => _creature = value; }
     
     [Header("Dados do Inimigo")]
-    public CrewData enemyCrew;
+    [FormerlySerializedAs("enemyCrew")]
+    [SerializeField] private CrewData _enemyCrew;
+    public CrewData EnemyCrew { get => _enemyCrew; set => _enemyCrew = value; }
+    public CrewData enemyCrew { get => _enemyCrew; set => _enemyCrew = value; }
     #endregion
 
     #region Estado e Referências
@@ -55,7 +66,7 @@ public class StartFight : MonoBehaviour
 
         // Inicia o efeito do GameBoy e só dispara o StartFight quando a tela estiver totalmente coberta
         _transition.StartTransition(
-            onMidpointCallback: () => battleData.StartFight(background, creature, crew)
+            onMidpointCallback: () => battleData.StartFight(_background, _creature, crew)
         );
     }
     #endregion
@@ -67,7 +78,7 @@ public class StartFight : MonoBehaviour
     /// </summary>
     private CrewData SolveCrew()
     {
-        if (enemyCrew != null) return enemyCrew;
+        if (_enemyCrew != null) return _enemyCrew;
 
         // Cria um GameObject temporário para hospedar o CrewData
         GameObject tempObject = new GameObject($"[TempCrew] {gameObject.name}");

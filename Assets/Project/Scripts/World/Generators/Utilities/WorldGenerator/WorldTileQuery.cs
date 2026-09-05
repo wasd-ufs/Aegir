@@ -1,5 +1,9 @@
 using UnityEngine;
 
+/// <summary>
+/// Serviço de consulta espacial que mapeia posições globais do mundo Unity
+/// para coordenadas locais de tiles e chunks, permitindo verificar tipo de terreno.
+/// </summary>
 public class WorldTileQuery
 {
     private ChunkLifecycleManager _lifecycleManager;
