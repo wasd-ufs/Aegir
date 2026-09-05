@@ -20,7 +20,7 @@ public class PlayerTransitionController : MonoBehaviour
         if (boatMovement == null) return;
 
         GameObject boatObject = boatMovement.gameObject;
-        GameObject captainObject = boatMovement.capitão; 
+        GameObject captainObject = boatMovement.captain; 
 
         if (boatMovement.isOnWater)
         {

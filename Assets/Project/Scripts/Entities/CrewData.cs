@@ -18,6 +18,9 @@ public class CrewData : MonoBehaviour
     public Inventory Inventory;
 
     private bool _isManuallyInitialized = false;
+
+    /// <summary>Disparado quando a composição da tripulação é modificada.</summary>
+    public event System.Action OnCrewChanged;
     #endregion
 
     #region Ciclo de Vida (Unity)
@@ -69,6 +72,7 @@ public class CrewData : MonoBehaviour
 
         CrewList.Clear();
         CrewList.Add(crewMember);
+        OnCrewChanged?.Invoke();
     }
     #endregion
 
@@ -163,11 +167,14 @@ public class CrewData : MonoBehaviour
 
         if (npcData != null)
             npcData.OnDeath += OnCrewMemberDied;
+
+        OnCrewChanged?.Invoke();
     }
 
     public void RemoveFromCrew(GameObject npcObject)
     {
         CrewList.Remove(npcObject);
+        OnCrewChanged?.Invoke();
     }
 
     /// <summary>
@@ -210,7 +217,7 @@ public class CrewData : MonoBehaviour
         else
         {
             npcData.gameObject.SetActive(false);
-            npcData.GetComponent<NPCsData>().isAlive = false;
+            npcData.isAlive = false;
         }
     }
     #endregion

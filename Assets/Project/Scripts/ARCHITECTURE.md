@@ -2,438 +2,387 @@
 
 ## Visão Geral
 
-Jogo 2D top-down de aventura marítima com geração procedural de mundo, sistema de batalha por turnos e gerenciamento de tripulação. Desenvolvido em Unity com C\#.
+**Aegir** é um RPG tático 2D top-down com temática de horror cósmico marítimo e exploração procedural, desenvolvido em Unity (Unity 6 / URP 2D) com C#. O projeto combina mecânicas de navegação marítima e a pé, geração procedural de mundos infinitos via **Wave Function Collapse (WFC)**, combate tático por turnos e gerenciamento de tripulação e inventário.
 
 ---
 
-## Mapa Mental dos Sistemas
+## 1. Estrutura Modular & Assembly Definitions
 
-JOGO
+O projeto é particionado em assemblies independentes para desacoplamento estrito, isolamento de testes e compilações incrementais de alta performance:
 
-├── Mundo Procedural (WFC)
+```mermaid
+graph TD
+    subgraph Engine & Packages
+        UnityCore["UnityEngine / URP"]
+        NewInput["com.unity.inputsystem"]
+        UTF["Unity Test Framework / NUnit"]
+    end
 
-│   ├── WorldGenerator        ← orquestrador central
+    subgraph Aegir Assemblies
+        EditorAssembly["Aegir.Editor.asmdef<br/>(Editor Tools, WFC Window)"]
+        RuntimeAssembly["Aegir.Runtime.asmdef<br/>(Core, World, Entities, Combat, Items, UI)"]
+        TestsAssembly["Aegir.Tests.asmdef<br/>(EditMode Unit Tests)"]
+    end
 
-│   ├── MapGenerator          ← geração de um chunk (WFC)
+    RuntimeAssembly --> UnityCore
+    RuntimeAssembly --> NewInput
 
-│   ├── RuleManager           ← regras de compatibilidade entre tiles
+    EditorAssembly --> RuntimeAssembly
+    EditorAssembly --> UnityCore
 
-│   ├── Tile / TilesetData    ← dados de cada tile
+    TestsAssembly --> RuntimeAssembly
+    TestsAssembly --> UTF
+    TestsAssembly --> UnityCore
 
-│   └── Cell                  ← célula individual da grade WFC
-
-│
-
-├── Jogador & Movimento
-
-│   ├── PlayerMovement        ← barco e capitão (modo água/terra)
-
-│   ├── PlayerInputActions    ← mapeamento de input (auto-gerado)
-
-│   └── CameraFollow          ← câmera suave com antecipação
-
-│
-
-├── NPCs & Criaturas
-
-│   ├── NPCsData              ← dados, combate, efeitos e level
-
-│   ├── NPCsMovement          ← IA de movimento (marítima/terrestre)
-
-│   ├── NPC\_Randomizer        ← aleatorização de atributos no spawn
-
-│   └── RecruitableNPC        ← NPC recrutável pelo jogador
-
-│
-
-├── Tripulação & Inventário
-
-│   ├── CrewData              ← lista de membros e HP
-
-│   ├── Inventory             ← slots de itens
-
-│   ├── ItemData (abstrata)   ← base para todos os itens
-
-│   │   ├── WeaponData
-
-│   │   ├── ArmorData
-
-│   │   ├── ConsumableData
-
-│   │   ├── ThrowableData
-
-│   │   └── MaterialData
-
-│   ├── CrewUI                ← barras de HP da tripulação
-
-│   ├── InventoryUI           ← tela de inventário
-
-│   └── RecruitmentUI         ← tela de recrutamento
-
-│
-
-├── Batalha
-
-│   ├── BattleManager         ← loop de turnos, botões e mensagens
-
-│   ├── BattleData            ← setup visual e transição de batalha
-
-│   ├── CombatBase (abstrata) ← lógica de ações e efeitos
-
-│   ├── CrewAttacks           ← implementação concreta de CombatBase
-
-│   └── StartFight            ← gatilho de batalha por colisão
-
-│
-
-├── Estado Global
-
-│   └── GameState             ← flags estáticas (IsInBattle, IsOnWater...)
-
-│
-
-├── Áudio
-
-│   ├── MusicManager          ← músicas por estado do jogo
-
-│   └── SFXManager            ← efeitos sonoros pontuais
-
-│
-
-├── UI / Transições
-
-│   ├── GameBoyTransition     ← transição animada estilo Game Boy
-
-│   └── StartGame             ← tela inicial
-
-│
-
-└── Debug
-
-    └── ClickDebug            ← log de cliques com raycast
+    style RuntimeAssembly fill:#1e3a8a,stroke:#3b82f6,stroke-width:2px,color:#fff
+    style EditorAssembly fill:#78350f,stroke:#f59e0b,stroke-width:2px,color:#fff
+    style TestsAssembly fill:#064e3b,stroke:#10b981,stroke-width:2px,color:#fff
+```
 
 ---
 
-## Sistema de Geração de Mundo (WFC)
+## 2. Grafos de Conexão dos Subsistemas (Scripts Atuais)
 
-### O que é WFC?
+### 2.1 Subsistema de Geração de Mundo & Algoritmo WFC
 
-Wave Function Collapse é um algoritmo de geração procedural que garante consistência local: cada tile só pode ter vizinhos compatíveis com ele. O resultado é um mapa sem "erros" de transição (ex.: água nunca toca terra sem uma costa entre elas).
+O ecossistema procedural é orquestrado pelo `WorldGenerator`, que decompõe o ciclo de vida dos chunks, persistência em disco, ordenação por prioridade de distância e o algoritmo matemático de colapso de função de onda:
 
-### Conceitos Fundamentais
+```mermaid
+graph TD
+    subgraph Orquestração e Ciclo de Vida
+        WG["WorldGenerator<br/>(Monobehaviour Central)"]
+        CLM["ChunkLifecycleManager<br/>(Active/Pending Dictionaries)"]
+        CGQ["ChunkGenerationQueue<br/>(Ordenação por Distância)"]
+        CNN["ChunkNeighborNotifier<br/>(Notificação de Bordas)"]
+        CP["ChunkPersistence<br/>(Serialização .dat em Disco)"]
+        PTC["PlayerTransitionController<br/>(Troca Barco / Capitão)"]
+        SP["StructurePlacer<br/>(Spawn de Estruturas Pré-definidas)"]
+        IMS["IslandMapSampler<br/>(Ruído Matemático / Bioma)"]
+        IL["IslandLocator<br/>(Busca e Agrupamento de Ilhas)"]
+    end
 
-**Chunk:** Bloco retangular de tiles (`chunkSize` × `chunkSize`).  
-O mundo é um grid infinito de chunks carregados e descarregados conforme o jogador se move.
+    subgraph Pipeline WFC por Chunk
+        MG["MapGenerator<br/>(Geração de 1 Chunk)"]
+        WFC["WFCAlgorithm<br/>(Motor Entropia MRE / Propagação)"]
+        CCG["ChunkCellGrid<br/>(Grade de Células + Snapshot Halo)"]
+        CC["CompatibilityCache<br/>(Matriz 3D bool[a,b,dir])"]
+        RM["RuleManager<br/>(Regras de Adjacência / Bloqueios)"]
+    end
 
-**Halo:** Anel de 1 célula ao redor do chunk interno.  
-Contém tiles já definidos pelos chunks vizinhos. É usado como restrição inicial do WFC, garantindo continuidade visual entre chunks.
+    subgraph Dados e Modelos
+        TD["TilesetData (ScriptableObject)"]
+        T["Tile (ScriptableObject / Sockets)"]
+        C["Cell (BitArray de Estados)"]
+        SD["StructureData (ScriptableObject)"]
+    end
 
-**Cell:** Cada posição na grade do chunk.  
-Mantém um `BitArray` de tiles "possíveis". Quando só 1 bit está ativo, a célula está colapsada (tile definido).
+    WG --> CLM
+    WG --> CGQ
+    WG --> CNN
+    WG --> CP
+    WG --> PTC
+    WG --> SP
+    WG --> IMS
+    WG --> IL
+    WG --> MG
 
-**Socket:** Valor nos 4 cantos de um tile.  
-Dois tiles vizinhos são compatíveis se os cantos compartilhados têm o mesmo valor. Isso é calculado em `Tile.IsCompatibleWith`.
+    MG --> WFC
+    MG --> CCG
+    MG --> CC
+    MG --> RM
 
-### Fluxo Completo de Geração
+    CCG --> C
+    CC --> RM
+    CC --> TD
+    RM --> TD
+    TD --> T
+    WFC --> CCG
+    WFC --> CC
+    WFC --> TD
+    SP --> SD
 
-WorldGenerator.Start()
-
-└── GenerateInitialChunks()           ← chunks do campo de visão inicial
-
-    └── CreateOrLoadChunkSync(pos)    ← para cada posição em espiral
-
-        ├── BuildHalo(pos)            ← lê bordas dos chunks vizinhos
-
-        └── MapGenerator.GenerateChunk()
-
-            ├── EnsureCompatibilityCache()   ← tabela bool\[a,b,dir\]
-
-            ├── InitCells(borderTiles)
-
-            │   ├── Cria Cell\[GridW, GridH\]  ← todos os tiles possíveis
-
-            │   ├── Colapsa células do halo  ← passagem 1
-
-            │   ├── Propaga restrições       ← passagem 2
-
-            │   └── Salva haloSnapshot       ← para reinícios
-
-            └── RunCollapseSync()
-
-                └── Loop:
-
-                    ├── ChooseCell()              ← MRE: menor entropia
-
-                    ├── CollapseAndPropagate()    ← colapsa \+ BFS
-
-                    │   └── PropagateConsequences() ← remove tiles sem suporte
-
-                    └── HasContradiction()?
-
-                        └── sim → RestartFromHalo() ← reinicia pelo snapshot
-
-### Tabela de Compatibilidade (`compatible[a, b, dir]`)
-
-Construída uma única vez por chunk em `BuildCompatibilityCache()`.  
-Evita chamar `RuleManager.IsBlocked()` repetidamente durante a propagação, que seria muito lento.
-
-compatible\[tileA, tileB, direção\] \= true
-
-    SE tileA.IsCompatibleWith(tileB, direção)   ← sockets compatíveis
-
-    E  NÃO RuleManager.IsBlocked(tileA, tileB)  ← nenhuma regra proíbe
-
-### Sistema de Sockets (Tile.cs)
-
-Cada tile tem 4 cantos (NO, NE, SO, SE) com valores inteiros.  
-O valor representa a camada do bioma naquele canto:
-
-| Valor | Significado |
-| :---- | :---- |
-| 0 | Água |
-| 1 | Costa |
-| 2 | Terra |
-
-Os sockets são **gerados automaticamente** em `OnValidate()` com base no tipo visual do tile:
-
-| Tipo | Descrição |
-| :---- | :---- |
-| Bloco | Todos os cantos iguais (tile plano) |
-| Costa | Uma borda inferior, oposta superior |
-| Quina | 3 cantos inferiores, 1 superior (convexa) |
-| QuinaInterna | 3 cantos superiores, 1 inferior (côncava) |
-
-### Ciclo de Vida dos Chunks
-
-Chunk entra no viewDistance
-
-    ├── Tem arquivo .dat? → LoadFromData()  (sem WFC)
-
-    └── Não tem?         → GenerateChunkAsync() (WFC completo)
-
-            ↓
-
-Chunk sai do viewDistance
-
-    ├── Ainda gerando? → vai para pendingChunks (oculto, aguarda conclusão)
-
-    └── Pronto?        → SaveAndDestroy() (salva .dat, destrói GameObject)
-
-**Estados de um chunk:**
-
-| Dicionário | Significado |
-| :---- | :---- |
-| `activeChunks` | Visível e completo |
-| `pendingChunks` | Saiu do view enquanto ainda gerava |
-| `generationQueue` | Aguardando vez de gerar (ordenado por distância) |
-| `failedChunks` | Teve contradição WFC, aguarda nova tentativa |
-
-### Persistência em Disco
-
-Cada chunk é salvo como `chunk_X_Y.dat` — um array de bytes onde cada byte é o índice do tile colapsado naquela posição.
-
-índice \= x \* chunkSize.y \+ y
-
-⚠️ A ordem dos tiles no `TilesetData.tileset` nunca deve ser alterada após chunks serem salvos, pois os índices ficariam inválidos.
+    style WG fill:#1e40af,stroke:#60a5fa,stroke-width:2px,color:#fff
+    style WFC fill:#0284c7,stroke:#38bdf8,stroke-width:2px,color:#fff
+    style MG fill:#0369a1,stroke:#7dd3fc,stroke-width:2px,color:#fff
+```
 
 ---
 
-## Sistema de Batalha (Por Turnos)
+### 2.2 Subsistema do Jogador & Máquina de Estados
 
-### Fluxo do Loop de Batalha
+O controle do jogador implementa o padrão State Pattern (`IPlayerState`), alternando dinamicamente a física, rotação e controles entre navegação marítima e locomoção a pé em terra firme:
 
-StartFight (colisão) → GameBoyTransition → BattleData.StartFight()
+```mermaid
+graph TD
+    subgraph Inputs & Câmera
+        PIA["PlayerInputActions<br/>(New Input System)"]
+        CF["CameraFollow<br/>(Seguimento Suave e Zoom)"]
+    end
 
-    └── BattleManager.IniciarBatalha(enemyCrew)
+    subgraph Núcleo do Jogador
+        PM["PlayerMovement<br/>(Controlador Central)"]
+        IPS["«interface»<br/>IPlayerState"]
+        BS["BoatState<br/>(Física Marítima, Inércia e Ondas)"]
+        CS["CaptainState<br/>(Locomoção Top-Down em Terra)"]
+    end
 
-        └── LoopDeBatalha() \[Coroutine\]
+    subgraph Integração de Mundo
+        PTC["PlayerTransitionController"]
+        WG["WorldGenerator"]
+        GS["GameState"]
+    end
 
-            ├── Turno do Player:
+    PIA --> PM
+    PM --> IPS
+    IPS <|.. BS
+    IPS <|.. CS
+    PM --> BS
+    PM --> CS
+    PM --> CF
+    PM <--> PTC
+    PTC --> WG
+    PM --> GS
 
-            │   ├── Gera botões da tripulação
-
-            │   ├── Player seleciona ator → seleciona ação
-
-            │   ├── CrewAttacks.ExecutarAção()
-
-            │   │   └── CombatBase.DoAction()
-
-            │   │       ├── Dano:   CrewData.DoDamage()
-
-            │   │       ├── Cura:   CrewData.HealUnits()
-
-            │   │       └── Efeito: NPCsData.AddEffect()
-
-            │   └── WaitUntil(passarTurno)
-
-            │
-
-            ├── Tick de efeitos (ambos os lados)
-
-            ├── VerificarFimDeBatalha()
-
-            │
-
-            └── Turno dos Inimigos:
-
-                ├── EscolheAção() ← ponderado por peso
-
-                ├── SortearAtor() ← elegível que pode agir
-
-                └── ExecutarAção()
-
-### Hierarquia de Combate
-
-CombatBase (MonoBehaviour abstrato)
-
-    └── CrewAttacks (concreto)
-
-            ├── aliados  : CrewData  ← quem ataca
-
-            └── inimigos : CrewData  ← quem recebe
-
-### Efeitos por Turno (NPCsData)
-
-Efeitos são armazenados em `activeEffects : List<ActiveEffect>`.  
-`TickEffects()` é chamado a cada fim de turno e:
-
-1. Aplica o efeito do turno (dano, cura)  
-2. Decrementa `turnosRestantes`  
-3. Remove efeitos expirados (revertendo buff de Força se for o caso)
+    style PM fill:#047857,stroke:#34d399,stroke-width:2px,color:#fff
+    style IPS fill:#065f46,stroke:#6ee7b7,stroke-width:2px,color:#fff
+    style BS fill:#0f766e,stroke:#2dd4bf,stroke-width:2px,color:#fff
+    style CS fill:#0f766e,stroke:#2dd4bf,stroke-width:2px,color:#fff
+```
 
 ---
 
-## Sistema de Tripulação
+### 2.3 Subsistema de Combate & Batalha por Turnos
 
-### Classes de NPC
+O combate opera como um fluxo tático isolado via Singleton (`BattleManager`), executando turnos do jogador e de IA inimiga com cálculo de forças, tabelas de fraqueza elemental e reuso eficiente de botões na UI:
 
-| Classe | Papel |
-| :---- | :---- |
-| Capitão | Unidade do jogador em terra |
-| Barco | Unidade do jogador na água |
-| Navegador | Tripulante de combate |
-| Canhoneiro | Tripulante de combate |
-| Atirador | Tripulante de combate |
-| Guerreiro | Tripulante de combate |
-| Cozinheiro | Suporte (cura) |
-| Médico | Suporte (cura) |
+```mermaid
+graph TD
+    subgraph Gatilho e Transição
+        SF["StartFight<br/>(Gatilho por Colisão)"]
+        GBT["GameBoyTransition<br/>(Animação Estilo Game Boy)"]
+        BD["BattleData<br/>(Setup Visual de Cenário)"]
+    end
 
-**Condição de derrota:** Capitão/Barco do jogador morrem, ou todos os outros membros morrem.
+    subgraph Orquestração do Combate
+        BM["BattleManager<br/>(Singleton / Turnos & UI)"]
+        CB["CombatBase<br/>(Lógica Abstrata de Efeitos)"]
+        CA["CrewAttacks<br/>(Implementação Concreta de Ações)"]
+    end
 
-### Tabela de Resistências por Tipo
+    subgraph Entidades e Dados
+        CD_Ally["CrewData (Aliados)"]
+        CD_Enemy["CrewData (Inimigos)"]
+        NPC["NPCsData<br/>(Vida, Matriz Elemental, Buffs, Ações)"]
+    end
 
-Cada tipo de criatura tem multiplicadores para cada tipo de dano, definidos em `NPCsData.damageTable`. Fantasmas são imunes a Físico e Veneno, por exemplo.
+    subgraph Interface de Combate
+        CUI["CrewUI<br/>(Escuta Reativa OnHealthChanged)"]
+    end
 
----
+    SF --> GBT
+    GBT --> BD
+    BD --> BM
 
-## Transição Barco ↔ Capitão
+    BM --> CA
+    BM --> CD_Ally
+    BM --> CD_Enemy
+    BM --> CUI
 
-Controlada por `WorldGenerator.TryGoOut()` e `PlayerMovement`.
+    CA -- herda --> CB
+    CB --> CD_Ally
+    CB --> CD_Enemy
+    CB --> NPC
 
-Na água (isOnWater \= true):
+    CD_Ally --> NPC
+    CD_Enemy --> NPC
+    NPC -- eventos --> CUI
 
-    Pressiona Space → TryGoOut()
-
-        └── Busca tile de costa (camada 1\) adjacente ao barco
-
-            └── Encontrou? → capitão.SetActive(true), muda referência do player
-
-Em terra (isOnWater \= false):
-
-    Pressiona Space → TryGoOut()
-
-        └── Capitão próximo do barco (\<= 1.5 células)?
-
-            └── Sim → capitão.SetActive(false), muda referência do player
-
-A referência `WorldGenerator.player` é o alvo que a câmera segue e que os NPCs usam para detecção/perseguição.
-
----
-
-## Estado Global (GameState)
-
-Classe estática simples que serve como barramento de estado:
-
-| Flag | Tipo | Significado |
-| :---- | :---- | :---- |
-| `isGameStarted` | bool | Jogo iniciado (passada a tela inicial) |
-| `IsInBattle` | bool | Batalha em andamento |
-| `IsOnWater` | bool | Jogador está no barco |
-| `ChasersCount` | int | Criaturas perseguindo o jogador |
-| `IsBeingChased` | bool | Derivado: ChasersCount \> 0 |
-
-Quando `IsInBattle = true` ou `isGameStarted = false`, todo movimento e física de NPCs e jogador são travados.
+    style BM fill:#991b1b,stroke:#f87171,stroke-width:2px,color:#fff
+    style CA fill:#b91c1c,stroke:#fca5a5,stroke-width:2px,color:#fff
+    style NPC fill:#831843,stroke:#f472b6,stroke-width:2px,color:#fff
+    style CUI fill:#4c1d95,stroke:#a78bfa,stroke-width:2px,color:#fff
+```
 
 ---
 
-## Áudio
+### 2.4 Subsistema de Entidades, IA e Tripulação
 
-### MusicManager — Máquina de Estados
+Gerenciamento individual e coletivo dos tripulantes e criaturas do mapa:
 
-Estado atual \= f(GameState)
+```mermaid
+graph TD
+    subgraph IA e Mundo
+        NM["NPCsMovement<br/>(Patrulha & Perseguição)"]
+        RNPC["RecruitableNPC<br/>(Interação de Recrutamento)"]
+        NR["NPC_Randomizer<br/>(Variação de Atributos no Spawn)"]
+    end
 
-isGameStarted \= false  →  Menu
+    subgraph Tripulação e Atributos
+        CD["CrewData<br/>(Coletivo da Tripulação & Permadeath)"]
+        NPC["NPCsData<br/>(Vida, XP, Nível, Tabela de Resistências)"]
+        INV["Inventory<br/>(Inventário Compartilhado do Grupo)"]
+    end
 
-IsInBattle \= true      →  Batalha
+    subgraph Eventos Reativos
+        E1["OnHealthChanged(npc, cur, max)"]
+        E2["OnDeath(npc)"]
+        E3["OnCrewChanged()"]
+    end
 
-IsBeingChased \= true   →  Perseguição
+    NM --> NPC
+    NM --> GS["GameState.ChasersCount"]
+    RNPC --> CD
+    NR --> NPC
 
-IsOnWater \= false      →  TerraFirme
+    CD --> NPC
+    CD --> INV
 
-default                →  Exploração
+    NPC --> E1
+    NPC --> E2
+    CD --> E3
 
-Cada estado tem uma playlist embaralhada. Ao trocar de estado, há fade out/in. Entre músicas pode haver um intervalo aleatório (`intervaloMinimo` a `intervaloMaximo` segundos).
-
-### SFXManager
-
-Sons pontuais (vitória, derrota, item consumido, contrato).  
-`TocarVitoria()` e `TocarDerrota()` fazem fade out da música antes de tocar.
-
----
-
-## Dependências Entre Scripts (Referências Críticas)
-
-WorldGenerator
-
-    ├── usa → MapGenerator (instancia e gerencia)
-
-    ├── usa → StructureData (geração de estruturas)
-
-    └── referência → player (Transform dinâmico)
-
-MapGenerator
-
-    ├── usa → RuleManager (IsBlocked)
-
-    ├── usa → TilesetData (lista de tiles)
-
-    ├── usa → Cell (grade interna)
-
-    └── usa → WorldGenerator (Setup de NPCs filhos)
-
-BattleManager
-
-    ├── usa → CrewData (player e inimigo)
-
-    ├── usa → CrewAttacks (executa ações)
-
-    ├── usa → BattleData (EndFight)
-
-    └── usa → CrewUI (HP visual)
-
-NPCsData
-
-    ├── usa → WeaponData / ArmorData (equipamento)
-
-    └── evento → OnMorte (escutado por CrewData)
+    style CD fill:#1e3a8a,stroke:#60a5fa,stroke-width:2px,color:#fff
+    style NPC fill:#831843,stroke:#f472b6,stroke-width:2px,color:#fff
+    style INV fill:#713f12,stroke:#facc15,stroke-width:2px,color:#fff
+```
 
 ---
 
-## Convenções do Projeto
+### 2.5 Subsistema de Itens & Inventário
 
-- **Português no domínio do jogo:** nomes de variáveis de gameplay, métodos de UI e eventos usam português (ex.: `vidaMáxima`, `EquiparArma`, `OnMorte`).  
-- **Inglês na infraestrutura:** nomes de padrões técnicos (ex.: `IsBlocked`, `BuildCompatibilityCache`, `PropagateConsequences`).  
-- **ScriptableObjects** para dados imutáveis de design: `Tile`, `TilesetData`, `StructureData`, todos os `ItemData`.  
-- **MonoBehaviours** para dados de runtime com estado: `NPCsData`, `CrewData`, `Inventory`.  
-- **GameState** como único singleton de estado global — evita acoplamento direto entre sistemas.
+Arquitetura ScriptableObject extensível com empilhamento dinâmico e controle de slots:
 
+```mermaid
+graph TD
+    subgraph Armazenamento & UI
+        INV["Inventory<br/>(Gestão de Slots & Pilhas)"]
+        IUI["InventoryUI<br/>(Tela do Inventário)"]
+    end
+
+    subgraph Definição de Dados
+        BID["BaseItemData<br/>(ScriptableObject Base)"]
+        WD["WeaponData<br/>(Ataque Base, Raridade)"]
+        AD["ArmorData<br/>(Defesa Flat, Resistência)"]
+        CD["ConsumableData<br/>(Cura, Buff de Força, Duração)"]
+        TD["ThrowableData<br/>(Dano Arremessável)"]
+        MD["MaterialData<br/>(Materiais de Craft/Reparo)"]
+    end
+
+    subgraph Utilização
+        NPC["NPCsData<br/>(EquipWeapon, EquipArmor, ApplyConsumable)"]
+    end
+
+    INV --> BID
+    IUI --> INV
+    BID <|-- WD
+    BID <|-- AD
+    BID <|-- CD
+    BID <|-- TD
+    BID <|-- MD
+
+    NPC --> WD
+    NPC --> AD
+    NPC --> CD
+
+    style INV fill:#713f12,stroke:#facc15,stroke-width:2px,color:#fff
+    style BID fill:#854d0e,stroke:#fde047,stroke-width:2px,color:#fff
+```
+
+---
+
+### 2.6 Subsistema de Áudio & Estado Global
+
+```mermaid
+graph TD
+    GS["GameState<br/>(Barramento Estático de Flags)"]
+    MM["MusicManager<br/>(Transições de Trilha por Estado)"]
+    SFX["SFXManager<br/>(Efeitos Pontuais de Vitória/Derrota)"]
+
+    GS --> MM
+    BM["BattleManager"] --> GS
+    BM --> SFX
+    NM["NPCsMovement"] --> GS
+    PM["PlayerMovement"] --> GS
+
+    style GS fill:#374151,stroke:#9ca3af,stroke-width:2px,color:#fff
+    style MM fill:#14532d,stroke:#4ade80,stroke-width:2px,color:#fff
+    style SFX fill:#14532d,stroke:#4ade80,stroke-width:2px,color:#fff
+```
+
+---
+
+### 2.7 Estrutura da Suíte de Testes Automatizados
+
+```mermaid
+graph TD
+    subgraph Aegir.Tests.asmdef
+        T_World["World Tests<br/>• CellTests<br/>• WFCAlgorithmTests<br/>• TileCompatibilityTests<br/>• IslandAndWorldUtilitiesTests"]
+        T_Items["Items Tests<br/>• InventoryTests<br/>• ItemDataTests"]
+        T_Entities["Entities Tests<br/>• NPCsDataTests<br/>• CrewDataTests<br/>• PlayerMovementStateTests"]
+        T_Combat["Combat Tests<br/>• CombatBaseTests<br/>• BattleLogicTests"]
+        T_Core["Core Tests<br/>• GameStateTests"]
+    end
+
+    subgraph Aegir.Runtime.asmdef
+        R_World["World & WFC Engine"]
+        R_Items["Inventory & ScriptableObjects"]
+        R_Entities["NPCs, Crew, Player State"]
+        R_Combat["BattleManager & CrewAttacks"]
+        R_Core["GameState Flags"]
+    end
+
+    T_World --> R_World
+    T_Items --> R_Items
+    T_Entities --> R_Entities
+    T_Combat --> R_Combat
+    T_Core --> R_Core
+
+    style T_World fill:#064e3b,stroke:#34d399,stroke-width:1px,color:#fff
+    style T_Items fill:#064e3b,stroke:#34d399,stroke-width:1px,color:#fff
+    style T_Entities fill:#064e3b,stroke:#34d399,stroke-width:1px,color:#fff
+    style T_Combat fill:#064e3b,stroke:#34d399,stroke-width:1px,color:#fff
+    style T_Core fill:#064e3b,stroke:#34d399,stroke-width:1px,color:#fff
+```
+
+---
+
+## 3. Matriz de Aderência: Código Implementado vs. GDD (Game Design Document)
+
+Comparação detalhada entre as diretrizes especificadas no documento [GDD_AEGIR_WASD.docx.pdf](file:///c:/Users/bretu/OneDrive/Documentos/GitHub/Aegir/GDD_AEGIR_WASD.docx.pdf) e a base de código C# existente:
+
+| Seção do GDD | Funcionalidade / Mecânica | Status Atual no Código | Detalhamento Técnico |
+| :--- | :--- | :---: | :--- |
+| **2.3.1** | **Andar (Capitão a pé)** | **Implementado** | [PlayerMovement.cs](file:///c:/Users/bretu/OneDrive/Documentos/GitHub/Aegir/Assets/Project/Scripts/Entities/Controllers/PlayerMovement.cs) e [CaptainState.cs](file:///c:/Users/bretu/OneDrive/Documentos/GitHub/Aegir/Assets/Project/Scripts/Entities/Controllers/CaptainState.cs). Movimentação top-down via New Input System (`W/A/S/D` e Gamepad). |
+| **2.3.2** | **Embarcar / Desembarcar** | **Implementado** | [PlayerTransitionController.cs](file:///c:/Users/bretu/OneDrive/Documentos/GitHub/Aegir/Assets/Project/Scripts/World/Generators/Utilities/WorldGenerator/PlayerTransitionController.cs). Validação de proximidade ao barco, checagem de tile de costa (layer 1), ocultação de sprite e transição de zoom na câmera. |
+| **2.4.1** | **Navegação do Navio** | **Implementado** | [BoatState.cs](file:///c:/Users/bretu/OneDrive/Documentos/GitHub/Aegir/Assets/Project/Scripts/Entities/Controllers/BoatState.cs). Rotação direcional, aceleração, inércia na água e perturbação senoidal matemática de ondas marítimas. |
+| **2.5.3** | **Geração de Mares & Chunks WFC** | **Implementado** | [WorldGenerator.cs](file:///c:/Users/bretu/OneDrive/Documentos/GitHub/Aegir/Assets/Project/Scripts/World/Generators/WorldGenerator.cs), [MapGenerator.cs](file:///c:/Users/bretu/OneDrive/Documentos/GitHub/Aegir/Assets/Project/Scripts/World/Generators/MapGenerator.cs) e [WFCAlgorithm.cs](file:///c:/Users/bretu/OneDrive/Documentos/GitHub/Aegir/Assets/Project/Scripts/World/Generators/Utilities/MapGenerator/WFCAlgorithm.cs). Chunks infinitos em espiral, halo de compatibilidade, eliminação de contradições e persistência em disco (.dat). |
+| **2.5.3** | **Amostragem e Busca de Ilhas** | **Implementado** | [IslandMapSampler.cs](file:///c:/Users/bretu/OneDrive/Documentos/GitHub/Aegir/Assets/Project/Scripts/World/Generators/Utilities/WorldGenerator/IslandMapSampler.cs) (ruído determinístico) e [IslandLocator.cs](file:///c:/Users/bretu/OneDrive/Documentos/GitHub/Aegir/Assets/Project/Scripts/World/Utilities/IslandLocator.cs) (busca em anel de raio e agrupamento flood-fill). |
+| **2.5.3** | **5 Camadas de Profundidade & Sanidade** | **Parcialmente Implementado** | As camadas de tiles existem em [LayerDefinition.cs](file:///c:/Users/bretu/OneDrive/Documentos/GitHub/Aegir/Assets/Project/Scripts/World/Data/LayerDefinition.cs). Porém, as **5 zonas temáticas** (Litorânea, Mar Cinzento, Abismo Sussurrante, Fossa Esquecida, Coração Adormecido) e a mecânica ativa de **Taxa de Erosão de Sanidade** (0.5 a 18 pt/h, alucinações, motim) ainda não foram codificadas. |
+| **2.5.2** | **Sistema de Combate por Turnos** | **Implementado** | [BattleManager.cs](file:///c:/Users/bretu/OneDrive/Documentos/GitHub/Aegir/Assets/Project/Scripts/Combat/BattleManager.cs), [CrewAttacks.cs](file:///c:/Users/bretu/OneDrive/Documentos/GitHub/Aegir/Assets/Project/Scripts/Combat/CrewAttacks.cs) e [BattleData.cs](file:///c:/Users/bretu/OneDrive/Documentos/GitHub/Aegir/Assets/Project/Scripts/Combat/BattleData.cs). Loop de turnos, UI com pooling de botões, seleção por alvo/peso e transição visual Game Boy. |
+| **2.5.2** | **Tabela de Dano Elemental & Resistências** | **Implementado** | [NPCsData.cs](file:///c:/Users/bretu/OneDrive/Documentos/GitHub/Aegir/Assets/Project/Scripts/Entities/NPCsData.cs#L225). Fraquezas/imunidades (Fantasma imune a Físico/Veneno e fraco a Sagrado; Esqueleto imune a Gelo), mitigação de armaduras e buffs temporais (`activeEffects`). |
+| **2.3.4 / 2.5.5** | **Sistema de Inventário & Itens** | **Parcialmente Implementado** | [Inventory.cs](file:///c:/Users/bretu/OneDrive/Documentos/GitHub/Aegir/Assets/Project/Scripts/Items/Inventory.cs) e [InventoryUI.cs](file:///c:/Users/bretu/OneDrive/Documentos/GitHub/Aegir/Assets/Project/UI/InventoryUI.cs). Armazena slots, empilha itens e categoriza armas/armaduras/consumíveis. Contudo, o **limite por peso em quilos** (50kg player, 150kg navio, debuffs de sobrecarga) e o **baú universal das docas** do GDD ainda utilizam o modelo simplificado de contagem de slots (`_maxItemsPerInventory`). |
+| **2.3.5 / 2.4.2** | **Minigame de Pesca (Player e Navio)** | **Planejado / Pendente** | O GDD projeta pesca a pé estilo *Stardew Valley* (trilho vertical) e pesca de içamento com guincho no navio estilo *Dredge* (minigame circular de acerto). Nenhum script de pesca foi implementado até o momento. |
+| **2.4.3** | **Reparo do Barco (Mar e Porto)** | **Planejado / Pendente** | Mecânica de gastar materiais de madeira no mar para cura parcial ou gastar moedas em portos para reparo completo. Não implementada. |
+| **2.5.10** | **Sistema de Destruição do Barco** | **Parcialmente Implementado** | A morte do Barco resulta em derrota imediata em [BattleManager.cs](file:///c:/Users/bretu/OneDrive/Documentos/GitHub/Aegir/Assets/Project/Scripts/Combat/BattleManager.cs). No entanto, as **fases de dano estéticas** (<25 HP: sprite trincado, -25% velocidade; <10 HP: fumaça, trepidação de câmera, -50% velocidade) e o **drop percentual de itens com respawn no porto** ainda não foram criados. |
+| **2.5.11** | **Sistema de Upgrades do Navio** | **Planejado / Pendente** | Tiers de evolução (Casco: 100 a 450 HP; Armazenamento: 150 a 500 kg; Velas: +5% a +15% velocidade; Canhões: 2 a 8 canhões laterais). Não implementado. |
+| **2.5.12** | **Mural de Missões (Quests)** | **Planejado / Pendente** | Missões de Coleta, Caça, Entrega e Chefes com bússola direcional nas vilas. Não implementado. |
+| **2.5.13** | **Sistema de Bestiário** | **Planejado / Pendente** | Enciclopédia desbloqueada ao encontrar o item Bestiário com contadores progressivos de abates. Não implementado. |
+| **4.3.2** | **Menu de Operações / Menu de Pausa** | **Parcialmente Implementado** | O GDD projeta uma barra horizontal superior direita com 6 abas navegáveis (*Inventário, Equipamentos, Status, Bestiário, Navio, Sistema*). Atualmente há apenas menus isolados de tela cheia. |
+| **5.1 - 5.3** | **Sistema de Áudio Dinâmico** | **Implementado** | [MusicManager.cs](file:///c:/Users/bretu/OneDrive/Documentos/GitHub/Aegir/Assets/Project/Scripts/Core/MusicManager.cs) e [SFXManager.cs](file:///c:/Users/bretu/OneDrive/Documentos/GitHub/Aegir/Assets/Project/Scripts/Core/SFXManager.cs). Máquina de estados musical orientada ao `GameState` (Menu, Batalha, Perseguição, TerraFirme, Exploração) com fades suaves. |
+
+---
+
+## 4. Próximos Passos Sugeridos de Roadmap (Pós-Sprint)
+
+Com a arquitetura reestruturada e coberta por testes automatizados, as próximas sprints podem focar na implementação dos sistemas-chave descritos no GDD:
+
+1. **Sprint de Sanidade & Camadas Oceânicas:**
+   - Implementar o componente `SanityManager` com degradação por camada de profundidade.
+   - Definir regras de pós-processamento e névoa/iluminação volumétrica no URP para as 5 camadas do oceano.
+2. **Sprint de Estado Crítico & Reparos do Navio:**
+   - Adicionar os estados de dano físico do barco (<25 HP e <10 HP) com trocas de sprites e penalidades de velocidade em [BoatState.cs](file:///c:/Users/bretu/OneDrive/Documentos/GitHub/Aegir/Assets/Project/Scripts/Entities/Controllers/BoatState.cs).
+   - Implementar a lógica de reparo em alto mar (via inventário) e reparo comercial nas docas.
+3. **Sprint do Menu de Pausa Unificado:**
+   - Construir a UI horizontal de 6 abas conforme as especificações das páginas 36 e 37 do GDD (*Inventário, Equipamentos, Status do Capitão/Barco, Bestiário, Navio, Sistema*).
+4. **Sprint do Minigame de Pesca:**
+   - Criar o controlador de pesca com vara (trilho vertical) e pesca pesada embarcada (guincho circular) com gatilho de combate surpresa (45%).

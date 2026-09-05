@@ -1,0 +1,20 @@
+{
+    "name": "Aegir.Editor",
+    "rootNamespace": "Aegir.EditorTools",
+    "references": [
+        "Aegir.Runtime",
+        "Unity.2D.Sprite.Editor",
+        "Unity.InputSystem"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

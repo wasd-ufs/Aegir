@@ -329,10 +329,7 @@ public class BattleManager : MonoBehaviour
         if (!nPCs.isAlive || !nPCs.CanAct()) return;
 
         _selectedActor = clickedCrewMember;
-
-        foreach (Transform child in _crewButtonContainer)
-            Destroy(child.gameObject);
-
+        ClearCrewButtons();
         GenerateActionButtons();
     }
 
@@ -354,15 +351,13 @@ public class BattleManager : MonoBehaviour
         shouldPassTurn = true;
         ClearActionButtons();
         ClearTargets();
-
-        foreach (Transform child in _crewButtonContainer) 
-            Destroy(child.gameObject);
+        ClearCrewButtons();
     }
     #endregion
 
     #region Gerenciamento da Interface Dinâmica (Botões)
     /// <summary>
-    /// Instancia e popula os botões de ação para o tripulante recém selecionado.
+    /// Instancia ou reutiliza os botões de ação para o tripulante recém selecionado.
     /// Filtra as ações que a classe do ator não pode executar.
     /// </summary>
     private void GenerateActionButtons()
@@ -370,45 +365,84 @@ public class BattleManager : MonoBehaviour
         if (_selectedActor == null) return;
         NPCsData.Class classeDoAtor = _selectedActor.GetComponent<NPCsData>().CreatureClass;
 
-        foreach (Transform child in _actionButtonContainer)
-            Destroy(child.gameObject);
-
+        int buttonIndex = 0;
         foreach (CombatBase.ActionData action in _playerAttacks.Actions)
         {
             if (action.allowedClasses != null && action.allowedClasses.Count > 0 && !action.allowedClasses.Contains(classeDoAtor)) continue;
 
-            GameObject buttonObject = Instantiate(_actionButtonPrefab, _actionButtonContainer);
-            buttonObject.GetComponentInChildren<TextMeshProUGUI>().text = action.actionName;
-            
-            buttonObject.GetComponentInChildren<TextMeshProUGUI>().fontSize = _buttonTextSize;
+            GameObject buttonObject;
+            if (buttonIndex < _actionButtonContainer.childCount)
+            {
+                buttonObject = _actionButtonContainer.GetChild(buttonIndex).gameObject;
+                buttonObject.SetActive(true);
+            }
+            else
+            {
+                buttonObject = Instantiate(_actionButtonPrefab, _actionButtonContainer);
+            }
+
+            var textComponent = buttonObject.GetComponentInChildren<TextMeshProUGUI>();
+            if (textComponent != null)
+            {
+                textComponent.text = action.actionName;
+                textComponent.fontSize = _buttonTextSize;
+            }
 
             Button button = buttonObject.GetComponent<Button>();
+            button.onClick.RemoveAllListeners();
             CombatBase.ActionData capturedAction = action;
             button.onClick.AddListener(() => ExecutePlayerAction(capturedAction));
+
+            buttonIndex++;
+        }
+
+        for (int i = buttonIndex; i < _actionButtonContainer.childCount; i++)
+        {
+            _actionButtonContainer.GetChild(i).gameObject.SetActive(false);
         }
     }
 
     /// <summary>
-    /// Lista os tripulantes aliados vivos e com ações disponíveis.
+    /// Lista os tripulantes aliados vivos e com ações disponíveis, reutilizando botões.
     /// </summary>
     private void GenerateCrewButtons()
     {
-        foreach (Transform child in _crewButtonContainer)
-            Destroy(child.gameObject);
-
+        int buttonIndex = 0;
         foreach (GameObject npcObject in _playerCrew.CrewList)
         {
+            if (npcObject == null) continue;
             NPCsData nPCs = npcObject.GetComponent<NPCsData>();
-            if (!nPCs.isAlive || !nPCs.CanAct()) continue;
+            if (nPCs == null || !nPCs.isAlive || !nPCs.CanAct()) continue;
 
-            GameObject buttonObject = Instantiate(_crewButtonPrefab, _crewButtonContainer);
-            buttonObject.GetComponentInChildren<TextMeshProUGUI>().text = nPCs.NpcName;
-            
-            buttonObject.GetComponentInChildren<TextMeshProUGUI>().fontSize = _buttonTextSize;
+            GameObject buttonObject;
+            if (buttonIndex < _crewButtonContainer.childCount)
+            {
+                buttonObject = _crewButtonContainer.GetChild(buttonIndex).gameObject;
+                buttonObject.SetActive(true);
+            }
+            else
+            {
+                buttonObject = Instantiate(_crewButtonPrefab, _crewButtonContainer);
+            }
+
+            var textComponent = buttonObject.GetComponentInChildren<TextMeshProUGUI>();
+            if (textComponent != null)
+            {
+                textComponent.text = nPCs.NpcName;
+                textComponent.fontSize = _buttonTextSize;
+            }
 
             Button button = buttonObject.GetComponent<Button>();
+            button.onClick.RemoveAllListeners();
             GameObject capturedNPC = npcObject;
             button.onClick.AddListener(() => SelectActor(capturedNPC));
+
+            buttonIndex++;
+        }
+
+        for (int i = buttonIndex; i < _crewButtonContainer.childCount; i++)
+        {
+            _crewButtonContainer.GetChild(i).gameObject.SetActive(false);
         }
     }
 
@@ -432,7 +466,13 @@ public class BattleManager : MonoBehaviour
     public void ClearActionButtons()
     {
         foreach (Transform child in _actionButtonContainer)
-            Destroy(child.gameObject);
+            child.gameObject.SetActive(false);
+    }
+
+    public void ClearCrewButtons()
+    {
+        foreach (Transform child in _crewButtonContainer)
+            child.gameObject.SetActive(false);
     }
     #endregion
 

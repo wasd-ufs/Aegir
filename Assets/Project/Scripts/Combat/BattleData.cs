@@ -197,7 +197,15 @@ public class BattleData : MonoBehaviour
             yield return null;
         }
 
-        Destroy(crew.gameObject);
+        // Destrói os GameObjects reais das entidades derrotadas para não ficarem órfãos e invisíveis
+        foreach (GameObject npc in crew.CrewList)
+        {
+            if (npc != null && npc != crew.gameObject)
+                Destroy(npc);
+        }
+
+        if (crew.gameObject != null)
+            Destroy(crew.gameObject);
     }
 
     #endregion

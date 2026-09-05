@@ -32,7 +32,9 @@ public class PlayerMovement : MonoBehaviour
 
     #region Referências
     [Header("References")]
-    public GameObject capitão;
+    [UnityEngine.Serialization.FormerlySerializedAs("capitão")]
+    public GameObject captain;
+    public GameObject capitão => captain;
     public Camera mainCamera;
     public WorldGenerator worldGenerator;
 
@@ -67,9 +69,9 @@ public class PlayerMovement : MonoBehaviour
     {
         inputActions = new PlayerInputActions();
         rb = GetComponent<Rigidbody2D>();
-        crb = capitão.GetComponent<Rigidbody2D>();
+        crb = captain.GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
-        cAnimator = capitão.GetComponent<Animator>();
+        cAnimator = captain.GetComponent<Animator>();
         GameState.IsOnWater = isOnWater;
     }
 
@@ -125,11 +127,11 @@ public class PlayerMovement : MonoBehaviour
     public void ApplyWaterMovement(Vector2 direction)
     {
         // Efeito de balanço das ondas cruzado com a direção do vento
-        float balancox = Mathf.Sin(Time.fixedTime * frequencia) * amplitude * dirVentoX, 
-              balancoy = Mathf.Cos(Time.fixedTime * frequencia) * amplitude * dirVentoY;
+        float waveX = Mathf.Sin(Time.fixedTime * frequencia) * amplitude * dirVentoX, 
+              waveY = Mathf.Cos(Time.fixedTime * frequencia) * amplitude * dirVentoY;
 
-        Vector2 forcaBalanço = new Vector2(balancox, balancoy);
-        rb.linearVelocity += forcaBalanço * Time.fixedDeltaTime;
+        Vector2 waveForce = new Vector2(waveX, waveY);
+        rb.linearVelocity += waveForce * Time.fixedDeltaTime;
 
         rb.linearVelocity = Vector2.Lerp(rb.linearVelocity, direction * boatSpeed, Time.fixedDeltaTime * 1);
         lastValidPosition = transform.position;
@@ -163,7 +165,7 @@ public class PlayerMovement : MonoBehaviour
             }
         }
 
-        if (capitão.activeSelf)
+        if (captain.activeSelf)
             cAnimator.SetFloat("MoveSpeed", crb.linearVelocity.sqrMagnitude);
         animator.SetFloat("MoveSpeed", rb.linearVelocity.sqrMagnitude);
     }

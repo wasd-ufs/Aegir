@@ -212,6 +212,12 @@ public class NPCsData : MonoBehaviour
     /// Disparado quando a vida do NPC chega a zero. CrewData escuta para processar a remoção.
     /// </summary>
     public event Action<NPCsData> OnDeath;
+
+    /// <summary>
+    /// Disparado quando a vida ou a vida máxima do NPC é alterada.
+    /// Parâmetros: (NPCsData npc, float currentHealth, float maxHealth).
+    /// </summary>
+    public event Action<NPCsData, float, float> OnHealthChanged;
     #endregion
 
     #region Ciclo de Vida (Unity)
@@ -247,7 +253,12 @@ public class NPCsData : MonoBehaviour
         {
             _currentHealth = 0;
             isAlive = false;
+            OnHealthChanged?.Invoke(this, _currentHealth, _maxHealth);
             OnDeath?.Invoke(this);
+        }
+        else
+        {
+            OnHealthChanged?.Invoke(this, _currentHealth, _maxHealth);
         }
     }
 
@@ -256,6 +267,7 @@ public class NPCsData : MonoBehaviour
         if (!isAlive) return;
 
         _currentHealth = Mathf.Min(_maxHealth, _currentHealth + healAmount);
+        OnHealthChanged?.Invoke(this, _currentHealth, _maxHealth);
     }
 
     public float GetCurrentHealth() => _currentHealth;
@@ -475,6 +487,6 @@ public class NPCsData : MonoBehaviour
 
     public void ConsumeAction() => remainingActions--;
 
-    public bool CanAct() => remainingActions > 0;
+    public bool CanAct() => isAlive && remainingActions > 0;
     #endregion
 }

@@ -72,6 +72,7 @@ public class CrewUI : MonoBehaviour
     
     private bool _isValid = false;
     private bool _isInitialized = false;
+    private CrewData _activeCrewData;
     #endregion
 
     #region Ciclo de Vida (Unity)
@@ -92,22 +93,19 @@ public class CrewUI : MonoBehaviour
             if (_spawnedObjectsList.Count > 0)
                 ClearUI();
 
-            foreach(GameObject spawnedObject in _spawnedObjectsList)
-                spawnedObject.SetActive(false);
+            foreach (GameObject spawnedObject in _spawnedObjectsList)
+            {
+                if (spawnedObject != null)
+                    spawnedObject.SetActive(false);
+            }
 
             return;
         }
-        
-        if (!_isValid || !_isInitialized) return;
-        
-        FetchHP();
+    }
 
-        if (HasHPChanged())
-        {
-            CacheHP();
-            ClearSpawned();
-            InstantiateHP();
-        }
+    void OnDestroy()
+    {
+        UnsubscribeFromCrew();
     }
     #endregion
 
@@ -117,6 +115,7 @@ public class CrewUI : MonoBehaviour
     /// </summary>
     public void ClearUI()
     {
+        UnsubscribeFromCrew();
         ClearSpawned();
         _enemyCrewData = null;
         _isValid = false;
@@ -130,6 +129,9 @@ public class CrewUI : MonoBehaviour
     public void ReactivateAsPlayer()
     {
         _isValid = true;
+        CrewData playerCrew = _player != null ? _player.GetComponent<CrewData>() : null;
+        SubscribeToCrew(playerCrew);
+        RefreshVisuals();
     }
 
     /// <summary>
@@ -146,10 +148,87 @@ public class CrewUI : MonoBehaviour
     }
     #endregion
 
+    #region Inscrição de Eventos e Reatividade
+    private void SubscribeToCrew(CrewData crew)
+    {
+        UnsubscribeFromCrew();
+        _activeCrewData = crew;
+        if (_activeCrewData == null) return;
+
+        _activeCrewData.OnCrewChanged += HandleCrewChanged;
+
+        foreach (GameObject crewMember in _activeCrewData.CrewList)
+        {
+            if (crewMember == null) continue;
+            NPCsData npcData = crewMember.GetComponent<NPCsData>();
+            if (npcData != null)
+            {
+                npcData.OnHealthChanged += HandleHealthChanged;
+                npcData.OnDeath += HandleNpcDeath;
+            }
+        }
+    }
+
+    private void UnsubscribeFromCrew()
+    {
+        if (_activeCrewData == null) return;
+
+        _activeCrewData.OnCrewChanged -= HandleCrewChanged;
+
+        foreach (GameObject crewMember in _activeCrewData.CrewList)
+        {
+            if (crewMember == null) continue;
+            NPCsData npcData = crewMember.GetComponent<NPCsData>();
+            if (npcData != null)
+            {
+                npcData.OnHealthChanged -= HandleHealthChanged;
+                npcData.OnDeath -= HandleNpcDeath;
+            }
+        }
+
+        _activeCrewData = null;
+    }
+
+    private void HandleHealthChanged(NPCsData npc, float current, float max)
+    {
+        RefreshVisuals();
+    }
+
+    private void HandleNpcDeath(NPCsData npc)
+    {
+        RefreshVisuals();
+    }
+
+    private void HandleCrewChanged()
+    {
+        if (_activeCrewData != null)
+        {
+            CrewData current = _activeCrewData;
+            SubscribeToCrew(current);
+        }
+        RefreshVisuals();
+    }
+
+    private void RefreshVisuals()
+    {
+        if (!_isValid || !_isInitialized) return;
+        FetchHP();
+        if (HasHPChanged())
+        {
+            CacheHP();
+            ClearSpawned();
+            InstantiateHP();
+        }
+    }
+    #endregion
+
     #region Helpers de Inicialização
     private IEnumerator LateStart()
     {
         yield return null;
+        CrewData targetCrew = _isEnemyMode ? _enemyCrewData : (_player != null ? _player.GetComponent<CrewData>() : null);
+        SubscribeToCrew(targetCrew);
+
         ClearSpawned();
         FetchHP();
         CacheHP();

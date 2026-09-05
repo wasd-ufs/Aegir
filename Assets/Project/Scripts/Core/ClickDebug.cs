@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
 
 /// <summary>
 /// Ferramenta de depuração utilizada para identificar quais objetos da Interface de Usuário (UI)
@@ -11,23 +12,29 @@ public class ClickDebug : MonoBehaviour
     #region Ciclo de Vida
     void Update()
     {
+        if (Mouse.current == null) return;
+
         // Dispara a checagem apenas quando o botão esquerdo do mouse é pressionado
-        if (Input.GetMouseButtonDown(0))
+        if (Mouse.current.leftButton.wasPressedThisFrame)
         {
-            Debug.Log($"[ClickDebug] Clique detectado em {Input.mousePosition}");
+            Vector2 mousePos = Mouse.current.position.ReadValue();
+            Debug.Log($"[ClickDebug] Clique detectado em {mousePos}");
 
             var resultado = new System.Collections.Generic.List<RaycastResult>();
-            var pointer = new PointerEventData(EventSystem.current) { position = Input.mousePosition };
+            var pointer = new PointerEventData(EventSystem.current) { position = mousePos };
             
             // Dispara um raio através da interface para pegar tudo o que está abaixo do cursor
-            EventSystem.current.RaycastAll(pointer, resultado);
+            if (EventSystem.current != null)
+            {
+                EventSystem.current.RaycastAll(pointer, resultado);
 
-            if (resultado.Count == 0)
-                Debug.Log("[ClickDebug] Nenhum objeto detectado pelo raycast");
+                if (resultado.Count == 0)
+                    Debug.Log("[ClickDebug] Nenhum objeto detectado pelo raycast");
 
-            // Itera e exibe todos os elementos atingidos no local do clique e sua layer respectiva
-            foreach (var r in resultado)
-                Debug.Log($"[ClickDebug] Raycast hit: {r.gameObject.name} | layer: {LayerMask.LayerToName(r.gameObject.layer)}");
+                // Itera e exibe todos os elementos atingidos no local do clique e sua layer respectiva
+                foreach (var r in resultado)
+                    Debug.Log($"[ClickDebug] Raycast hit: {r.gameObject.name} | layer: {LayerMask.LayerToName(r.gameObject.layer)}");
+            }
         }
     }
     #endregion

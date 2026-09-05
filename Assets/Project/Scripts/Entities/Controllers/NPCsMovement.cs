@@ -63,7 +63,7 @@ public class NPCsMovement : MonoBehaviour
         circleCollider2D = GetComponent<CircleCollider2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
 
-        if (isAgressive) gameObject.tag = "AggresiveCreature";
+        if (isAgressive) gameObject.tag = "AgressiveCreature";
         else gameObject.tag = "PassiveCreature";
         
         rb.gravityScale = 0;
@@ -145,7 +145,7 @@ public class NPCsMovement : MonoBehaviour
     void OnDestroy()
     {
         if (Presa != null && Presa.CompareTag("Player"))
-            GameState.ChasersCount--;
+            GameState.ChasersCount = Mathf.Max(0, GameState.ChasersCount - 1);
     }
     #endregion
 
@@ -224,9 +224,11 @@ public class NPCsMovement : MonoBehaviour
 
     private void StopChasing()
     {
+        if (Presa != null && Presa.CompareTag("Player"))
+            GameState.ChasersCount = Mathf.Max(0, GameState.ChasersCount - 1);
+
         Presa = null;
         chaseTimer = 0;
-        GameState.ChasersCount--;
         SetRandomDirection();
     }
 
@@ -289,6 +291,9 @@ public class NPCsMovement : MonoBehaviour
         {
             rb.linearVelocity = Vector2.zero;
             transform.position = lastValidPosition;
+
+            if (Presa != null && Presa.CompareTag("Player"))
+                GameState.ChasersCount = Mathf.Max(0, GameState.ChasersCount - 1);
 
             Presa = null;
             chaseTimer = 0;
@@ -390,11 +395,14 @@ public class NPCsMovement : MonoBehaviour
             // Fixa a presa caso o timer de alerta termine
             if (agressionTimer >= timeUntilAggressive && hasBorderCooldown == false)
             {
-                isAlert = false;
-                Presa = collider.gameObject;
+                if (Presa != collider.gameObject)
+                {
+                    isAlert = false;
+                    Presa = collider.gameObject;
 
-                if (Presa.CompareTag("Player")) 
-                    GameState.ChasersCount++;
+                    if (Presa.CompareTag("Player")) 
+                        GameState.ChasersCount++;
+                }
             }
 
             return;

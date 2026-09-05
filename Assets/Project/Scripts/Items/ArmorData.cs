@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using UnityEditor.Overlays;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "New Armor", menuName = "Scriptable Objects/ArmorData")]
