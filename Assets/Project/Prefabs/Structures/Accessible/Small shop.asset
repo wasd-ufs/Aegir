@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Small shop
   m_EditorClassIdentifier: Assembly-CSharp::StructureData
   _structureName: Vendinha
-  _structureDimensions: {x: 3, y: 2}
+  _structureDimensions: {x: 4, y: 3}
   _structurePrefab: {fileID: 4540174133025460802, guid: 645a1d9fe47d31844878a80d0c92e622, type: 3}
   _spawnChance: 0.05
   _validBaseLayersList: 020000000300000004000000
@@ -24,4 +24,3 @@ MonoBehaviour:
   _weight: 2
   _doorLocalCoordinate: {x: 1, y: 0}
   _maxPerChunk: 1
-

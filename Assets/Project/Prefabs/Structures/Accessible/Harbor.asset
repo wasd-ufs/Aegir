@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Harbor
   m_EditorClassIdentifier: Assembly-CSharp::StructureData
   _structureName: Porto
-  _structureDimensions: {x: 3, y: 3}
+  _structureDimensions: {x: 5, y: 3}
   _structurePrefab: {fileID: 4306527351568153791, guid: 9a8ca1d343fea6149a9b162feab2a042, type: 3}
   _spawnChance: 0.01
   _validBaseLayersList: 0100000002000000
@@ -24,4 +24,3 @@ MonoBehaviour:
   _weight: 1
   _doorLocalCoordinate: {x: 1, y: 0}
   _maxPerChunk: 1
-

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Hospital
   m_EditorClassIdentifier: Assembly-CSharp::StructureData
   _structureName: Hospital
-  _structureDimensions: {x: 3, y: 2}
+  _structureDimensions: {x: 5, y: 4}
   _structurePrefab: {fileID: 2842499114943241122, guid: ad6a55233ae1fe3408bec17f5c9824b3, type: 3}
   _spawnChance: 0.01
   _validBaseLayersList: 0300000004000000
@@ -24,4 +24,3 @@ MonoBehaviour:
   _weight: 1
   _doorLocalCoordinate: {x: 1, y: 0}
   _maxPerChunk: 1
-
