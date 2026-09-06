@@ -1,0 +1,394 @@
+fileFormatVersion: 2
+guid: e05493e6ebc03ed4d943ec2ee2633a90
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 3637361131510348983
+    second: Aegir Navio Sprite sheet-sheet_0
+  - first:
+      213: 2189269755527978993
+    second: Aegir Navio Sprite sheet-sheet_1
+  - first:
+      213: 1753323424161606317
+    second: Aegir Navio Sprite sheet-sheet_2
+  - first:
+      213: -7331887124441232434
+    second: Aegir Navio Sprite sheet-sheet_3
+  - first:
+      213: 1120615904294188866
+    second: Aegir Navio Sprite sheet-sheet_4
+  - first:
+      213: -6905897565219440904
+    second: Aegir Navio Sprite sheet-sheet_5
+  - first:
+      213: 2696647370671913633
+    second: Aegir Navio Sprite sheet-sheet_6
+  - first:
+      213: 1529150348240326338
+    second: Aegir Navio Sprite sheet-sheet_7
+  - first:
+      213: 5009551780077999251
+    second: Aegir Navio Sprite sheet-sheet_8
+  - first:
+      213: -2592774279962216226
+    second: Aegir Navio Sprite sheet-sheet_9
+  - first:
+      213: 6320473830038990280
+    second: Aegir Navio Sprite sheet-sheet_10
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 192
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: Aegir Navio Sprite sheet-sheet_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 26
+        width: 96
+        height: 64
+      alignment: 9
+      pivot: {x: 0.5, y: 0.6}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7bcbc737da08a7230800000000000000
+      internalID: 3637361131510348983
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Aegir Navio Sprite sheet-sheet_1
+      rect:
+        serializedVersion: 2
+        x: 95
+        y: 26
+        width: 96
+        height: 62
+      alignment: 9
+      pivot: {x: 0.5, y: 0.6}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1ff50cf4e39d16e10800000000000000
+      internalID: 2189269755527978993
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Aegir Navio Sprite sheet-sheet_2
+      rect:
+        serializedVersion: 2
+        x: 217
+        y: 14
+        width: 43
+        height: 73
+      alignment: 9
+      pivot: {x: 0.5, y: 0.6}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: daa26816d5e055810800000000000000
+      internalID: 1753323424161606317
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Aegir Navio Sprite sheet-sheet_3
+      rect:
+        serializedVersion: 2
+        x: 312
+        y: 12
+        width: 42
+        height: 77
+      alignment: 9
+      pivot: {x: 0.5, y: 0.6}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ecb8b6e9187ef3a90800000000000000
+      internalID: -7331887124441232434
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Aegir Navio Sprite sheet-sheet_4
+      rect:
+        serializedVersion: 2
+        x: 406
+        y: 3
+        width: 44
+        height: 83
+      alignment: 9
+      pivot: {x: 0.5, y: 0.6}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 247bb194a3a3d8f00800000000000000
+      internalID: 1120615904294188866
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Aegir Navio Sprite sheet-sheet_5
+      rect:
+        serializedVersion: 2
+        x: 501
+        y: 1
+        width: 45
+        height: 82
+      alignment: 9
+      pivot: {x: 0.5, y: 0.6}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8f63cd1e0c25920a0800000000000000
+      internalID: -6905897565219440904
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Aegir Navio Sprite sheet-sheet_6
+      rect:
+        serializedVersion: 2
+        x: 584
+        y: 9
+        width: 68
+        height: 76
+      alignment: 9
+      pivot: {x: 0.5, y: 0.6}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1aaf3650f7a6c6520800000000000000
+      internalID: 2696647370671913633
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Aegir Navio Sprite sheet-sheet_7
+      rect:
+        serializedVersion: 2
+        x: 677
+        y: 7
+        width: 70
+        height: 76
+      alignment: 9
+      pivot: {x: 0.5, y: 0.6}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2ce8703d322a83510800000000000000
+      internalID: 1529150348240326338
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Aegir Navio Sprite sheet-sheet_8
+      rect:
+        serializedVersion: 2
+        x: 782
+        y: 2
+        width: 66
+        height: 86
+      alignment: 9
+      pivot: {x: 0.5, y: 0.6}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 394997f5dc0858540800000000000000
+      internalID: 5009551780077999251
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Aegir Navio Sprite sheet-sheet_9
+      rect:
+        serializedVersion: 2
+        x: 876
+        y: 1
+        width: 63
+        height: 85
+      alignment: 9
+      pivot: {x: 0.5, y: 0.6}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ed8351c878d940cd0800000000000000
+      internalID: -2592774279962216226
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 6ffe7139d715d4d4fafe58e7a141c80d
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      Aegir Navio Sprite sheet-sheet_0: 3637361131510348983
+      Aegir Navio Sprite sheet-sheet_1: 2189269755527978993
+      Aegir Navio Sprite sheet-sheet_10: 6320473830038990280
+      Aegir Navio Sprite sheet-sheet_2: 1753323424161606317
+      Aegir Navio Sprite sheet-sheet_3: -7331887124441232434
+      Aegir Navio Sprite sheet-sheet_4: 1120615904294188866
+      Aegir Navio Sprite sheet-sheet_5: -6905897565219440904
+      Aegir Navio Sprite sheet-sheet_6: 2696647370671913633
+      Aegir Navio Sprite sheet-sheet_7: 1529150348240326338
+      Aegir Navio Sprite sheet-sheet_8: 5009551780077999251
+      Aegir Navio Sprite sheet-sheet_9: -2592774279962216226
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

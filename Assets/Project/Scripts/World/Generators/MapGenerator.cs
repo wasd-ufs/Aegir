@@ -12,27 +12,24 @@ using UnityEngine;
 [RequireComponent(typeof(WFCSolver), typeof(ChunkRenderer), typeof(EntitySpawner))]
 public class MapGenerator : MonoBehaviour
 {
-    // =========================================================================
-    // Campos Serializados
-    // =========================================================================
 
     [SerializeField] private Vector2Int _chunkSize;
     [SerializeField] private TilesetData _tilesetData;
     [SerializeField] private RuleManager _ruleManager;
 
-    // =========================================================================
-    // Propriedades e Eventos
-    // =========================================================================
-
     public Vector2Int ChunkSize   => _chunkSize;
     public bool IsGenerating      => _wfcSolver.IsGenerating;
     public ChunkRenderer Renderer => _chunkRenderer;
 
-    public Action<MapGenerator, bool> OnGenerationComplete;
+    /// <summary>
+    /// Indica se este chunk já passou pela fase de geração de estruturas e
+    /// pelo loop de correção de compatibilidade WFC pós-estruturas.
+    /// Válido tanto para chunks com estruturas quanto para chunks sem estruturas
+    /// que estejam dentro do raio de geração.
+    /// </summary>
+    public bool StructuresGenerated { get; set; }
 
-    // =========================================================================
-    // Campos Privados
-    // =========================================================================
+    public Action<MapGenerator, bool> OnGenerationComplete;
 
     private WFCSolver _wfcSolver;
     private ChunkRenderer _chunkRenderer;
@@ -43,10 +40,6 @@ public class MapGenerator : MonoBehaviour
     private WorldGenerator _worldGenerator;
     private GameObject _player;
 
-    // =========================================================================
-    // Unity Callbacks
-    // =========================================================================
-
     private void Awake()
     {
         _wfcSolver     = GetComponent<WFCSolver>();
@@ -56,18 +49,9 @@ public class MapGenerator : MonoBehaviour
         _grid  = new ChunkCellGrid(_chunkSize, _tilesetData);
         _cache = new CompatibilityCache(_ruleManager, _tilesetData);
 
-        // BuildCache e Setup do solver NÃO são chamados aqui.
-        // O RuleManager pode ainda não ter rodado seu Awake quando este chunk
-        // é instanciado em runtime via Instantiate. O cache é construído de
-        // forma lazy em EnsureCache(), chamada no início de cada geração.
-
         _wfcSolver.OnMapRenderRequested += HandleMapRenderRequest;
         _wfcSolver.OnGenerationComplete += HandleGenerationComplete;
     }
-
-    // =========================================================================
-    // API Pública — Setup
-    // =========================================================================
 
     /// <summary>
     /// Associa o jogador e o <see cref="WorldGenerator"/> a este chunk e a todos os NPCs filhos.
@@ -80,10 +64,6 @@ public class MapGenerator : MonoBehaviour
         foreach (var npcComponent in GetComponentsInChildren<NPCsMovement>())
             npcComponent.Setup(player, worldGenerator);
     }
-
-    // =========================================================================
-    // API Pública — Geração
-    // =========================================================================
 
     /// <summary>
     /// Geração síncrona. Bloqueia o jogo até o chunk estar pronto.
@@ -141,19 +121,12 @@ public class MapGenerator : MonoBehaviour
         if (_wfcSolver.HasGenerationSucceeded)
             _chunkRenderer.RenderMap(_grid, _chunkSize);
 
-        // Delegar todo o retry ao WFC — o loop externo não faz sentido no modo async
-        // O WFC já gerencia seus próprios restarts via RestartGenerationAttempt
-        // OnGenerationComplete será invocado pelo WFC ao final
     }
 
     public void SetIslandSampler(IslandMapSampler sampler)
     {
         _wfcSolver.SetIslandSampler(sampler);
     }
-
-    // =========================================================================
-    // API Pública — Halo e Dados
-    // =========================================================================
 
     /// <summary>
     /// Atualiza o halo com tiles recém-gerados de um chunk vizinho e repropaga
@@ -198,6 +171,7 @@ public class MapGenerator : MonoBehaviour
                 _grid.CellsArray[x, y].CollapseCell(waterTileIndex);
 
         _chunkRenderer.RenderMap(_grid, _chunkSize);
+        StructuresGenerated = true;
     }
 
     /// <summary>
@@ -234,12 +208,64 @@ public class MapGenerator : MonoBehaviour
                 _grid.CellsArray[x + 1, y + 1].CollapseCell(serializedDataArray[x * _chunkSize.y + y]);
 
         _chunkRenderer.RenderMap(_grid, _chunkSize);
+        StructuresGenerated = true;
     }
 
     /// <summary>Retorna o tile colapsado na posição local, excluindo o halo.</summary>
     public Tile GetTileAt(int localX, int localY)
     {
         return _grid.GetTileAt(localX, localY);
+    }
+
+    /// <summary>
+    /// Retorna a célula WFC interna na posição local (0..chunkSize-1), excluindo o halo.
+    /// Usado pelo loop de correção de compatibilidade pós-estruturas para manipular
+    /// diretamente o PossibleBitsArray da célula.
+    /// </summary>
+    public Cell GetCellAt(int localX, int localY)
+    {
+        if (_grid.CellsArray == null) return null;
+        if (localX < 0 || localX >= _chunkSize.x || localY < 0 || localY >= _chunkSize.y) return null;
+        return _grid.CellsArray[localX + 1, localY + 1];
+    }
+
+    /// <summary>
+    /// Re-renderiza o tile na posição local a partir do estado atual da célula WFC interna.
+    /// Deve ser chamado após alterar o PossibleBitsArray da célula manualmente.
+    /// </summary>
+    public void RefreshTileFromCell(int localX, int localY)
+    {
+        if (_grid.CellsArray == null) return;
+        if (localX < 0 || localX >= _chunkSize.x || localY < 0 || localY >= _chunkSize.y) return;
+
+        Cell cell = _grid.CellsArray[localX + 1, localY + 1];
+        if (!cell.IsCollapsed()) return;
+
+        int tileIndex = cell.CollapsedIndex();
+        if (tileIndex < 0 || tileIndex >= _tilesetData.TilesetList.Count) return;
+
+        if (_chunkRenderer != null && _chunkRenderer.Tilemap != null)
+        {
+            _chunkRenderer.Tilemap.SetTile(
+                new Vector3Int(localX, localY, 0),
+                _tilesetData.TilesetList[tileIndex].TilemapTile);
+        }
+    }
+
+    /// <summary>
+    /// Substitui o tile colapsado na posição local especificada (0..chunkSize-1)
+    /// atualizando tanto a célula interna quanto o Tilemap da Unity.
+    /// </summary>
+    public void SetTileAt(int localX, int localY, int tileIndex)
+    {
+        if (localX < 0 || localX >= _chunkSize.x || localY < 0 || localY >= _chunkSize.y) return;
+        if (tileIndex < 0 || tileIndex >= _tilesetData.TilesetList.Count) return;
+
+        _grid.CellsArray[localX + 1, localY + 1].CollapseCell(tileIndex);
+        if (_chunkRenderer != null && _chunkRenderer.Tilemap != null)
+        {
+            _chunkRenderer.Tilemap.SetTile(new Vector3Int(localX, localY, 0), _tilesetData.TilesetList[tileIndex].TilemapTile);
+        }
     }
 
     /// <summary>Instancia criaturas sobre as células colapsadas do chunk.</summary>
@@ -254,10 +280,6 @@ public class MapGenerator : MonoBehaviour
             _player,
             _worldGenerator);
     }
-
-    // =========================================================================
-    // Helpers Privados
-    // =========================================================================
 
     /// <summary>
     /// Garante que o cache de compatibilidade e o solver estejam prontos antes

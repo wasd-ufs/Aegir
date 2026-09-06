@@ -16,7 +16,7 @@ public class RuleManager : MonoBehaviour
 
         public Tile.TileType Type => _type;
         public Tile.TileDirection Direction => _direction;
-        
+
         public TileIdentifier(Tile.TileType type, Tile.TileDirection direction)
         {
             _type = type;
@@ -48,14 +48,17 @@ public class RuleManager : MonoBehaviour
     [SerializeField] private TilesetData _tilesetData;
 
     private Dictionary<Tile, HashSet<Tile>[]> _fastRulesDictionary;
+    private bool _isProcessed = false;
 
     private void Awake()
     {
         ProcessRules();
     }
 
-    private void ProcessRules()
+    public void ProcessRules()
     {
+        if (_isProcessed) return;
+        _isProcessed = true;
         MirrorRules();
         BuildFastRules();
     }
@@ -95,10 +98,10 @@ public class RuleManager : MonoBehaviour
             {
                 _fastRulesDictionary[originTile] = new HashSet<Tile>[4]
                 {
-                    new HashSet<Tile>(), // 0: up
-                    new HashSet<Tile>(), // 1: down
-                    new HashSet<Tile>(), // 2: left
-                    new HashSet<Tile>()  // 3: right
+                    new HashSet<Tile>(),
+                    new HashSet<Tile>(),
+                    new HashSet<Tile>(),
+                    new HashSet<Tile>()
                 };
             }
 
@@ -118,7 +121,7 @@ public class RuleManager : MonoBehaviour
             if (ExistsInOriginals(blockedTile, origin, inverseDirection)) continue;
 
             TileRule targetRule = mirroredList.Find(rule => rule.Origin.Type == blockedTile.Type && rule.Origin.Direction == blockedTile.Direction);
-            
+
             if (targetRule == null)
             {
                 targetRule = new TileRule { Origin = blockedTile };
@@ -126,7 +129,7 @@ public class RuleManager : MonoBehaviour
             }
 
             List<TileIdentifier> targetList = GetList(targetRule, inverseDirection);
-            
+
             if (targetList != null && !targetList.Exists(identifier => identifier.Type == origin.Type && identifier.Direction == origin.Direction))
             {
                 targetList.Add(origin);
@@ -146,14 +149,19 @@ public class RuleManager : MonoBehaviour
     ///</summary>
     public bool IsBlocked(Tile current, Tile neighbor, Vector2Int direction)
     {
+        if (!_isProcessed)
+        {
+            ProcessRules();
+        }
+
         if (!current.IsCompatibleWith(neighbor, direction)) return true;
 
-        if (_fastRulesDictionary.TryGetValue(current, out var directionSets))
+        if (_fastRulesDictionary != null && _fastRulesDictionary.TryGetValue(current, out var directionSets))
         {
             int index = direction == Vector2Int.up ? 0 :
                         direction == Vector2Int.down ? 1 :
                         direction == Vector2Int.left ? 2 : 3;
-                        
+
             return directionSets[index].Contains(neighbor);
         }
 

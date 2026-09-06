@@ -16,6 +16,13 @@ public class StructureData : ScriptableObject
     [SerializeField] private List<int> _validBaseLayersList;
     [SerializeField] private float _isolationRadius;
     [SerializeField] private List<LayerOverride> _layerOverridesList;
+    [Header("Identificação e Categoria")]
+    [SerializeField] private StructureCategory _category = StructureCategory.Residential;
+    [SerializeField] private StructurePivotMode _pivotMode = StructurePivotMode.BottomCenter;
+    [SerializeField, Min(0.01f)] private float _weight = 1f;
+    [SerializeField] private Vector2Int _doorLocalCoordinate;
+
+    [Header("Limites")]
     [SerializeField, Min(1)] private int _maxPerChunk = 1;
 
     public string StructureName => _structureName;
@@ -26,6 +33,11 @@ public class StructureData : ScriptableObject
     public float IsolationRadius => _isolationRadius;
     public int MaxPerChunk => _maxPerChunk;
     public List<LayerOverride> LayerOverridesList => _layerOverridesList;
+
+    public StructureCategory Category => _category;
+    public StructurePivotMode PivotMode => _pivotMode;
+    public float Weight => _weight > 0 ? _weight : (_spawnChance > 0 ? _spawnChance * 100f : 1f);
+    public Vector2Int DoorLocalCoordinate => _doorLocalCoordinate;
 
     /// <summary>
     /// Estrutura que define exceções ou regras estritas para camadas específicas.
@@ -40,4 +52,18 @@ public class StructureData : ScriptableObject
         public List<Vector2Int> LocalCoordinatesList => _localCoordinatesList;
         public int Layer => _layer;
     }
+}
+
+public enum StructureCategory
+{
+    Residential,
+    Service,
+    Harbor,
+    Landmark
+}
+
+public enum StructurePivotMode
+{
+    BottomCenter,
+    Center
 }

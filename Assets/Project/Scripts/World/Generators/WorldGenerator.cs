@@ -9,9 +9,6 @@ using System.Collections.Generic;
 [RequireComponent(typeof(ChunkLifecycleManager), typeof(StructureGenerator), typeof(PlayerTransitionController))]
 public class WorldGenerator : MonoBehaviour
 {
-    // =========================================================================
-    // Campos Serializados
-    // =========================================================================
 
     [Header("World Settings")]
     [SerializeField] private GameObject _chunkPrefab;
@@ -26,24 +23,12 @@ public class WorldGenerator : MonoBehaviour
     [Header("Containers")]
     [SerializeField] private Transform _creaturesContainer;
 
-    // =========================================================================
-    // Propriedades Públicas
-    // =========================================================================
-
     public Transform CreaturesContainer => _creaturesContainer;
-
-    // =========================================================================
-    // Subsistemas — MonoBehaviour (componentes no mesmo GameObject)
-    // =========================================================================
 
     private ChunkLifecycleManager _lifecycleManager;
     private StructureGenerator _structureGenerator;
     private PlayerTransitionController _transitionController;
     private IslandMapSampler _islandMapSampler;
-
-    // =========================================================================
-    // Subsistemas — Classes C# puras
-    // =========================================================================
 
     private ChunkPersistence _persistence;
     private ChunkGenerationQueue _generationQueue;
@@ -52,18 +37,11 @@ public class WorldGenerator : MonoBehaviour
     private HaloBuilder _haloBuilder;
     private ChunkNeighborNotifier _neighborNotifier;
     private IslandLocator _islandLocator;
-
-    // =========================================================================
-    // Estado Interno
-    // =========================================================================
+    private RuleManager _ruleManager;
 
     private Vector2Int _lastPlayerChunkPosition;
     private Vector2Int _chunkSize;
     private float _cachedCellSize;
-
-    // =========================================================================
-    // Unity Callbacks
-    // =========================================================================
 
     private void Awake()
     {
@@ -86,7 +64,8 @@ public class WorldGenerator : MonoBehaviour
         _neighborNotifier  = new ChunkNeighborNotifier(_lifecycleManager, _chunkSize);
         _visibilityTracker = new ChunkVisibilityTracker(_lifecycleManager, _viewDistance);
 
-        _structureGenerator.Setup(_tileQuery, _lifecycleManager, _chunkSize, _cachedCellSize, _worldSeed);
+        _ruleManager = GetComponent<RuleManager>() ?? FindFirstObjectByType<RuleManager>() ?? _chunkPrefab?.GetComponent<RuleManager>();
+        _structureGenerator.Setup(_tileQuery, _lifecycleManager, _chunkSize, _cachedCellSize, _worldSeed, _islandLocator, _islandMapSampler, _tilesetData, _ruleManager);
         _lifecycleManager.Setup(_persistence, _haloBuilder, _neighborNotifier, this, _playerTransform, _islandMapSampler, _structureGenerator);
         _transitionController.Setup(_tileQuery, _lifecycleManager, Camera.main, _cachedCellSize);
     }
@@ -108,7 +87,6 @@ public class WorldGenerator : MonoBehaviour
         {
             _lastPlayerChunkPosition = currentPlayerChunk;
 
-            // Visibilidade delegada ao tracker — lifecycle só executa o que lhe é pedido
             _visibilityTracker.UpdateVisibleChunks(currentPlayerChunk, _generationQueue);
             _generationQueue.SortQueueByDistance(currentPlayerChunk);
         }
@@ -122,10 +100,6 @@ public class WorldGenerator : MonoBehaviour
 
         _structureGenerator.ProcessDecorations();
     }
-
-    // =========================================================================
-    // Geração Inicial
-    // =========================================================================
 
     private void GenerateInitialChunks(Vector2Int centerPosition)
     {
@@ -147,10 +121,6 @@ public class WorldGenerator : MonoBehaviour
             }
         }
     }
-
-    // =========================================================================
-    // API Pública
-    // =========================================================================
 
     public Tile GetTileAtWorldPosition(Vector3 worldPosition)
     {
@@ -174,20 +144,13 @@ public class WorldGenerator : MonoBehaviour
         _persistence?.ClearSaveData();
     }
 
-    // =========================================================================
-    // Legacy API Bridges (compatibilidade com sistema antigo)
-    // =========================================================================
-
-    // Devolve o transform do jogador para a CameraFollow.cs não quebrar
     public Transform player => _lifecycleManager.ActivePlayer;
 
-    // Redireciona a chamada antiga do PlayerMovement.cs para o novo sistema
     public void TryGoOut(Camera mainCamera)
     {
         TryTransitionToBoatOrPlayer();
     }
 
-    // Redireciona a matemática de posições para o novo _tileQuery (usado pelo NPCsMovement)
     public Vector2Int GetChunkPosFromWorld(Vector3 worldPosition)
     {
         return _tileQuery.GetChunkPositionFromWorld(worldPosition);
@@ -199,7 +162,7 @@ public class WorldGenerator : MonoBehaviour
         List<Vector2Int> candidates = _islandLocator.FindIslandsInRange(
             playerChunk, minRadius, maxRadius);
 
-        if (candidates.Count == 0) return Vector3.zero; // sem ilhas no raio — tratar no chamador
+        if (candidates.Count == 0) return Vector3.zero;
 
         foreach (Vector2Int candidate in candidates)
         {
@@ -210,7 +173,6 @@ public class WorldGenerator : MonoBehaviour
         return _tileQuery.GetChunkWorldPosition(chosen);
     }
 
-    // Redireciona a verificação de chunks para o novo _lifecycleManager (usado pelo NPCsMovement)
     public bool IsChunkActive(Vector2Int chunkPosition)
     {
         return _lifecycleManager.GetActiveChunk(chunkPosition) != null;

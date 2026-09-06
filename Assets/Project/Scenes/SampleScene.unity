@@ -7673,7 +7673,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &661309217
 Transform:
   m_ObjectHideFlags: 0
@@ -7787,7 +7787,7 @@ SpriteRenderer:
   m_SortingLayer: 1
   m_SortingOrder: 0
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 7160037788141939892, guid: 7315ebf787605d242ba7934b288ec306, type: 3}
+  m_Sprite: {fileID: -962338743, guid: f2afffd9ce8109a4191bab3af8183a9a, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -7834,8 +7834,8 @@ BoxCollider2D:
   m_Offset: {x: 0, y: 0}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0}
-    oldSize: {x: 0.12, y: 0.17}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 0.08203125, y: 0.125}
     newSize: {x: 0.12, y: 0.17}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
@@ -7910,14 +7910,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6fdbcac59abd0c147ba895cf89d15c53, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMovement
-  boatSpeed: 3
-  captainSpeed: 1.5
-  amplitude: 0.1
-  frequencia: 0.5
-  tempoAteOVentoMudar: 10
+  _boatSpeed: 3
+  _captainSpeed: 1.5
+  _amplitude: 0.1
+  _waveFrequency: 0.5
+  _timeUntilWindChanges: 10
   isOnWater: 1
   moveInput: {x: 0, y: 0}
-  "capit\xE3o": {fileID: 661309216}
+  captain: {fileID: 661309216}
   mainCamera: {fileID: 519420031}
   worldGenerator: {fileID: 1829302568}
   rb: {fileID: 0}
@@ -7981,8 +7981,8 @@ BoxCollider2D:
   m_Offset: {x: 0, y: 0}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.1}
-    oldSize: {x: 0.32, y: 0.23}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 0.1875, y: 0.12109375}
     newSize: {x: 0.32, y: 0.23}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
@@ -8066,7 +8066,7 @@ SpriteRenderer:
   m_SortingLayer: 1
   m_SortingOrder: 0
   m_MaskInteraction: 0
-  m_Sprite: {fileID: -832099650, guid: 2d22f03fc776ae8458dde2d391338c35, type: 3}
+  m_Sprite: {fileID: 2189269755527978993, guid: 872a361fcd816d24ba4977d1c4aa3c92, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -8105,11 +8105,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e3318b340adad124689811be33b7e31e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  CrewList:
+  _crewList:
   - {fileID: 889662306}
   - {fileID: 661309216}
   _maxCrewLength: 4
-  Inventory: {fileID: 0}
+  <Inventory>k__BackingField: {fileID: 0}
 --- !u!114 &679149532
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -13172,10 +13172,10 @@ MonoBehaviour:
   _battleActionText: {fileID: 1939293824}
   _fadeSpeed: 1
   _buttonTextSize: 9
-  isActiveBattle: 0
-  shouldPassTurn: 0
-  isShowingMessage: 0
-  isShowingLogMessage: 0
+  _isActiveBattle: 0
+  _shouldPassTurn: 0
+  _isShowingMessage: 0
+  _isShowingLogMessage: 0
 --- !u!1 &975422470
 GameObject:
   m_ObjectHideFlags: 0
@@ -17327,9 +17327,9 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 679149527}
   - {fileID: 344813211}
   - {fileID: 2031006555}
+  - {fileID: 679149527}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1249750006

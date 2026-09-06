@@ -18,7 +18,7 @@ public class IslandMapSampler
     /// O "nível do oceano profundo". Qualquer valor de ruído gerado abaixo disto torna-se oceano profundo. 
     /// </summary>
     public const float SEA_EDGE_THRESHOLD = 0.5f;
-    
+
     /// <summary>
     /// O "nível da água". Qualquer valor de ruído gerado abaixo disto torna-se água. 
     /// Aumentar este valor submerge a ilha (deixando-a menor). Diminuir faz a ilha crescer e ligar-se a outras.
@@ -76,11 +76,9 @@ public class IslandMapSampler
     /// </summary>
     private const float WARP_STRENGTH = 0.003f;
 
-    // Valores arbitrários para garantir que o ruído de distorção não é idêntico ao ruído do terreno
     private const float WARP_X_OFFSET = 31.7f;
     private const float WARP_Y_OFFSET = 71.3f;
-    
-    // Matemática de Hash para espalhar a Seed do mundo
+
     private const float HASH_OFFSET_BASE = 13f;
     private const uint HASH_OFFSET_RANGE = 984u;
 
@@ -108,18 +106,14 @@ public class IslandMapSampler
     /// <summary>
     /// Consulta o motor matemático para saber a altitude de um ponto exato do mundo.
     /// </summary>
-    public float Sample(float globalX, float globalY)
+    public virtual float Sample(float globalX, float globalY)
     {
-        // 1. Domain Warping: Antes de ler o mapa, "entortamos" as coordenadas 
-        // para fingir que a grelha do mundo é feita de gelatina.
         Vector2 warpedPosition = CalculateWarpedPosition(globalX, globalY);
 
-        // 2. Lemos o ruído FBM já na coordenada distorcida
         float heightValue = SampleFbm(
             warpedPosition.x * BASE_FREQUENCY + _offsetX,
             warpedPosition.y * BASE_FREQUENCY + _offsetY);
 
-        // 3. Aplicamos o contraste final (Exponente) para separar bem o que é terra do que é mar
         return Mathf.Clamp01(Mathf.Pow(heightValue, ISLAND_EXPONENT));
     }
 
@@ -129,10 +123,9 @@ public class IslandMapSampler
 
     private Vector2 CalculateWarpedPosition(float globalX, float globalY)
     {
-        // Geramos duas forças diferentes: uma que empurra na horizontal (warpX) e outra na vertical (warpY)
         float warpX = SampleWarpNoise(globalX, globalY, 0f, 0f);
         float warpY = SampleWarpNoise(globalX, globalY, WARP_X_OFFSET, WARP_Y_OFFSET);
-        
+
         float warpScale = WARP_STRENGTH / BASE_FREQUENCY;
 
         return new Vector2(
@@ -149,8 +142,6 @@ public class IslandMapSampler
 
     private float RemapToSignedRange(float value)
     {
-        // O Perlin devolve de 0.0 a 1.0. 
-        // Convertendo para -1.0 a 1.0, permitimos que a distorção empurre a terra tanto para a esquerda como para a direita.
         return value * 2f - 1f;
     }
 
@@ -163,15 +154,15 @@ public class IslandMapSampler
         float totalValue = 0f;
         float amplitude = 1f;
         float frequency = 1f;
-        float maxValue = 0f; // Usado para normalizar o valor final de volta para 0.0 ~ 1.0
+        float maxValue = 0f;
 
         for (int octaveIndex = 0; octaveIndex < FBM_OCTAVES; octaveIndex++)
         {
             totalValue += Mathf.PerlinNoise(x * frequency, y * frequency) * amplitude;
             maxValue += amplitude;
 
-            amplitude *= FBM_PERSISTENCE; // A próxima camada será mais fraca
-            frequency *= FBM_LACUNARITY;  // A próxima camada terá detalhes mais finos
+            amplitude *= FBM_PERSISTENCE;
+            frequency *= FBM_LACUNARITY;
         }
 
         return totalValue / maxValue;
@@ -183,8 +174,6 @@ public class IslandMapSampler
 
     private static float HashSeed(int seed, int channel)
     {
-        // Algoritmo clássico de hash rápido para garantir que cada mundo gerado 
-        // comece num ponto completamente aleatório do mapa infinito do Perlin Noise.
         uint hash = (uint)(seed * 1664525 + channel * 22695477 + 1013904223);
         hash ^= hash >> 16;
         hash *= 0x45d9f3b;

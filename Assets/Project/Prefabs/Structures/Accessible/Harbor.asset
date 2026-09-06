@@ -18,8 +18,10 @@ MonoBehaviour:
   _spawnChance: 0.01
   _validBaseLayersList: 0100000002000000
   _isolationRadius: 3
-  _layerOverridesList:
-  - _localCoordinatesList:
-    - {x: 3, y: 3}
-    _layer: 0
+  _layerOverridesList: []
+  _category: 2
+  _pivotMode: 1
+  _weight: 1
+  _doorLocalCoordinate: {x: 1, y: 0}
   _maxPerChunk: 1
+

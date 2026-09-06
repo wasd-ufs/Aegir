@@ -67,5 +67,6 @@
         "*.sln": "*.csproj",
         "*.slnx": "*.csproj"
     },
-    "dotnet.defaultSolution": "Aegir.slnx"
+    "dotnet.defaultSolution": "Aegir.slnx",
+    "dotrush.roslyn.projectOrSolutionFiles": []
 }

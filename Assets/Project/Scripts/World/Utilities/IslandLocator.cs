@@ -29,7 +29,6 @@ public class IslandLocator
         {
             for (int y = -maxRadius; y <= maxRadius; y++)
             {
-                // Filtra pelo anel — só o que está entre min e max
                 float distance = Mathf.Sqrt(x * x + y * y);
                 if (distance < minRadius || distance > maxRadius) continue;
 
@@ -84,12 +83,11 @@ public class IslandLocator
         return islandsList;
     }
 
-    private bool IsChunkMostlyLand(Vector2Int chunkCoord)
+    public bool IsChunkMostlyLand(Vector2Int chunkCoord)
     {
-        // Amostra 4 pontos dentro do chunk (quarts)
         float[] offsetsX = { 0.25f, 0.75f, 0.25f, 0.75f };
         float[] offsetsY = { 0.25f, 0.25f, 0.75f, 0.75f };
-        
+
         int landCount = 0;
         for (int i = 0; i < 4; i++)
         {
@@ -99,8 +97,65 @@ public class IslandLocator
                 landCount++;
         }
 
-        // Só conta como terra se os 4 pontos forem terra
         return landCount >= 4;
+    }
+
+    /// <summary>
+    /// Verifica se o chunk contém qualquer porção de terra firme pertencente à ilha.
+    /// Amostra pontos distribuídos (4 cantos interiores e o centro) para identificar chunks costeiros e periféricos.
+    /// </summary>
+    public bool IsChunkPartOfIsland(Vector2Int chunkCoord)
+    {
+        float[] offsetsX = { 0.25f, 0.75f, 0.25f, 0.75f, 0.5f };
+        float[] offsetsY = { 0.25f, 0.25f, 0.75f, 0.75f, 0.5f };
+
+        for (int i = 0; i < 5; i++)
+        {
+            float globalX = chunkCoord.x * _chunkSize.x + _chunkSize.x * offsetsX[i];
+            float globalY = chunkCoord.y * _chunkSize.y + _chunkSize.y * offsetsY[i];
+            if (_sampler.Sample(globalX, globalY) >= _landThreshold)
+                return true;
+        }
+
+        return false;
+    }
+
+    /// <summary>
+    /// Retorna a lista de chunks de terra conectados que compõem a ilha do chunk informado,
+    /// ou null se o chunk não contiver terra da ilha.
+    /// </summary>
+    public List<Vector2Int> GetIslandContaining(Vector2Int chunkCoord, int maxIslandChunks = 30)
+    {
+        if (!IsChunkPartOfIsland(chunkCoord)) return null;
+
+        var visited = new HashSet<Vector2Int>();
+        var island = new List<Vector2Int>();
+        var queue = new Queue<Vector2Int>();
+
+        queue.Enqueue(chunkCoord);
+        visited.Add(chunkCoord);
+
+        while (queue.Count > 0 && island.Count < maxIslandChunks)
+        {
+            Vector2Int current = queue.Dequeue();
+            island.Add(current);
+
+            foreach (var neighbor in GetAllNeighbors(current))
+            {
+                if (!visited.Contains(neighbor) && IsChunkPartOfIsland(neighbor))
+                {
+                    visited.Add(neighbor);
+                    queue.Enqueue(neighbor);
+                }
+            }
+        }
+
+        return island.OrderBy(c => c.x).ThenBy(c => c.y).ToList();
+    }
+
+    public Vector2Int GetCenterOfIsland(List<Vector2Int> island)
+    {
+        return GetIslandCenter(island);
     }
 
     private Vector2Int GetIslandCenter(List<Vector2Int> island)
@@ -109,22 +164,19 @@ public class IslandLocator
         foreach (var chunk in island) { sumX += chunk.x; sumY += chunk.y; }
         Vector2Int average = new Vector2Int(sumX / island.Count, sumY / island.Count);
 
-        // Retorna o chunk de terra mais próximo do centro calculado
         return island.OrderBy(c => (c - average).sqrMagnitude).First();
     }
 
     private IEnumerable<Vector2Int> GetAllNeighbors(Vector2Int coord)
     {
-        // Direções Cardeais (Ortogonais)
         yield return coord + Vector2Int.up;
         yield return coord + Vector2Int.down;
         yield return coord + Vector2Int.left;
         yield return coord + Vector2Int.right;
 
-        // Direções Diagonais
-        yield return coord + new Vector2Int(1, 1);   // Nordeste
-        yield return coord + new Vector2Int(1, -1);  // Sudeste
-        yield return coord + new Vector2Int(-1, 1);  // Noroeste
-        yield return coord + new Vector2Int(-1, -1); // Sudoeste
+        yield return coord + new Vector2Int(1, 1);
+        yield return coord + new Vector2Int(1, -1);
+        yield return coord + new Vector2Int(-1, 1);
+        yield return coord + new Vector2Int(-1, -1);
     }
 }
