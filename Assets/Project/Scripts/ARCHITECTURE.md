@@ -45,7 +45,7 @@ graph TD
 
 ### 2.1 Subsistema de Geração de Mundo & Algoritmo WFC
 
-O ecossistema procedural é orquestrado pelo `WorldGenerator`, que decompõe o ciclo de vida dos chunks, persistência em disco, ordenação por prioridade de distância e o algoritmo matemático de colapso de função de onda:
+O ecossistema procedural é orquestrado pelo `WorldGenerator`, que decompõe o ciclo de vida dos chunks, persistência em disco, ordenação por prioridade de distância, geração de assentamentos viários determinísticos e o algoritmo matemático de colapso de função de onda:
 
 ```mermaid
 graph TD
@@ -56,7 +56,8 @@ graph TD
         CNN["ChunkNeighborNotifier<br/>(Notificação de Bordas)"]
         CP["ChunkPersistence<br/>(Serialização .dat em Disco)"]
         PTC["PlayerTransitionController<br/>(Troca Barco / Capitão)"]
-        SP["StructurePlacer<br/>(Spawn de Estruturas Pré-definidas)"]
+        SG["StructureGenerator<br/>(Orquestrador de Estruturas e Vias)"]
+        ISP["IslandSettlementPlanner<br/>(Malha Viária, Lotes e Fechamentos)"]
         IMS["IslandMapSampler<br/>(Ruído Matemático / Bioma)"]
         IL["IslandLocator<br/>(Busca e Agrupamento de Ilhas)"]
     end
@@ -81,10 +82,20 @@ graph TD
     WG --> CNN
     WG --> CP
     WG --> PTC
-    WG --> SP
+    WG --> SG
     WG --> IMS
     WG --> IL
     WG --> MG
+
+    SG --> ISP
+    SG --> SD
+    SG --> RM
+    SG --> IL
+    SG --> IMS
+    SG --> TD
+    ISP --> IL
+    ISP --> IMS
+    ISP --> TD
 
     MG --> WFC
     MG --> CCG
@@ -99,9 +110,10 @@ graph TD
     WFC --> CCG
     WFC --> CC
     WFC --> TD
-    SP --> SD
 
     style WG fill:#1e40af,stroke:#60a5fa,stroke-width:2px,color:#fff
+    style SG fill:#1e3a8a,stroke:#3b82f6,stroke-width:2px,color:#fff
+    style ISP fill:#0369a1,stroke:#38bdf8,stroke-width:2px,color:#fff
     style WFC fill:#0284c7,stroke:#38bdf8,stroke-width:2px,color:#fff
     style MG fill:#0369a1,stroke:#7dd3fc,stroke-width:2px,color:#fff
 ```
@@ -317,6 +329,7 @@ graph TD
 ```mermaid
 graph TD
     subgraph Subgraph_Tests ["Aegir.Tests.asmdef"]
+        T_Settlement["Island Settlement Tests<br/>(Planner, Roads, Cul-de-sacs, Repair)"]
         T_World["World Tests<br/>(Cell, WFC, Sockets, Island)"]
         T_Items["Items Tests<br/>(Inventory, ItemData)"]
         T_Entities["Entities Tests<br/>(NPCs, Crew, PlayerState)"]
@@ -325,6 +338,7 @@ graph TD
     end
 
     subgraph Subgraph_Runtime ["Aegir.Runtime.asmdef"]
+        R_Settlement["IslandSettlementPlanner & StructureGenerator"]
         R_World["World e WFC Engine"]
         R_Items["Inventory e ScriptableObjects"]
         R_Entities["NPCs, Crew, Player State"]
@@ -332,12 +346,14 @@ graph TD
         R_Core["GameState Flags"]
     end
 
+    T_Settlement --> R_Settlement
     T_World --> R_World
     T_Items --> R_Items
     T_Entities --> R_Entities
     T_Combat --> R_Combat
     T_Core --> R_Core
 
+    style T_Settlement fill:#064e3b,stroke:#34d399,stroke-width:1px,color:#fff
     style T_World fill:#064e3b,stroke:#34d399,stroke-width:1px,color:#fff
     style T_Items fill:#064e3b,stroke:#34d399,stroke-width:1px,color:#fff
     style T_Entities fill:#064e3b,stroke:#34d399,stroke-width:1px,color:#fff
@@ -357,7 +373,8 @@ Comparação detalhada entre as diretrizes especificadas no documento [GDD_AEGIR
 | **2.3.2** | **Embarcar / Desembarcar** | **Implementado** | [PlayerTransitionController.cs](file:///c:/Users/bretu/OneDrive/Documentos/GitHub/Aegir/Assets/Project/Scripts/World/Generators/Utilities/WorldGenerator/PlayerTransitionController.cs). Validação de proximidade ao barco, checagem de tile de costa (layer 1), ocultação de sprite e transição de zoom na câmera. |
 | **2.4.1** | **Navegação do Navio** | **Implementado** | [BoatState.cs](file:///c:/Users/bretu/OneDrive/Documentos/GitHub/Aegir/Assets/Project/Scripts/Entities/Controllers/BoatState.cs). Rotação direcional, aceleração, inércia na água e perturbação senoidal matemática de ondas marítimas. |
 | **2.5.3** | **Geração de Mares & Chunks WFC** | **Implementado** | [WorldGenerator.cs](file:///c:/Users/bretu/OneDrive/Documentos/GitHub/Aegir/Assets/Project/Scripts/World/Generators/WorldGenerator.cs), [MapGenerator.cs](file:///c:/Users/bretu/OneDrive/Documentos/GitHub/Aegir/Assets/Project/Scripts/World/Generators/MapGenerator.cs) e [WFCAlgorithm.cs](file:///c:/Users/bretu/OneDrive/Documentos/GitHub/Aegir/Assets/Project/Scripts/World/Generators/Utilities/MapGenerator/WFCAlgorithm.cs). Chunks infinitos em espiral, halo de compatibilidade, eliminação de contradições e persistência em disco (.dat). |
-| **2.5.3** | **Amostragem e Busca de Ilhas** | **Implementado** | [IslandMapSampler.cs](file:///c:/Users/bretu/OneDrive/Documentos/GitHub/Aegir/Assets/Project/Scripts/World/Generators/Utilities/WorldGenerator/IslandMapSampler.cs) (ruído determinístico) e [IslandLocator.cs](file:///c:/Users/bretu/OneDrive/Documentos/GitHub/Aegir/Assets/Project/Scripts/World/Utilities/IslandLocator.cs) (busca em anel de raio e agrupamento flood-fill). |
+| **2.5.3** | **Amostragem e Busca de Ilhas** | **Implementado** | [IslandMapSampler.cs](file:///c:/Users/bretu/OneDrive/Documentos/GitHub/Aegir/Assets/Project/Scripts/World/Generators/Utilities/WorldGenerator/IslandMapSampler.cs) (ruído determinístico) e [IslandLocator.cs](file:///c:/Users/bretu/OneDrive/Documentos/GitHub/Aegir/Assets/Project/Scripts/World/Utilities/IslandLocator.cs) (busca em anel de raio e agrupamento flood-fill de ilhas conexas). |
+| **2.5.4** | **Assentamentos, Estruturas & Malha Viária** | **Implementado** | [IslandSettlementPlanner.cs](file:///c:/Users/bretu/OneDrive/Documentos/GitHub/Aegir/Assets/Project/Scripts/World/Generators/Utilities/WorldGenerator/IslandSettlementPlanner.cs), [StructureGenerator.cs](file:///c:/Users/bretu/OneDrive/Documentos/GitHub/Aegir/Assets/Project/Scripts/World/Generators/Utilities/WorldGenerator/StructureGenerator.cs) e [StructureData.cs](file:///c:/Users/bretu/OneDrive/Documentos/GitHub/Aegir/Assets/Project/Scripts/World/Data/StructureData.cs). Planejamento determinístico de malha viária em ilhas conexas (`IslandLocator`), terminações de vias em cul-de-sacs e quinas automáticas em transições de costa (layer < 4), nós em células pares (layer >= 4), fachadas de estruturas voltadas ao Sul (estilo clássico Pokémon), autotiling de 13 tipos topológicos e loop WFC pós-estruturas (`ResolveTileCompatibility`) com eliminação de cortes de estradas e sockets incompatíveis. |
 | **2.5.3** | **5 Camadas de Profundidade & Sanidade** | **Parcialmente Implementado** | As camadas de tiles existem em [LayerDefinition.cs](file:///c:/Users/bretu/OneDrive/Documentos/GitHub/Aegir/Assets/Project/Scripts/World/Data/LayerDefinition.cs). Porém, as **5 zonas temáticas** (Litorânea, Mar Cinzento, Abismo Sussurrante, Fossa Esquecida, Coração Adormecido) e a mecânica ativa de **Taxa de Erosão de Sanidade** (0.5 a 18 pt/h, alucinações, motim) ainda não foram codificadas. |
 | **2.5.2** | **Sistema de Combate por Turnos** | **Implementado** | [BattleManager.cs](file:///c:/Users/bretu/OneDrive/Documentos/GitHub/Aegir/Assets/Project/Scripts/Combat/BattleManager.cs), [CrewAttacks.cs](file:///c:/Users/bretu/OneDrive/Documentos/GitHub/Aegir/Assets/Project/Scripts/Combat/CrewAttacks.cs) e [BattleData.cs](file:///c:/Users/bretu/OneDrive/Documentos/GitHub/Aegir/Assets/Project/Scripts/Combat/BattleData.cs). Loop de turnos, UI com pooling de botões, seleção por alvo/peso e transição visual Game Boy. |
 | **2.5.2** | **Tabela de Dano Elemental & Resistências** | **Implementado** | [NPCsData.cs](file:///c:/Users/bretu/OneDrive/Documentos/GitHub/Aegir/Assets/Project/Scripts/Entities/NPCsData.cs#L225). Fraquezas/imunidades (Fantasma imune a Físico/Veneno e fraco a Sagrado; Esqueleto imune a Gelo), mitigação de armaduras e buffs temporais (`activeEffects`). |
@@ -370,6 +387,7 @@ Comparação detalhada entre as diretrizes especificadas no documento [GDD_AEGIR
 | **2.5.13** | **Sistema de Bestiário** | **Planejado / Pendente** | Enciclopédia desbloqueada ao encontrar o item Bestiário com contadores progressivos de abates. Não implementado. |
 | **4.3.2** | **Menu de Operações / Menu de Pausa** | **Parcialmente Implementado** | O GDD projeta uma barra horizontal superior direita com 6 abas navegáveis (*Inventário, Equipamentos, Status, Bestiário, Navio, Sistema*). Atualmente há apenas menus isolados de tela cheia. |
 | **5.1 - 5.3** | **Sistema de Áudio Dinâmico** | **Implementado** | [MusicManager.cs](file:///c:/Users/bretu/OneDrive/Documentos/GitHub/Aegir/Assets/Project/Scripts/Core/MusicManager.cs) e [SFXManager.cs](file:///c:/Users/bretu/OneDrive/Documentos/GitHub/Aegir/Assets/Project/Scripts/Core/SFXManager.cs). Máquina de estados musical orientada ao `GameState` (Menu, Batalha, Perseguição, TerraFirme, Exploração) com fades suaves. |
+
 
 ---
 
