@@ -23,6 +23,12 @@ public class StructureGenerator : MonoBehaviour
         [NonSerialized] public GameObject instance;
     }
 
+    [Serializable]
+    public class ChunkStructuresSaveWrapper
+    {
+        public List<StructureSaveData> structures = new List<StructureSaveData>();
+    }
+
     public List<StructureSaveData> SavedStructuresList { get; private set; } = new List<StructureSaveData>();
 
     private WorldTileQuery _tileQuery;
@@ -36,6 +42,7 @@ public class StructureGenerator : MonoBehaviour
     private IslandSettlementPlanner _settlementPlanner;
     private RuleManager _ruleManager;
     private CompatibilityCache _compatibilityCache;
+    private ChunkPersistence _persistence;
 
     public IslandSettlementPlanner SettlementPlanner => _settlementPlanner;
 
@@ -48,7 +55,8 @@ public class StructureGenerator : MonoBehaviour
         IslandLocator islandLocator = null,
         IslandMapSampler islandMapSampler = null,
         TilesetData tilesetData = null,
-        RuleManager ruleManager = null)
+        RuleManager ruleManager = null,
+        ChunkPersistence persistence = null)
     {
         _tileQuery = tileQuery;
         _lifecycleManager = lifecycleManager;
@@ -59,6 +67,7 @@ public class StructureGenerator : MonoBehaviour
         _islandMapSampler = islandMapSampler;
         _tilesetData = tilesetData;
         _ruleManager = ruleManager;
+        _persistence = persistence;
 
         EnsureCompatibilityCache();
 
@@ -73,6 +82,10 @@ public class StructureGenerator : MonoBehaviour
                 GetTileAtGlobal);
         }
     }
+
+    public void SetStructuresList(List<StructureData> list) => _structuresList = list;
+    public void SetStructuresContainer(Transform container) => _structuresContainer = container;
+    public void SetPersistence(ChunkPersistence persistence) => _persistence = persistence;
 
     /// <summary>
     /// Consulta o tile em coordenadas globais do mundo a partir dos chunks ativos gerenciados pelo LifecycleManager.
@@ -95,6 +108,68 @@ public class StructureGenerator : MonoBehaviour
     }
 
     /// <summary>
+    /// Serializa e grava em disco todas as estruturas pertencentes ao chunk especificado.
+    /// </summary>
+    public void SaveStructuresForChunk(Vector2Int chunkPosition, ChunkPersistence persistence = null)
+    {
+        ChunkPersistence targetPersistence = persistence ?? _persistence;
+        if (targetPersistence == null) return;
+
+        var chunkStructures = SavedStructuresList.Where(s => s.chunkPosition == chunkPosition).ToList();
+        var wrapper = new ChunkStructuresSaveWrapper { structures = chunkStructures };
+        string json = JsonUtility.ToJson(wrapper);
+        targetPersistence.SaveStructuresToDisk(chunkPosition, json);
+    }
+
+    /// <summary>
+    /// Carrega as estruturas do disco e reinstancia seus GameObjects na cena.
+    /// Caso não exista arquivo salvo, utiliza o plano da ilha como fallback.
+    /// </summary>
+    public void LoadAndInstantiateStructuresForChunk(Vector2Int chunkPosition, ChunkPersistence persistence = null)
+    {
+        ChunkPersistence targetPersistence = persistence ?? _persistence;
+        if (targetPersistence == null) return;
+
+        // Evita duplicar se já existirem instâncias ativas na cena para este chunk
+        if (SavedStructuresList.Any(s => s.chunkPosition == chunkPosition && s.instance != null))
+        {
+            return;
+        }
+
+        string json = targetPersistence.LoadStructuresFromDisk(chunkPosition);
+        if (!string.IsNullOrEmpty(json))
+        {
+            ChunkStructuresSaveWrapper wrapper = JsonUtility.FromJson<ChunkStructuresSaveWrapper>(json);
+            if (wrapper != null && wrapper.structures != null)
+            {
+                foreach (var saved in wrapper.structures)
+                {
+                    StructureData blueprint = _structuresList?.FirstOrDefault(s => s.StructureName == saved.structureName);
+                    if (blueprint != null && blueprint.StructurePrefab != null)
+                    {
+                        GameObject instance = Instantiate(blueprint.StructurePrefab, saved.structureWorldPosition, Quaternion.identity, _structuresContainer);
+                        RegisterStructure(saved.structureName, saved.structureWorldPosition, saved.isolationRadius, chunkPosition, instance);
+                    }
+                    else
+                    {
+                        Debug.LogWarning($"[StructureGenerator] Could not find blueprint or prefab for structure '{saved.structureName}' when reloading chunk {chunkPosition}");
+                    }
+                }
+            }
+        }
+        else
+        {
+            // Fallback caso o chunk tenha sido gerado antes da persistência de estruturas:
+            IslandSettlementPlan plan = _settlementPlanner?.GetPlanForChunk(chunkPosition);
+            if (plan != null)
+            {
+                SpawnPlannedStructuresInChunk(chunkPosition, plan);
+                SaveStructuresForChunk(chunkPosition, targetPersistence);
+            }
+        }
+    }
+
+    /// <summary>
     /// Remove e destrói todas as instâncias de estruturas que pertencem ao chunk destruído,
     /// prevenindo vazamentos de memória e duplicação de GameObjects.
     /// </summary>
@@ -106,11 +181,40 @@ public class StructureGenerator : MonoBehaviour
             {
                 if (SavedStructuresList[i].instance != null)
                 {
-                    Destroy(SavedStructuresList[i].instance);
+                    if (Application.isPlaying)
+                    {
+                        Destroy(SavedStructuresList[i].instance);
+                    }
+                    else
+                    {
+                        DestroyImmediate(SavedStructuresList[i].instance);
+                    }
                 }
                 SavedStructuresList.RemoveAt(i);
             }
         }
+    }
+
+    /// <summary>
+    /// Remove e destrói todas as instâncias de estruturas ativas na cena e limpa o registro de memória.
+    /// </summary>
+    public void ClearAllSavedStructures()
+    {
+        for (int i = SavedStructuresList.Count - 1; i >= 0; i--)
+        {
+            if (SavedStructuresList[i].instance != null)
+            {
+                if (Application.isPlaying)
+                {
+                    Destroy(SavedStructuresList[i].instance);
+                }
+                else
+                {
+                    DestroyImmediate(SavedStructuresList[i].instance);
+                }
+            }
+        }
+        SavedStructuresList.Clear();
     }
 
     public void ProcessDecorations()
@@ -154,6 +258,7 @@ public class StructureGenerator : MonoBehaviour
             CarveRoadsInChunk(chunkPosition, activeChunk, plan);
 
             SpawnPlannedStructuresInChunk(chunkPosition, plan);
+            SaveStructuresForChunk(chunkPosition, _persistence);
         }
 
         activeChunk.StructuresGenerated = true;
@@ -178,13 +283,20 @@ public class StructureGenerator : MonoBehaviour
 
             if (localX < 0 || localX >= _chunkSize.x || localY < 0 || localY >= _chunkSize.y) continue;
 
-            if (!roadTile.IsVisual || roadTile.Layer == 2)
+            if (!roadTile.IsVisual)
             {
                 continue;
             }
 
             Tile existingTile = activeChunk.GetTileAt(localX, localY);
             if ((object)existingTile == null || existingTile.Metadata.Layer < 4)
+            {
+                continue;
+            }
+
+            if (existingTile.Metadata.Layer == roadTile.Layer &&
+                existingTile.Metadata.Type == roadTile.TileType &&
+                existingTile.Metadata.Direction == roadTile.Direction)
             {
                 continue;
             }
@@ -320,12 +432,216 @@ public class StructureGenerator : MonoBehaviour
     /// que mudanças feitas dentro do mesmo passe não influenciem a avaliação de outras
     /// células — comportamento correto do WFC de compatibilidade.
     /// </summary>
+    private bool SetTileSafe(MapGenerator activeChunk, int localX, int localY, int layer, Tile.TileType type, Tile.TileDirection direction)
+    {
+        if (localX < 0 || localX >= _chunkSize.x || localY < 0 || localY >= _chunkSize.y) return false;
+        Tile targetTile = FindTile(layer, type, direction);
+        if ((object)targetTile != null)
+        {
+            int tileIndex = _tilesetData.TilesetList.FindIndex(t => ReferenceEquals(t, targetTile));
+            if (tileIndex >= 0)
+            {
+                activeChunk.SetTileAt(localX, localY, tileIndex);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /// <summary>
+    /// Resolve anomalias morfológicas de transição grama-areia e encontros via-costa:
+    /// 1. Costas duplicadas na mesma direção (ex: Costa N acima de Costa N) -> substitui por Bloco de Areia.
+    /// 2. Vias (Coast East/West) encontrando costas ortogonais (Coast North/South) -> converte para Quinas ou Internas.
+    /// <summary>
+    /// Resolve padrões morfológicos acoplados específicos que geram incompatibilidades locais
+    /// de costa/via e não conseguem colapsar individualmente no WFC:
+    /// 1. Costas duplicadas na mesma direção (ex: Coast North acima de Coast North) -> vira Sand Block.
+    /// 2. Vias acopladas de 2 células (Coast East + Coast West) encontrando costa ortogonal (Coast North / Coast South)
+    ///    -> convertidas em conjunto para Corner (se abrir para areia) ou InnerCorner (se fechar cul-de-sac).
+    /// </summary>
+    private int ResolveMorphologicalCoastIncompatibilities(Vector2Int chunkPosition, MapGenerator activeChunk)
+    {
+        int fixedCount = 0;
+
+        // Caso 1: Costas duplicadas na mesma direção
+        for (int x = 0; x < _chunkSize.x; x++)
+        {
+            for (int y = 0; y < _chunkSize.y; y++)
+            {
+                Tile current = activeChunk.GetTileAt(x, y);
+                if ((object)current == null || current.Metadata.Layer != 3 || current.Metadata.Type != Tile.TileType.Coast) continue;
+
+                if (current.Metadata.Direction == Tile.TileDirection.North)
+                {
+                    Tile below = GetNeighborTile(x, y, Vector2Int.down, chunkPosition, activeChunk);
+                    if ((object)below != null && below.Metadata.Layer == 3 && below.Metadata.Type == Tile.TileType.Coast && below.Metadata.Direction == Tile.TileDirection.North)
+                    {
+                        if (SetTileSafe(activeChunk, x, y, 2, Tile.TileType.Block, Tile.TileDirection.None))
+                            fixedCount++;
+                    }
+                }
+                else if (current.Metadata.Direction == Tile.TileDirection.South)
+                {
+                    Tile above = GetNeighborTile(x, y, Vector2Int.up, chunkPosition, activeChunk);
+                    if ((object)above != null && above.Metadata.Layer == 3 && above.Metadata.Type == Tile.TileType.Coast && above.Metadata.Direction == Tile.TileDirection.South)
+                    {
+                        if (SetTileSafe(activeChunk, x, y, 2, Tile.TileType.Block, Tile.TileDirection.None))
+                            fixedCount++;
+                    }
+                }
+                else if (current.Metadata.Direction == Tile.TileDirection.East)
+                {
+                    Tile left = GetNeighborTile(x, y, Vector2Int.left, chunkPosition, activeChunk);
+                    if ((object)left != null && left.Metadata.Layer == 3 && left.Metadata.Type == Tile.TileType.Coast && left.Metadata.Direction == Tile.TileDirection.East)
+                    {
+                        if (SetTileSafe(activeChunk, x, y, 2, Tile.TileType.Block, Tile.TileDirection.None))
+                            fixedCount++;
+                    }
+                }
+                else if (current.Metadata.Direction == Tile.TileDirection.West)
+                {
+                    Tile right = GetNeighborTile(x, y, Vector2Int.right, chunkPosition, activeChunk);
+                    if ((object)right != null && right.Metadata.Layer == 3 && right.Metadata.Type == Tile.TileType.Coast && right.Metadata.Direction == Tile.TileDirection.West)
+                    {
+                        if (SetTileSafe(activeChunk, x, y, 2, Tile.TileType.Block, Tile.TileDirection.None))
+                            fixedCount++;
+                    }
+                }
+            }
+        }
+
+        // Caso 2: Transições entre vias de 2 células (Coast East/West ou Coast North/South) e costa ortogonal
+        // 2a. Via vertical (x: Coast East, x + 1: Coast West) encontrando costa ortogonal
+        for (int x = 0; x < _chunkSize.x - 1; x++)
+        {
+            for (int y = 0; y < _chunkSize.y; y++)
+            {
+                Tile tLeft = activeChunk.GetTileAt(x, y);
+                Tile tRight = activeChunk.GetTileAt(x + 1, y);
+                if ((object)tLeft == null || (object)tRight == null) continue;
+                if (tLeft.Metadata.Layer != 3 || tRight.Metadata.Layer != 3) continue;
+                if (tLeft.Metadata.Type != Tile.TileType.Coast || tLeft.Metadata.Direction != Tile.TileDirection.East) continue;
+                if (tRight.Metadata.Type != Tile.TileType.Coast || tRight.Metadata.Direction != Tile.TileDirection.West) continue;
+
+                // Encontro ao Norte com Coast North
+                Tile aboveLeft = GetNeighborTile(x, y, Vector2Int.up, chunkPosition, activeChunk);
+                Tile aboveRight = GetNeighborTile(x + 1, y, Vector2Int.up, chunkPosition, activeChunk);
+                if ((object)aboveLeft != null && (object)aboveRight != null &&
+                    aboveLeft.Metadata.Layer == 3 && aboveLeft.Metadata.Type == Tile.TileType.Coast && aboveLeft.Metadata.Direction == Tile.TileDirection.North &&
+                    aboveRight.Metadata.Layer == 3 && aboveRight.Metadata.Type == Tile.TileType.Coast && aboveRight.Metadata.Direction == Tile.TileDirection.North)
+                {
+                    Tile farN1 = GetNeighborTile(x, y + 1, Vector2Int.up, chunkPosition, activeChunk);
+                    Tile farN2 = GetNeighborTile(x + 1, y + 1, Vector2Int.up, chunkPosition, activeChunk);
+                    bool opensToSand = (farN1 == null || farN1.Metadata.Layer <= 2) && (farN2 == null || farN2.Metadata.Layer <= 2);
+
+                    if (opensToSand && y + 1 < _chunkSize.y)
+                    {
+                        if (SetTileSafe(activeChunk, x, y + 1, 3, Tile.TileType.Corner, Tile.TileDirection.NorthEast)) fixedCount++;
+                        if (SetTileSafe(activeChunk, x + 1, y + 1, 3, Tile.TileType.Corner, Tile.TileDirection.NorthWest)) fixedCount++;
+                    }
+                    else if (!opensToSand)
+                    {
+                        if (SetTileSafe(activeChunk, x, y, 3, Tile.TileType.InnerCorner, Tile.TileDirection.NorthWest)) fixedCount++;
+                        if (SetTileSafe(activeChunk, x + 1, y, 3, Tile.TileType.InnerCorner, Tile.TileDirection.NorthEast)) fixedCount++;
+                    }
+                }
+
+                // Encontro ao Sul com Coast South
+                Tile belowLeft = GetNeighborTile(x, y, Vector2Int.down, chunkPosition, activeChunk);
+                Tile belowRight = GetNeighborTile(x + 1, y, Vector2Int.down, chunkPosition, activeChunk);
+                if ((object)belowLeft != null && (object)belowRight != null &&
+                    belowLeft.Metadata.Layer == 3 && belowLeft.Metadata.Type == Tile.TileType.Coast && belowLeft.Metadata.Direction == Tile.TileDirection.South &&
+                    belowRight.Metadata.Layer == 3 && belowRight.Metadata.Type == Tile.TileType.Coast && belowRight.Metadata.Direction == Tile.TileDirection.South)
+                {
+                    Tile farS1 = GetNeighborTile(x, y - 1, Vector2Int.down, chunkPosition, activeChunk);
+                    Tile farS2 = GetNeighborTile(x + 1, y - 1, Vector2Int.down, chunkPosition, activeChunk);
+                    bool opensToSand = (farS1 == null || farS1.Metadata.Layer <= 2) && (farS2 == null || farS2.Metadata.Layer <= 2);
+
+                    if (opensToSand && y - 1 >= 0)
+                    {
+                        if (SetTileSafe(activeChunk, x, y - 1, 3, Tile.TileType.Corner, Tile.TileDirection.SouthEast)) fixedCount++;
+                        if (SetTileSafe(activeChunk, x + 1, y - 1, 3, Tile.TileType.Corner, Tile.TileDirection.SouthWest)) fixedCount++;
+                    }
+                    else if (!opensToSand)
+                    {
+                        if (SetTileSafe(activeChunk, x, y, 3, Tile.TileType.InnerCorner, Tile.TileDirection.SouthWest)) fixedCount++;
+                        if (SetTileSafe(activeChunk, x + 1, y, 3, Tile.TileType.InnerCorner, Tile.TileDirection.SouthEast)) fixedCount++;
+                    }
+                }
+            }
+        }
+
+        // 2b. Via horizontal (y: Coast North, y + 1: Coast South) encontrando costa ortogonal
+        for (int x = 0; x < _chunkSize.x; x++)
+        {
+            for (int y = 0; y < _chunkSize.y - 1; y++)
+            {
+                Tile tBottom = activeChunk.GetTileAt(x, y);
+                Tile tTop = activeChunk.GetTileAt(x, y + 1);
+                if ((object)tBottom == null || (object)tTop == null) continue;
+                if (tBottom.Metadata.Layer != 3 || tTop.Metadata.Layer != 3) continue;
+                if (tBottom.Metadata.Type != Tile.TileType.Coast || tBottom.Metadata.Direction != Tile.TileDirection.North) continue;
+                if (tTop.Metadata.Type != Tile.TileType.Coast || tTop.Metadata.Direction != Tile.TileDirection.South) continue;
+
+                // Encontro a Leste com Coast East
+                Tile rightBottom = GetNeighborTile(x, y, Vector2Int.right, chunkPosition, activeChunk);
+                Tile rightTop = GetNeighborTile(x, y + 1, Vector2Int.right, chunkPosition, activeChunk);
+                if ((object)rightBottom != null && (object)rightTop != null &&
+                    rightBottom.Metadata.Layer == 3 && rightBottom.Metadata.Type == Tile.TileType.Coast && rightBottom.Metadata.Direction == Tile.TileDirection.East &&
+                    rightTop.Metadata.Layer == 3 && rightTop.Metadata.Type == Tile.TileType.Coast && rightTop.Metadata.Direction == Tile.TileDirection.East)
+                {
+                    Tile farE1 = GetNeighborTile(x + 1, y, Vector2Int.right, chunkPosition, activeChunk);
+                    Tile farE2 = GetNeighborTile(x + 1, y + 1, Vector2Int.right, chunkPosition, activeChunk);
+                    bool opensToSand = (farE1 == null || farE1.Metadata.Layer <= 2) && (farE2 == null || farE2.Metadata.Layer <= 2);
+
+                    if (opensToSand && x + 1 < _chunkSize.x)
+                    {
+                        if (SetTileSafe(activeChunk, x + 1, y, 3, Tile.TileType.Corner, Tile.TileDirection.NorthEast)) fixedCount++;
+                        if (SetTileSafe(activeChunk, x + 1, y + 1, 3, Tile.TileType.Corner, Tile.TileDirection.SouthEast)) fixedCount++;
+                    }
+                    else if (!opensToSand)
+                    {
+                        if (SetTileSafe(activeChunk, x, y, 3, Tile.TileType.InnerCorner, Tile.TileDirection.NorthEast)) fixedCount++;
+                        if (SetTileSafe(activeChunk, x, y + 1, 3, Tile.TileType.InnerCorner, Tile.TileDirection.SouthEast)) fixedCount++;
+                    }
+                }
+
+                // Encontro a Oeste com Coast West
+                Tile leftBottom = GetNeighborTile(x, y, Vector2Int.left, chunkPosition, activeChunk);
+                Tile leftTop = GetNeighborTile(x, y + 1, Vector2Int.left, chunkPosition, activeChunk);
+                if ((object)leftBottom != null && (object)leftTop != null &&
+                    leftBottom.Metadata.Layer == 3 && leftBottom.Metadata.Type == Tile.TileType.Coast && leftBottom.Metadata.Direction == Tile.TileDirection.West &&
+                    leftTop.Metadata.Layer == 3 && leftTop.Metadata.Type == Tile.TileType.Coast && leftTop.Metadata.Direction == Tile.TileDirection.West)
+                {
+                    Tile farW1 = GetNeighborTile(x - 1, y, Vector2Int.left, chunkPosition, activeChunk);
+                    Tile farW2 = GetNeighborTile(x - 1, y + 1, Vector2Int.left, chunkPosition, activeChunk);
+                    bool opensToSand = (farW1 == null || farW1.Metadata.Layer <= 2) && (farW2 == null || farW2.Metadata.Layer <= 2);
+
+                    if (opensToSand && x - 1 >= 0)
+                    {
+                        if (SetTileSafe(activeChunk, x - 1, y, 3, Tile.TileType.Corner, Tile.TileDirection.NorthWest)) fixedCount++;
+                        if (SetTileSafe(activeChunk, x - 1, y + 1, 3, Tile.TileType.Corner, Tile.TileDirection.SouthWest)) fixedCount++;
+                    }
+                    else if (!opensToSand)
+                    {
+                        if (SetTileSafe(activeChunk, x, y, 3, Tile.TileType.InnerCorner, Tile.TileDirection.NorthWest)) fixedCount++;
+                        if (SetTileSafe(activeChunk, x, y + 1, 3, Tile.TileType.InnerCorner, Tile.TileDirection.SouthWest)) fixedCount++;
+                    }
+                }
+            }
+        }
+
+        return fixedCount;
+    }
+
     public void ResolveTileCompatibilityInChunk(Vector2Int chunkPosition, MapGenerator activeChunk)
     {
         if ((object)_tilesetData == null || _tilesetData.TilesetList == null || _tilesetData.TilesetList.Count == 0) return;
         if ((object)activeChunk == null) return;
 
         EnsureCompatibilityCache();
+
+        int morphFixed = ResolveMorphologicalCoastIncompatibilities(chunkPosition, activeChunk);
 
         int tileCount = _tilesetData.TilesetList.Count;
         Vector2Int[] cardinalDirs = { Vector2Int.up, Vector2Int.down, Vector2Int.left, Vector2Int.right };
@@ -335,7 +651,7 @@ public class StructureGenerator : MonoBehaviour
         int[,] cellChangeCount = new int[_chunkSize.x, _chunkSize.y];
         bool anyChangedInPass;
         int passCount = 0;
-        int totalTilesFixed = 0;
+        int totalTilesFixed = morphFixed;
 
         do
         {
@@ -567,6 +883,13 @@ public class StructureGenerator : MonoBehaviour
                 score += 800f;
             }
 
+            if ((object)currentTile != null && currentTile.Metadata.Layer == 3 &&
+                candidate.Metadata.Layer == 2 && candidate.Metadata.Type == Tile.TileType.Block &&
+                neighborList.Any(n => n.neighbor != null && n.neighbor.Metadata.Layer == 2))
+            {
+                score += 1200f;
+            }
+
             score += candidate.Weight;
 
             if (score > bestScore)
@@ -636,10 +959,21 @@ public class StructureGenerator : MonoBehaviour
             if ((object)currentTile != null)
             {
                 int layerDiff = Math.Abs(candidate.Metadata.Layer - currentTile.Metadata.Layer);
+                if (currentTile.Metadata.Layer == 3 && candidate.Metadata.Layer == 2 &&
+                    neighborList.Any(n => n.neighbor != null && n.neighbor.Metadata.Layer == 2))
+                {
+                    layerDiff = 0;
+                }
                 score += (10 - layerDiff) * 20f;
 
                 if (currentTile.Metadata.Layer == 3 && candidate.Metadata.Layer == 3)
                     score += 150f;
+
+                if (currentTile.Metadata.Layer == 3 && candidate.Metadata.Layer == 2 && candidate.Metadata.Type == Tile.TileType.Block &&
+                    neighborList.Any(n => n.neighbor != null && n.neighbor.Metadata.Layer == 2))
+                {
+                    score += 200f;
+                }
 
                 if (candidate.Metadata.Type == currentTile.Metadata.Type)
                     score += 30f;
@@ -728,7 +1062,7 @@ public class StructureGenerator : MonoBehaviour
             (type == Tile.TileType.Block || t.Metadata.Direction == direction));
     }
 
-    private void RegisterStructure(string name, Vector3 position, float isolationRadius, Vector2Int chunkPosition, GameObject instance)
+    public void RegisterStructure(string name, Vector3 position, float isolationRadius, Vector2Int chunkPosition, GameObject instance)
     {
         SavedStructuresList.Add(new StructureSaveData
         {

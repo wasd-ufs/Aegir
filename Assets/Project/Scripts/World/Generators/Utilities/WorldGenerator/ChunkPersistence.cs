@@ -49,20 +49,56 @@ public class ChunkPersistence
     }
 
     /// <summary>
-    /// Deleta todos os arquivos <c>.dat</c> da pasta de save.
+    /// Grava os dados JSON de estruturas do chunk no arquivo <c>chunk_X_Y_structures.json</c>.
+    /// </summary>
+    public void SaveStructuresToDisk(Vector2Int position, string json)
+    {
+        string path = BuildStructuresFilePath(position);
+        if (!string.IsNullOrEmpty(json))
+        {
+            File.WriteAllText(path, json);
+        }
+        else if (File.Exists(path))
+        {
+            File.Delete(path);
+        }
+    }
+
+    /// <summary>
+    /// Carrega os dados JSON de estruturas do chunk. Retorna <c>null</c> se o arquivo não existir.
+    /// </summary>
+    public string LoadStructuresFromDisk(Vector2Int position)
+    {
+        string path = BuildStructuresFilePath(position);
+        return File.Exists(path) ? File.ReadAllText(path) : null;
+    }
+
+    /// <summary>
+    /// Verifica se existem estruturas salvas em disco para o chunk.
+    /// </summary>
+    public bool HasStructuresFile(Vector2Int position)
+    {
+        return File.Exists(BuildStructuresFilePath(position));
+    }
+
+    /// <summary>
+    /// Deleta todos os arquivos de save (<c>.dat</c> e <c>.json</c>) da pasta de save.
     /// </summary>
     public void ClearSaveData()
     {
         if (!Directory.Exists(_savePath)) return;
 
         int deletedCount = 0;
-        foreach (string file in Directory.GetFiles(_savePath, "*.dat"))
+        foreach (string file in Directory.GetFiles(_savePath, "*.*"))
         {
-            File.Delete(file);
-            deletedCount++;
+            if (file.EndsWith(".dat") || file.EndsWith(".json"))
+            {
+                File.Delete(file);
+                deletedCount++;
+            }
         }
 
-        Debug.Log($"[ChunkPersistence] Cleared {deletedCount} .dat files from {_savePath}");
+        Debug.Log($"[ChunkPersistence] Cleared {deletedCount} save files from {_savePath}");
     }
 
     // =========================================================================
@@ -71,4 +107,7 @@ public class ChunkPersistence
 
     private string BuildFilePath(Vector2Int position)
         => _savePath + $"chunk_{position.x}_{position.y}.dat";
+
+    private string BuildStructuresFilePath(Vector2Int position)
+        => _savePath + $"chunk_{position.x}_{position.y}_structures.json";
 }

@@ -56,7 +56,11 @@ public class WorldGenerator : MonoBehaviour
         _persistence    = new ChunkPersistence();
         _islandMapSampler = new IslandMapSampler(_worldSeed);
         _islandLocator = new IslandLocator(_islandMapSampler, _chunkSize);
-        if (_shouldClearSaveOnStart) _persistence.ClearSaveData();
+        if (_shouldClearSaveOnStart)
+        {
+            _persistence.ClearSaveData();
+            _structureGenerator?.ClearAllSavedStructures();
+        }
 
         _generationQueue   = new ChunkGenerationQueue();
         _tileQuery         = new WorldTileQuery(_lifecycleManager, _chunkSize, _cachedCellSize);
@@ -65,7 +69,7 @@ public class WorldGenerator : MonoBehaviour
         _visibilityTracker = new ChunkVisibilityTracker(_lifecycleManager, _viewDistance);
 
         _ruleManager = GetComponent<RuleManager>() ?? FindFirstObjectByType<RuleManager>() ?? _chunkPrefab?.GetComponent<RuleManager>();
-        _structureGenerator.Setup(_tileQuery, _lifecycleManager, _chunkSize, _cachedCellSize, _worldSeed, _islandLocator, _islandMapSampler, _tilesetData, _ruleManager);
+        _structureGenerator.Setup(_tileQuery, _lifecycleManager, _chunkSize, _cachedCellSize, _worldSeed, _islandLocator, _islandMapSampler, _tilesetData, _ruleManager, _persistence);
         _lifecycleManager.Setup(_persistence, _haloBuilder, _neighborNotifier, this, _playerTransform, _islandMapSampler, _structureGenerator);
         _transitionController.Setup(_tileQuery, _lifecycleManager, Camera.main, _cachedCellSize);
     }

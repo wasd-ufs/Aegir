@@ -112,9 +112,24 @@ public class IslandSettlementPlanner
         if (_sampler != null)
         {
             float h = _sampler.Sample(globalX, globalY);
-            if (h >= IslandMapSampler.ISLAND_EDGE_THRESHOLD) return 4;
-            if (h >= 0.35f || h >= IslandMapSampler.WATER_EDGE_THRESHOLD) return 2;
-            return 0;
+            if (h < IslandMapSampler.WATER_EDGE_THRESHOLD && h < 0.35f) return 0;
+            if (h < IslandMapSampler.ISLAND_EDGE_THRESHOLD) return 2;
+
+            // Para ser terra firme (Camada >= 4), a célula deve estar no interior da ilha,
+            // fora da faixa de praia gerada pelo TargetLayerBuilder.
+            const int beachMargin = 4;
+            for (int dx = -beachMargin; dx <= beachMargin; dx += 2)
+            {
+                for (int dy = -beachMargin; dy <= beachMargin; dy += 2)
+                {
+                    if (_sampler.Sample(globalX + dx, globalY + dy) < IslandMapSampler.ISLAND_EDGE_THRESHOLD)
+                    {
+                        return 2;
+                    }
+                }
+            }
+
+            return 4;
         }
 
         return -1;
@@ -535,7 +550,13 @@ public class IslandSettlementPlanner
                 }
             }
 
-            int targetY = candidateYs.Where(y => y >= endY).DefaultIfEmpty(anchorY).Min();
+            var activeStreetYs = activeHoriz.Select(h => candidateYs[h.yi])
+                .Concat(activeNodes.Select(n => candidateYs[n.yi]))
+                .Where(y => y >= endY)
+                .ToList();
+            int targetY = activeStreetYs.Count > 0
+                ? activeStreetYs.Min()
+                : candidateYs.Where(y => y >= endY).DefaultIfEmpty(anchorY).Min();
             for (int y = endY; y <= targetY; y++)
             {
                 if (IsCellLand(anchorX, y) && IsCellLand(anchorX + 1, y))
@@ -646,18 +667,7 @@ public class IslandSettlementPlanner
                 return true;
         }
 
-        Tile tile = GetTileAt(x, y);
-        if ((object)tile != null)
-        {
-            return tile.Metadata.Layer <= 3;
-        }
-
-        if (_sampler != null)
-        {
-            return _sampler.Sample(x, y) < IslandMapSampler.ISLAND_EDGE_THRESHOLD;
-        }
-
-        return false;
+        return !IsCellLand(x, y);
     }
 
     private bool Is2x2Land(int x, int y)

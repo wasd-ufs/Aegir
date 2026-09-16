@@ -100,5 +100,97 @@ namespace Aegir.Tests.World
             List<Vector2Int> islands = locator.FindIslandsInRange(Vector2Int.zero, 0, 10);
             Assert.IsFalse(islands.Contains(Vector2Int.zero), "O chunk (0,0) nunca deve ser retornado como ilha.");
         }
+
+        [Test]
+        public void ChunkPersistence_SaveAndLoadStructures_RecoversOriginalJson()
+        {
+            ChunkPersistence persistence = new ChunkPersistence();
+            Vector2Int testCoord = new Vector2Int(8888, 8888);
+            string testJson = "{\"structures\":[{\"structureName\":\"House\",\"structureWorldPosition\":{\"x\":1.0,\"y\":2.0,\"z\":3.0},\"isolationRadius\":4.0,\"chunkPosition\":{\"x\":8888,\"y\":8888}}]}";
+
+            try
+            {
+                Assert.IsFalse(persistence.HasStructuresFile(testCoord));
+
+                persistence.SaveStructuresToDisk(testCoord, testJson);
+                Assert.IsTrue(persistence.HasStructuresFile(testCoord));
+
+                string loadedJson = persistence.LoadStructuresFromDisk(testCoord);
+                Assert.IsNotNull(loadedJson);
+                Assert.AreEqual(testJson, loadedJson);
+            }
+            finally
+            {
+                string path = Application.persistentDataPath + $"/map_data/chunk_{testCoord.x}_{testCoord.y}_structures.json";
+                if (System.IO.File.Exists(path))
+                    System.IO.File.Delete(path);
+            }
+        }
+
+        [Test]
+        public void StructureGenerator_SaveAndLoadStructures_ReinstantiatesGameObjects()
+        {
+            ChunkPersistence persistence = new ChunkPersistence();
+            Vector2Int testCoord = new Vector2Int(7777, 7777);
+
+            GameObject genGo = new GameObject("TestStructureGenerator");
+            StructureGenerator generator = genGo.AddComponent<StructureGenerator>();
+
+            GameObject containerGo = new GameObject("StructuresContainer");
+            generator.SetStructuresContainer(containerGo.transform);
+            generator.SetPersistence(persistence);
+
+            GameObject prefabGo = new GameObject("TestPrefab");
+
+            StructureData blueprint = ScriptableObject.CreateInstance<StructureData>();
+            typeof(StructureData).GetField("_structureName", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).SetValue(blueprint, "TestBuilding");
+            typeof(StructureData).GetField("_structurePrefab", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).SetValue(blueprint, prefabGo);
+
+            generator.SetStructuresList(new List<StructureData> { blueprint });
+
+            try
+            {
+                // Register initial structure with active GameObject
+                GameObject initialInstance = Object.Instantiate(prefabGo, new Vector3(15f, 0f, 25f), Quaternion.identity, containerGo.transform);
+                generator.RegisterStructure("TestBuilding", new Vector3(15f, 0f, 25f), 5f, testCoord, initialInstance);
+
+                Assert.AreEqual(1, generator.SavedStructuresList.Count);
+                Assert.IsNotNull(generator.SavedStructuresList[0].instance);
+
+                // Save chunk structures to disk
+                generator.SaveStructuresForChunk(testCoord);
+                Assert.IsTrue(persistence.HasStructuresFile(testCoord));
+
+                // Player moves away -> Chunk unloads and structures are cleared/destroyed
+                generator.ClearStructuresForChunk(testCoord);
+                Assert.AreEqual(0, generator.SavedStructuresList.Count);
+
+                // Player approaches -> Chunk reloads and structures are reinstantiated
+                generator.LoadAndInstantiateStructuresForChunk(testCoord);
+
+                Assert.AreEqual(1, generator.SavedStructuresList.Count);
+                var reloaded = generator.SavedStructuresList[0];
+                Assert.AreEqual("TestBuilding", reloaded.structureName);
+                Assert.AreEqual(new Vector3(15f, 0f, 25f), reloaded.structureWorldPosition);
+                Assert.IsNotNull(reloaded.instance, "A estrutura deveria ter sido reinstanciada após o reload.");
+                Assert.AreEqual(new Vector3(15f, 0f, 25f), reloaded.instance.transform.position);
+
+                // Verify duplicate protection: calling LoadAndInstantiate again does not duplicate
+                generator.LoadAndInstantiateStructuresForChunk(testCoord);
+                Assert.AreEqual(1, generator.SavedStructuresList.Count);
+            }
+            finally
+            {
+                generator.ClearAllSavedStructures();
+                Object.DestroyImmediate(blueprint);
+                Object.DestroyImmediate(prefabGo);
+                Object.DestroyImmediate(containerGo);
+                Object.DestroyImmediate(genGo);
+
+                string path = Application.persistentDataPath + $"/map_data/chunk_{testCoord.x}_{testCoord.y}_structures.json";
+                if (System.IO.File.Exists(path))
+                    System.IO.File.Delete(path);
+            }
+        }
     }
 }

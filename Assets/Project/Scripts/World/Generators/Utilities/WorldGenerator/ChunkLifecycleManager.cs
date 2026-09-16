@@ -118,6 +118,7 @@ public class ChunkLifecycleManager : MonoBehaviour
         {
             mapGenerator.LoadFromData(savedDataArray);
             mapGenerator.SpawnEntities();
+            _structureGenerator?.LoadAndInstantiateStructuresForChunk(position, _persistence);
         }
         else
         {
@@ -167,6 +168,7 @@ public class ChunkLifecycleManager : MonoBehaviour
         {
             mapGenerator.LoadFromData(savedDataArray);
             mapGenerator.SpawnEntities();
+            _structureGenerator?.LoadAndInstantiateStructuresForChunk(position, _persistence);
             _neighborNotifier.NotifyNeighbors(position, mapGenerator);
             queue.CurrentlyGenerating = null;
         }
@@ -263,6 +265,7 @@ public class ChunkLifecycleManager : MonoBehaviour
         {
             byte[] chunkDataArray = mapGenerator.GetChunkData();
             _persistence.SaveChunkToDisk(position, chunkDataArray);
+            _structureGenerator?.SaveStructuresForChunk(position, _persistence);
         }
         _structureGenerator?.ClearStructuresForChunk(position);
 
