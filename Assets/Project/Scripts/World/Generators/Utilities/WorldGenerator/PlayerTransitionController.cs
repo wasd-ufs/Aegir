@@ -44,7 +44,10 @@ public class PlayerTransitionController : MonoBehaviour
                     _lifecycleManager.SetPlayerTransform(captainObject.transform);
                     boatObject.GetComponent<Rigidbody2D>().linearVelocity = Vector2.zero;
                     
-                    _mainCamera.orthographicSize = 3.5f; 
+                    if (_mainCamera != null && _mainCamera.GetComponent<CameraFollow>() == null)
+                    {
+                        _mainCamera.orthographicSize = 3.5f; 
+                    }
                     return;
                 }
             }
@@ -59,7 +62,10 @@ public class PlayerTransitionController : MonoBehaviour
                 captainObject.SetActive(false);
                 
                 _lifecycleManager.SetPlayerTransform(boatObject.transform);
-                _mainCamera.orthographicSize = 5f;
+                if (_mainCamera != null && _mainCamera.GetComponent<CameraFollow>() == null)
+                {
+                    _mainCamera.orthographicSize = 5f;
+                }
             }
         }
     }

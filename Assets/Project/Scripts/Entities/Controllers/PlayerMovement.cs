@@ -44,9 +44,9 @@ public class PlayerMovement : MonoBehaviour
     [Header("Internal State")]
     public bool isOnWater = true;
     public Vector2 moveInput;
-    private Vector3 _lastValidPosition;
-    private float _windChangeInterval = 0;
-    private float _windDirX = 1, _windDirY = 1;
+    protected Vector3 _lastValidPosition;
+    protected float _windChangeInterval = 0;
+    protected float _windDirX = 1, _windDirY = 1;
     #endregion
 
     #region Referências
@@ -56,17 +56,36 @@ public class PlayerMovement : MonoBehaviour
     public GameObject capitão => captain;
     public Camera mainCamera;
     public WorldGenerator worldGenerator;
+    public MonoBehaviour worldGeneratorV2;
+
+    public IWorldGenerator ActiveWorldGenerator
+    {
+        get
+        {
+            if (worldGeneratorV2 is IWorldGenerator genV2) return genV2;
+            if (worldGenerator != null) return worldGenerator;
+
+            var v2 = FindFirstObjectByType<Aegir.World.V2.Runtime.WorldGeneratorV2>();
+            if (v2 != null) { worldGeneratorV2 = v2; return v2; }
+
+            var v1 = FindFirstObjectByType<WorldGenerator>();
+            if (v1 != null) { worldGenerator = v1; return v1; }
+
+            return null;
+        }
+    }
 
     public Rigidbody2D rb;
     public Rigidbody2D crb;
-    private Animator _animator;
-    private Animator _cAnimator;
+    protected Animator _animator;
+    protected Animator _cAnimator;
     public PlayerInputActions inputActions;
     #endregion
 
-    private IPlayerState currentState;
+    protected IPlayerState currentState;
+    public IPlayerState CurrentState => currentState;
 
-    public void ChangeState(IPlayerState newState)
+    public virtual void ChangeState(IPlayerState newState)
     {
         currentState?.Exit();
         currentState = newState;
@@ -84,17 +103,37 @@ public class PlayerMovement : MonoBehaviour
     #endregion
 
     #region Ciclo de Vida (Unity)
-    void Awake()
+    protected virtual void Awake()
     {
         inputActions = new PlayerInputActions();
         rb = GetComponent<Rigidbody2D>();
-        crb = captain.GetComponent<Rigidbody2D>();
+        if (captain != null)
+        {
+            crb = captain.GetComponent<Rigidbody2D>();
+            _cAnimator = captain.GetComponent<Animator>();
+        }
         _animator = GetComponent<Animator>();
-        _cAnimator = captain.GetComponent<Animator>();
         GameState.IsOnWater = isOnWater;
+
+        if (mainCamera == null)
+        {
+            mainCamera = Camera.main;
+        }
+
+        if (worldGenerator == null && worldGeneratorV2 == null)
+        {
+            var v2 = FindFirstObjectByType<Aegir.World.V2.Runtime.WorldGeneratorV2>();
+            if (v2 != null) worldGeneratorV2 = v2;
+            else worldGenerator = FindFirstObjectByType<WorldGenerator>();
+        }
+
+        if (FindFirstObjectByType<StartGame>() == null)
+        {
+            GameState.IsGameStarted = true;
+        }
     }
 
-    void Start()
+    protected virtual void Start()
     {
         _lastValidPosition = transform.position;
 
@@ -104,7 +143,7 @@ public class PlayerMovement : MonoBehaviour
             ChangeState(new CaptainState(this));
     }
 
-    void Update()
+    protected virtual void Update()
     {
         if (GameState.IsInBattle || !GameState.IsGameStarted) return;
 
@@ -112,7 +151,10 @@ public class PlayerMovement : MonoBehaviour
 
         if (inputActions.Player.EnterGetOut.WasPressedThisFrame())
         {
-            worldGenerator.TryGoOut(mainCamera);
+            if (ActiveWorldGenerator != null)
+                ActiveWorldGenerator.TryGoOut(mainCamera);
+            else if (worldGenerator != null)
+                worldGenerator.TryGoOut(mainCamera);
         }
 
         SimulateWind();
@@ -128,7 +170,7 @@ public class PlayerMovement : MonoBehaviour
     #endregion
 
     #region Física e Movimento (FixedUpdate)
-    void FixedUpdate()
+    protected virtual void FixedUpdate()
     {
         if (GameState.IsInBattle || !GameState.IsGameStarted)
         {
@@ -142,7 +184,7 @@ public class PlayerMovement : MonoBehaviour
     #endregion
 
     #region Helpers de Movimento e Simulação
-    public void ApplyWaterMovement(Vector2 direction)
+    public virtual void ApplyWaterMovement(Vector2 direction)
     {
         // Efeito de balanço das ondas cruzado com a direção do vento
         float waveX = Mathf.Sin(Time.fixedTime * _waveFrequency) * _amplitude * _windDirX;
@@ -155,7 +197,7 @@ public class PlayerMovement : MonoBehaviour
         _lastValidPosition = transform.position;
     }
 
-    private void SimulateWind()
+    protected virtual void SimulateWind()
     {
         _windChangeInterval += Time.deltaTime;
         if (_windChangeInterval >= _timeUntilWindChanges)
@@ -171,7 +213,7 @@ public class PlayerMovement : MonoBehaviour
     /// <summary>
     /// Atualiza as variáveis do Animator de acordo com o estado e velocidade atuais.
     /// </summary>
-    public void UpdateAnimations()
+    public virtual void UpdateAnimations()
     {
         if (moveInput.sqrMagnitude >= 0.01f)
         {
@@ -198,7 +240,7 @@ public class PlayerMovement : MonoBehaviour
     /// </summary>
     public void AtualizarAnimacoes() => UpdateAnimations();
 
-    public void StopAndReset()
+    public virtual void StopAndReset()
     {
         rb.linearVelocity = Vector2.zero;
         transform.position = _lastValidPosition;
@@ -206,8 +248,8 @@ public class PlayerMovement : MonoBehaviour
     #endregion
 
     #region Controles de Input
-    void OnEnable()  => inputActions.Enable();
-    void OnDisable() => inputActions.Disable();
+    protected virtual void OnEnable()  => inputActions?.Enable();
+    protected virtual void OnDisable() => inputActions?.Disable();
     public PlayerInputActions GetInputActions() => inputActions;
     #endregion
 }

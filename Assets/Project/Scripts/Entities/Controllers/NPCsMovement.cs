@@ -1,6 +1,7 @@
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Serialization;
+using Aegir.World.V2.Runtime;
 
 /// <summary>
 /// A Máquina de Estados de IA responsável pela movimentação de todos os NPCs do jogo.
@@ -55,37 +56,37 @@ public class NPCsMovement : MonoBehaviour
 
     #region Estado Interno e Componentes
     [Header("References")]
-    private WorldGenerator _worldGenerator;
+    protected IWorldGenerator _worldGenerator;
 
     // Estado Interno
-    private GameObject _prey = null;
-    private Vector2 _direction = Vector2.zero;
-    private Vector3 _lastValidPosition;
-    private float _aggressionTimer;
-    private float _timeUntilChangeDirection;
-    private float _chaseTimer;
-    private float _wanderingTimer;
-    private bool _shouldStopAggression = false;
-    private bool _isAlert = false;
-    private float _boundaryCheckTimer;
-    private const float BoundaryCheckInterval = 0.05f;
-    private float _borderCooldownTimer = 0f;
-    private bool _hasBorderCooldown = false;
-    private const float BorderChaseCooldown = 20f; // segundos até poder perseguir novamente    
-    private bool _isHeadingToBoat = false;
-    private Transform _boatTarget = null;
+    protected GameObject _prey = null;
+    protected Vector2 _direction = Vector2.zero;
+    protected Vector3 _lastValidPosition;
+    protected float _aggressionTimer;
+    protected float _timeUntilChangeDirection;
+    protected float _chaseTimer;
+    protected float _wanderingTimer;
+    protected bool _shouldStopAggression = false;
+    protected bool _isAlert = false;
+    protected float _boundaryCheckTimer;
+    protected const float BoundaryCheckInterval = 0.05f;
+    protected float _borderCooldownTimer = 0f;
+    protected bool _hasBorderCooldown = false;
+    protected const float BorderChaseCooldown = 20f; // segundos até poder perseguir novamente    
+    protected bool _isHeadingToBoat = false;
+    protected Transform _boatTarget = null;
 
     // Componentes Acoplados
-    private Rigidbody2D _rigidbody2D;
-    private NPCsData _npcsData;
-    private Animator _animator;
-    private CircleCollider2D _circleCollider2D;
-    private Vector2Int _currentChunk;
-    private SpriteRenderer _spriteRenderer;
+    protected Rigidbody2D _rigidbody2D;
+    protected NPCsData _npcsData;
+    protected Animator _animator;
+    protected CircleCollider2D _circleCollider2D;
+    protected Vector2Int _currentChunk;
+    protected SpriteRenderer _spriteRenderer;
     #endregion
 
     #region Ciclo de Vida (Unity)
-    void Awake()
+    protected virtual void Awake()
     {
         _animator = GetComponent<Animator>();
         _rigidbody2D = GetComponent<Rigidbody2D>();
@@ -103,20 +104,38 @@ public class NPCsMovement : MonoBehaviour
         _circleCollider2D.isTrigger = true;
     }
 
-    void Start()
+    protected virtual void Start()
     {
         SetRandomDirection();
         _timeUntilChangeDirection = Random.Range(0, _maxTimeUntilChangingDirection);
+
+        if (_worldGenerator == null)
+        {
+            _worldGenerator = (IWorldGenerator)FindFirstObjectByType<WorldGeneratorV2>()
+                           ?? FindFirstObjectByType<WorldGenerator>();
+
+            if (_worldGenerator != null)
+            {
+                _lastValidPosition = transform.position;
+                _currentChunk = _worldGenerator.GetChunkPosFromWorld(transform.position);
+            }
+        }
     }
 
-    public void Setup(GameObject player, WorldGenerator worldGenerator)
+    public virtual void Setup(GameObject player, IWorldGenerator worldGenerator)
     {
         _worldGenerator = worldGenerator;
         _lastValidPosition = transform.position;
-        _currentChunk = worldGenerator.GetChunkPosFromWorld(transform.position);
+        if (worldGenerator != null)
+            _currentChunk = worldGenerator.GetChunkPosFromWorld(transform.position);
     }
 
-    void Update()
+    public virtual void Setup(GameObject player, WorldGenerator worldGenerator)
+    {
+        Setup(player, (IWorldGenerator)worldGenerator);
+    }
+
+    protected virtual void Update()
     {
         if (GameState.IsInBattle || !GameState.IsGameStarted) return;
 
@@ -147,7 +166,7 @@ public class NPCsMovement : MonoBehaviour
         }
     }
 
-    void FixedUpdate()
+    protected virtual void FixedUpdate()
     {
         if (GameState.IsInBattle || !GameState.IsGameStarted)
         {
@@ -155,7 +174,12 @@ public class NPCsMovement : MonoBehaviour
             return; // ← trava física completamente em combates
         }
         
-        if (_worldGenerator == null) return;
+        if (_worldGenerator == null)
+        {
+            _worldGenerator = (IWorldGenerator)FindFirstObjectByType<WorldGeneratorV2>()
+                           ?? FindFirstObjectByType<WorldGenerator>();
+            if (_worldGenerator == null) return;
+        }
         
         ApplyMovement();
         UpdateAnimations();
@@ -172,7 +196,7 @@ public class NPCsMovement : MonoBehaviour
         }
     }
     
-    void OnDestroy()
+    protected virtual void OnDestroy()
     {
         if (_prey != null && _prey.CompareTag("Player"))
             GameState.ChasersCount = Mathf.Max(0, GameState.ChasersCount - 1);
@@ -184,7 +208,7 @@ public class NPCsMovement : MonoBehaviour
     /// Comportamento adotado assim que um RecruitableNPC é contratado, fazendo com
     /// que ele marche em direção ao barco e suma visualmente.
     /// </summary>
-    public void MoveToBoat(Transform boatTransform)
+    public virtual void MoveToBoat(Transform boatTransform)
     {
         _boatTarget = boatTransform;
         _isHeadingToBoat = true;
@@ -274,7 +298,7 @@ public class NPCsMovement : MonoBehaviour
     #endregion
 
     #region Movimento e Animação
-    private void ApplyMovement()
+    protected virtual void ApplyMovement()
     {
         // Criaturas passivas sendo perseguidas ganham um boost de velocidade na fuga
         float realSpeed = (!_isAgressive && _prey != null) ? _moveSpeed * 1.4f : _moveSpeed;
@@ -290,7 +314,7 @@ public class NPCsMovement : MonoBehaviour
         }
     }
 
-    private void UpdateAnimations()
+    protected virtual void UpdateAnimations()
     {
         if (!_isAlert)
         {
@@ -312,7 +336,7 @@ public class NPCsMovement : MonoBehaviour
     /// Verifica se o NPC "Marítimo" tocou num tile de "Terra" e vice versa.
     /// Se entrou em terreno proibido, força o retorno à última posição válida e desarma o Agro.
     /// </summary>
-    private void CheckWorldBoundaries()
+    protected virtual void CheckWorldBoundaries()
     {
         Tile actualTile = _worldGenerator.GetTileAtWorldPosition(transform.position);
 
@@ -350,7 +374,7 @@ public class NPCsMovement : MonoBehaviour
         }
     }
     
-    private Vector2 GetEscapeDirection()
+    protected virtual Vector2 GetEscapeDirection()
     {
         // Testa as 8 direções e escolhe a que leva ao tile válido mais próximo do "bump"
         Vector2[] candidates = {
@@ -381,7 +405,7 @@ public class NPCsMovement : MonoBehaviour
     /// <summary>
     /// Exclui o NPC se a Chunk onde ele se encontra foi apagada (Despawn).
     /// </summary>
-    private void CheckDespawn()
+    protected virtual void CheckDespawn()
     {
         Vector2Int newChunk = _worldGenerator.GetChunkPosFromWorld(transform.position);
 
@@ -391,7 +415,7 @@ public class NPCsMovement : MonoBehaviour
     #endregion
 
     #region Detecção de Triggers (Agro)
-    void OnTriggerEnter2D(Collider2D collider)
+    protected virtual void OnTriggerEnter2D(Collider2D collider)
     {
         PlayerMovement playerMovement = collider.GetComponent<PlayerMovement>();
         if (playerMovement != null)
@@ -415,7 +439,7 @@ public class NPCsMovement : MonoBehaviour
         }
     }
     
-    void OnTriggerStay2D(Collider2D collider)
+    protected virtual void OnTriggerStay2D(Collider2D collider)
     {
         if (collider.gameObject.CompareTag("Player") && _isAgressive)
         {
@@ -462,7 +486,7 @@ public class NPCsMovement : MonoBehaviour
         }
     }
 
-    void OnTriggerExit2D(Collider2D collider)
+    protected virtual void OnTriggerExit2D(Collider2D collider)
     {
         if ((collider.gameObject.CompareTag("AgressiveCreature") && !_isAgressive && _prey == null) ||
             ((collider.gameObject.CompareTag("Player") || collider.gameObject.CompareTag("PassiveCreature")) && _isAgressive && _prey == null))

@@ -26,7 +26,7 @@ public class CaptainState : PlayerMovement.IPlayerState
     public void FixedUpdate()
     {
         Vector3 currentPos = _player.captain.transform.position;
-        Tile tile = _player.worldGenerator.GetTileAtWorldPosition(currentPos);
+        Tile tile = _player.ActiveWorldGenerator?.GetTileAtWorldPosition(currentPos);
 
         if (tile == null) return;
 

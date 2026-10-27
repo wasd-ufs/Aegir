@@ -69,13 +69,18 @@ public class IslandSettlementPlanner
     private readonly Dictionary<Vector2Int, IslandSettlementPlan> _planCache = new Dictionary<Vector2Int, IslandSettlementPlan>();
     private readonly Dictionary<Vector2Int, IslandSettlementPlan> _chunkToPlanCache = new Dictionary<Vector2Int, IslandSettlementPlan>();
 
+    private readonly float _settlementChance;
+    private readonly int _minIslandChunks;
+
     public IslandSettlementPlanner(
         IslandMapSampler sampler,
         IslandLocator locator,
         Vector2Int chunkSize,
         int worldSeed,
         List<StructureData> structuresList,
-        Func<int, int, Tile> tileProvider = null)
+        Func<int, int, Tile> tileProvider = null,
+        float settlementChance = 1.0f,
+        int minIslandChunks = 1)
     {
         _sampler = sampler;
         _locator = locator;
@@ -83,6 +88,8 @@ public class IslandSettlementPlanner
         _worldSeed = worldSeed;
         _structuresList = structuresList ?? new List<StructureData>();
         _tileProvider = tileProvider;
+        _settlementChance = Mathf.Clamp01(settlementChance);
+        _minIslandChunks = Mathf.Max(1, minIslandChunks);
     }
 
     /// <summary>
@@ -209,11 +216,62 @@ public class IslandSettlementPlanner
         int islandSeed = HashIslandSeed(_worldSeed, islandCenterChunk.x, islandCenterChunk.y);
         System.Random prng = new System.Random(islandSeed);
 
+        int islandChunkCount = islandChunks != null ? islandChunks.Count : 1;
+        bool isSpawnIsland = (islandChunks != null && islandChunks.Contains(Vector2Int.zero)) || islandCenterChunk == Vector2Int.zero;
+
+        // Se _settlementChance for 0, nenhuma ilha (nem mesmo o spawn) terá vila/estradas
+        if (_settlementChance <= 0f)
+        {
+            IndexPlanByChunks(plan);
+            return plan;
+        }
+
+        // Se a ilha for menor que o tamanho mínimo, ela permanece selvagem/deserta
+        if (islandChunkCount < _minIslandChunks)
+        {
+            IndexPlanByChunks(plan);
+            return plan;
+        }
+
+        // Se o roll de probabilidade for superior à chance configurada, a ilha permanece selvagem/deserta
+        if (!isSpawnIsland && (float)prng.NextDouble() > _settlementChance)
+        {
+            IndexPlanByChunks(plan);
+            return plan;
+        }
+
         var occupiedTiles = new HashSet<Vector2Int>();
 
-        Vector2Int? harborOrigin = TryPlaceHarbor(plan, prng, occupiedTiles);
+        Vector2Int? harborOrigin = TryPlaceHarbor(plan, prng, occupiedTiles, islandChunks);
 
         Vector2Int villageCenter = plan.IslandCenterTile;
+        if (islandChunks != null && islandChunks.Count > 0)
+        {
+            long sumX = 0, sumY = 0, landCount = 0;
+            foreach (var chunk in islandChunks)
+            {
+                int baseGX = chunk.x * _chunkSize.x;
+                int baseGY = chunk.y * _chunkSize.y;
+                for (int x = 2; x < _chunkSize.x; x += 4)
+                {
+                    for (int y = 2; y < _chunkSize.y; y += 4)
+                    {
+                        if (IsCellLand(baseGX + x, baseGY + y))
+                        {
+                            sumX += baseGX + x;
+                            sumY += baseGY + y;
+                            landCount++;
+                        }
+                    }
+                }
+            }
+
+            if (landCount > 0)
+            {
+                villageCenter = new Vector2Int((int)(sumX / landCount), (int)(sumY / landCount));
+            }
+        }
+
         var (avenueXs, streetYs) = TraceRoadsWithFullTransitions(plan, harborOrigin, villageCenter, islandChunks, prng);
 
         AllocateBlockSettlement(plan, avenueXs, streetYs, islandSeed, occupiedTiles);
@@ -225,7 +283,7 @@ public class IslandSettlementPlanner
 
     #region 1. Posicionamento do Porto
 
-    private Vector2Int? TryPlaceHarbor(IslandSettlementPlan plan, System.Random prng, HashSet<Vector2Int> occupiedTiles)
+    private Vector2Int? TryPlaceHarbor(IslandSettlementPlan plan, System.Random prng, HashSet<Vector2Int> occupiedTiles, List<Vector2Int> islandChunks = null)
     {
         StructureData harborBlueprint = _structuresList.FirstOrDefault(
             s => (object)s != null && (s.Category == StructureCategory.Harbor || (s.StructureName != null && s.StructureName.IndexOf("Porto", StringComparison.OrdinalIgnoreCase) >= 0)));
@@ -235,8 +293,16 @@ public class IslandSettlementPlanner
         Vector2Int centerTile = plan.IslandCenterTile;
         Vector2Int dims = harborBlueprint.StructureDimensions;
 
-        int searchRangeX = Mathf.Min(_chunkSize.x * 2, 30);
-        int searchDepthY = Mathf.Min(_chunkSize.y * 3, 50);
+        int searchRangeX = 30;
+        int searchDepthY = 50;
+
+        if (islandChunks != null && islandChunks.Count > 0)
+        {
+            int spanX = (islandChunks.Max(c => c.x) - islandChunks.Min(c => c.x) + 1) * _chunkSize.x;
+            int spanY = (islandChunks.Max(c => c.y) - islandChunks.Min(c => c.y) + 1) * _chunkSize.y;
+            searchRangeX = Mathf.Max(30, spanX / 2 + 5);
+            searchDepthY = Mathf.Max(50, spanY + 5);
+        }
 
         List<int> xOffsets = new List<int>();
         for (int i = 0; i <= searchRangeX; i++)
@@ -353,7 +419,7 @@ public class IslandSettlementPlanner
             anchorY = IsCellLand(anchorX, anchorY + 1) ? anchorY + 1 : anchorY - 1;
         }
 
-        if (!Is2x2Land(anchorX, anchorY))
+        if (!Is2x2Land(anchorX, anchorY) || !IsCellLand(anchorX, anchorY + 2) || !IsCellLand(anchorX, anchorY + 3))
         {
             Vector2Int? best = FindClosestValidEvenNode(anchorX, anchorY, minTileX, maxTileX, minTileY, maxTileY);
             if (best.HasValue)
@@ -502,6 +568,90 @@ public class IslandSettlementPlanner
             }
         }
 
+        // Expansão adaptativa orgânica: para cada nó ativo, estende as vias até o limite da terra firme
+        foreach (var (xi, yi) in activeNodes)
+        {
+            int nx = candidateXs[xi];
+            int ny = candidateYs[yi];
+
+            if (!activeHoriz.Contains((xi, yi)))
+            {
+                int cur = nx;
+                while (cur + 1 <= maxTileX && IsCellLand(cur + 1, ny) && IsCellLand(cur + 1, ny + 1))
+                {
+                    cur++;
+                    visualRoadCells.Add(new Vector2Int(cur, ny));
+                    visualRoadCells.Add(new Vector2Int(cur, ny + 1));
+                }
+            }
+
+            if (xi == 0 || !activeHoriz.Contains((xi - 1, yi)))
+            {
+                int cur = nx;
+                while (cur - 1 >= minTileX && IsCellLand(cur - 1, ny) && IsCellLand(cur - 1, ny + 1))
+                {
+                    cur--;
+                    visualRoadCells.Add(new Vector2Int(cur, ny));
+                    visualRoadCells.Add(new Vector2Int(cur, ny + 1));
+                }
+            }
+
+            if (!activeVert.Contains((xi, yi)))
+            {
+                int cur = ny;
+                while (cur + 1 <= maxTileY && IsCellLand(nx, cur + 1) && IsCellLand(nx + 1, cur + 1))
+                {
+                    cur++;
+                    visualRoadCells.Add(new Vector2Int(nx, cur));
+                    visualRoadCells.Add(new Vector2Int(nx + 1, cur));
+                }
+            }
+
+            if (yi == 0 || !activeVert.Contains((xi, yi - 1)))
+            {
+                int cur = ny;
+                while (cur - 1 >= minTileY && IsCellLand(nx, cur - 1) && IsCellLand(nx + 1, cur - 1))
+                {
+                    cur--;
+                    visualRoadCells.Add(new Vector2Int(nx, cur));
+                    visualRoadCells.Add(new Vector2Int(nx + 1, cur));
+                }
+            }
+        }
+
+        if (visualRoadCells.Count == 0 && IsCellLand(anchorX, anchorY))
+        {
+            int leftX = anchorX;
+            while (leftX - 1 >= minTileX && IsCellLand(leftX - 1, anchorY) && IsCellLand(leftX - 1, anchorY + 1))
+                leftX--;
+
+            int rightX = anchorX + 1;
+            while (rightX + 1 <= maxTileX && IsCellLand(rightX + 1, anchorY) && IsCellLand(rightX + 1, anchorY + 1))
+                rightX++;
+
+            for (int x = leftX; x <= rightX; x++)
+            {
+                visualRoadCells.Add(new Vector2Int(x, anchorY));
+                visualRoadCells.Add(new Vector2Int(x, anchorY + 1));
+            }
+
+            int botY = anchorY;
+            while (botY - 1 >= minTileY && IsCellLand(anchorX, botY - 1) && IsCellLand(anchorX + 1, botY - 1))
+                botY--;
+
+            int topY = anchorY + 1;
+            while (topY + 1 <= maxTileY && IsCellLand(anchorX, topY + 1) && IsCellLand(anchorX + 1, topY + 1))
+                topY++;
+
+            for (int y = botY; y <= topY; y++)
+            {
+                visualRoadCells.Add(new Vector2Int(anchorX, y));
+                visualRoadCells.Add(new Vector2Int(anchorX + 1, y));
+            }
+
+            plan.RoadNodes.Add(new Vector2Int(anchorX, anchorY));
+        }
+
         if (plan.Harbor != null)
         {
             Vector2Int doorTile = plan.Harbor.GlobalTileOrigin + plan.Harbor.Blueprint.DoorLocalCoordinate;
@@ -645,17 +795,20 @@ public class IslandSettlementPlanner
             }
         }
 
-        var streetList = activeHoriz.Select(h => candidateYs[h.yi]).Distinct().OrderBy(y => y).ToList();
-        if (streetList.Count == 0)
-        {
-            streetList = activeNodes.Select(n => candidateYs[n.yi]).Distinct().OrderBy(y => y).ToList();
-        }
-        var avenueList = activeVert.Select(v => candidateXs[v.xi]).Distinct().OrderBy(x => x).ToList();
-        if (avenueList.Count == 0)
-        {
-            avenueList = activeNodes.Select(n => candidateXs[n.xi]).Distinct().OrderBy(x => x).ToList();
-        }
+        var streetList = activeHoriz.Select(h => candidateYs[h.yi])
+            .Concat(activeNodes.Select(n => candidateYs[n.yi]))
+            .Concat(visualRoadCells.Select(c => c.y).Where(y => y % 2 == 0))
+            .Distinct()
+            .OrderBy(y => y)
+            .ToList();
 
+        var avenueList = activeVert.Select(v => candidateXs[v.xi])
+            .Concat(activeNodes.Select(n => candidateXs[n.xi]))
+            .Concat(visualRoadCells.Select(c => c.x).Where(x => x % 2 == 0))
+            .Distinct()
+            .OrderBy(x => x)
+            .ToList();
+ 
         return (avenueList, streetList);
     }
 
@@ -697,23 +850,37 @@ public class IslandSettlementPlanner
 
     private Vector2Int? FindClosestValidEvenNode(int startX, int startY, int minX, int maxX, int minY, int maxY)
     {
-        for (int r = 2; r <= 30; r += 2)
+        int maxR = Mathf.Max(30, Mathf.Max(maxX - minX, maxY - minY));
+        Vector2Int? fallback = null;
+
+        for (int r = 2; r <= maxR; r += 2)
         {
             for (int dx = -r; dx <= r; dx += 2)
             {
                 for (int dy = -r; dy <= r; dy += 2)
                 {
+                    if (Math.Abs(dx) != r && Math.Abs(dy) != r) continue;
                     int tx = startX + dx;
                     int ty = startY + dy;
                     if (tx >= minX && tx + 1 <= maxX && ty >= minY && ty + 1 <= maxY)
                     {
                         if (Is2x2Land(tx, ty))
-                            return new Vector2Int(tx, ty);
+                        {
+                            // Prefere um nó que tenha espaço de terra firme para as casas acima (ty + 2 e ty + 3)
+                            if (IsCellLand(tx, ty + 2) && IsCellLand(tx + 1, ty + 2) &&
+                                IsCellLand(tx, ty + 3) && IsCellLand(tx + 1, ty + 3))
+                            {
+                                return new Vector2Int(tx, ty);
+                            }
+
+                            if (!fallback.HasValue)
+                                fallback = new Vector2Int(tx, ty);
+                        }
                     }
                 }
             }
         }
-        return null;
+        return fallback;
     }
 
     private static int GetVertexSocket(int vx, int vy, HashSet<Vector2Int> visualCells)

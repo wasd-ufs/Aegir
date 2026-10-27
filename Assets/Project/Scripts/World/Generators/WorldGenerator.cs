@@ -7,7 +7,7 @@ using System.Collections.Generic;
 /// e transição do jogador — sem implementar nenhuma dessas responsabilidades diretamente.
 /// </summary>
 [RequireComponent(typeof(ChunkLifecycleManager), typeof(StructureGenerator), typeof(PlayerTransitionController))]
-public class WorldGenerator : MonoBehaviour
+public class WorldGenerator : MonoBehaviour, IWorldGenerator
 {
 
     [Header("World Settings")]
@@ -24,6 +24,8 @@ public class WorldGenerator : MonoBehaviour
     [SerializeField] private Transform _creaturesContainer;
 
     public Transform CreaturesContainer => _creaturesContainer;
+    public Transform PlayerTransform => _playerTransform != null ? _playerTransform : _lifecycleManager?.ActivePlayer;
+    public float CellSize => _cachedCellSize;
 
     private ChunkLifecycleManager _lifecycleManager;
     private StructureGenerator _structureGenerator;

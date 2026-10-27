@@ -263,7 +263,7 @@ CircleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_Radius: 0.085
+  m_Radius: 1
 --- !u!114 &2942105602657738232
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -276,13 +276,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 76e475493e98a7846aa070b6b581a27d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::NPCsMovement
-  moveSpeed: 1.5
-  timeUntilAggressive: 4
-  isAgressive: 0
-  maxChaseTime: 10
-  maxTimeUntilChangingDirection: 5
-  viewRadius: 1
-  isMaritime: 0
+  _moveSpeed: 1.5
+  _timeUntilAggressive: 4
+  _isAgressive: 0
+  _maxChaseTime: 10
+  _maxTimeUntilChangingDirection: 5
+  _viewRadius: 1
+  _isMaritime: 0
 --- !u!114 &3108463120876491116
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -325,22 +325,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 219e42c4f178e554fa4c90e3398ce337, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::NPCsData
-  NPC_Name: 
-  creatureType: 1
-  creatureClass: 0
-  armaEquipada: {fileID: 0}
-  armaduraEquipada: {fileID: 0}
-  maxAcoesPorTurno: 1
-  acoesRestantes: 0
-  chanceDeMortePermanente: 0.3
-  "vidaM\xE1xima": 0
-  "for\xE7a": 0
+  _npcName: 
+  _creatureType: 0
+  _creatureClass: 0
+  _equippedWeapon: {fileID: 0}
+  _equippedArmor: {fileID: 0}
+  _maxActionsPerTurn: 1
+  remainingActions: 0
+  _permanentDeathChance: 0.3
+  _maxHealth: 0
+  _strength: 0
   isAlive: 1
-  level: 1
-  custo: 0
-  currentXP: 0
-  xpToNextLevel: 100
-  xpReward: 20
+  _level: 1
+  _cost: 0
+  _currentXp: 0
+  _xpToNextLevel: 100
+  _xpReward: 20
   possibleDrops: []
   activeEffects: []
 --- !u!114 &5680160972608885946
@@ -355,8 +355,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ae0e43bf2f2bb814688600a72a854610, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RecruitableNPC
-  "raioDeIntera\xE7\xE3o": 0.5
-  barco: {fileID: 0}
+  _interactionRadius: 0.5
+  _boatTransform: {fileID: 0}
 --- !u!114 &3837377835553275154
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -369,11 +369,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1ba9a6c95ac0a8f4c803deeb1fca90b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::NPC_Randomizer
-  minVida: 25
-  maxVida: 75
-  "minFor\xE7a": 5
-  "maxFor\xE7a": 15
-  minCusto: 100
-  maxCusto: 500
-  randomizarClasse: 1
-  randomizarNome: 1
+  _minHealth: 0
+  _maxHealth: 0
+  _minStrength: 0
+  _maxStrength: 0
+  _minCost: 0
+  _maxCost: 0
+  _shouldRandomizeClass: 0
+  _shouldRandomizeName: 0

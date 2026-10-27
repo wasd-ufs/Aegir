@@ -85,36 +85,53 @@ public class IslandLocator
 
     public bool IsChunkMostlyLand(Vector2Int chunkCoord)
     {
-        float[] offsetsX = { 0.25f, 0.75f, 0.25f, 0.75f };
-        float[] offsetsY = { 0.25f, 0.25f, 0.75f, 0.75f };
-
+        const int steps = 4;
+        float step = 1f / steps;
+        float halfStep = step * 0.5f;
         int landCount = 0;
-        for (int i = 0; i < 4; i++)
+
+        for (int ix = 0; ix < steps; ix++)
         {
-            float globalX = chunkCoord.x * _chunkSize.x + _chunkSize.x * offsetsX[i];
-            float globalY = chunkCoord.y * _chunkSize.y + _chunkSize.y * offsetsY[i];
-            if (_sampler.Sample(globalX, globalY) > _landThreshold)
-                landCount++;
+            float fx = halfStep + ix * step;
+            float globalX = chunkCoord.x * _chunkSize.x + _chunkSize.x * fx;
+
+            for (int iy = 0; iy < steps; iy++)
+            {
+                float fy = halfStep + iy * step;
+                float globalY = chunkCoord.y * _chunkSize.y + _chunkSize.y * fy;
+
+                if (_sampler.Sample(globalX, globalY) > _landThreshold)
+                    landCount++;
+            }
         }
 
-        return landCount >= 4;
+        return landCount >= 12; // 75% da área
     }
 
     /// <summary>
     /// Verifica se o chunk contém qualquer porção de terra firme pertencente à ilha.
-    /// Amostra pontos distribuídos (4 cantos interiores e o centro) para identificar chunks costeiros e periféricos.
+    /// Amostra uma grade uniforme 4x4 (16 pontos) para garantir que praias, bordas e penínsulas
+    /// não sejam descartadas por falsos negativos.
     /// </summary>
     public bool IsChunkPartOfIsland(Vector2Int chunkCoord)
     {
-        float[] offsetsX = { 0.25f, 0.75f, 0.25f, 0.75f, 0.5f };
-        float[] offsetsY = { 0.25f, 0.25f, 0.75f, 0.75f, 0.5f };
+        const int steps = 4;
+        float step = 1f / steps;
+        float halfStep = step * 0.5f;
 
-        for (int i = 0; i < 5; i++)
+        for (int ix = 0; ix < steps; ix++)
         {
-            float globalX = chunkCoord.x * _chunkSize.x + _chunkSize.x * offsetsX[i];
-            float globalY = chunkCoord.y * _chunkSize.y + _chunkSize.y * offsetsY[i];
-            if (_sampler.Sample(globalX, globalY) >= _landThreshold)
-                return true;
+            float fx = halfStep + ix * step;
+            float globalX = chunkCoord.x * _chunkSize.x + _chunkSize.x * fx;
+
+            for (int iy = 0; iy < steps; iy++)
+            {
+                float fy = halfStep + iy * step;
+                float globalY = chunkCoord.y * _chunkSize.y + _chunkSize.y * fy;
+
+                if (_sampler.Sample(globalX, globalY) >= _landThreshold)
+                    return true;
+            }
         }
 
         return false;
