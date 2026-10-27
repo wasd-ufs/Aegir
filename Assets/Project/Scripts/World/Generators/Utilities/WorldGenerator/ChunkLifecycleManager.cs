@@ -11,26 +11,20 @@ using UnityEngine;
 /// </summary>
 public class ChunkLifecycleManager : MonoBehaviour
 {
-    // =========================================================================
     // Campos Serializados
-    // =========================================================================
 
     [SerializeField] private GameObject _chunkPrefab;
     [SerializeField] private Transform _chunksContainer;
     [SerializeField] private float _noiseScale = 0.05f;
 
-    // =========================================================================
     // Estado Interno
-    // =========================================================================
 
     private Dictionary<Vector2Int, MapGenerator> _activeChunksDictionary  = new Dictionary<Vector2Int, MapGenerator>();
     private Dictionary<Vector2Int, MapGenerator> _pendingChunksDictionary = new Dictionary<Vector2Int, MapGenerator>();
     private HashSet<Vector2Int> _failedChunksSet                          = new HashSet<Vector2Int>();
     private List<Vector2Int> _chunksWaitingForDecorationList              = new List<Vector2Int>();
 
-    // =========================================================================
     // Dependências
-    // =========================================================================
 
     private ChunkPersistence _persistence;
     private StructureGenerator _structureGenerator;
@@ -41,9 +35,7 @@ public class ChunkLifecycleManager : MonoBehaviour
     private Transform _playerTransform;
     public Transform ActivePlayer => _playerTransform;
 
-    // =========================================================================
     // Inicialização
-    // =========================================================================
 
     public void Setup(
         ChunkPersistence persistence,
@@ -63,9 +55,7 @@ public class ChunkLifecycleManager : MonoBehaviour
         _structureGenerator = structureGenerator;
     }
 
-    // =========================================================================
     // Consulta de Chunks
-    // =========================================================================
 
     /// <summary>Retorna o chunk ativo na posição informada, ou <c>null</c>.</summary>
     public MapGenerator GetActiveChunk(Vector2Int position)
@@ -87,9 +77,7 @@ public class ChunkLifecycleManager : MonoBehaviour
     public void RemoveChunkWaitingForDecoration(Vector2Int position)
         => _chunksWaitingForDecorationList.Remove(position);
 
-    // =========================================================================
     // Atualização do Jogador
-    // =========================================================================
 
     /// <summary>
     /// Atualiza o transform do jogador em todos os chunks ativos.
@@ -102,9 +90,7 @@ public class ChunkLifecycleManager : MonoBehaviour
             chunk.Setup(_playerTransform.gameObject, _worldGenerator);
     }
 
-    // =========================================================================
     // Criação e Carregamento
-    // =========================================================================
 
     /// <summary>
     /// Instancia e gera (ou carrega do disco) um chunk de forma síncrona.
@@ -207,9 +193,7 @@ public class ChunkLifecycleManager : MonoBehaviour
         }
     }
 
-    // =========================================================================
     // Remoção (Chamada pelo ChunkVisibilityTracker)
-    // =========================================================================
 
     /// <summary>
     /// Remove os chunks que não estão mais no conjunto visível.
@@ -241,9 +225,7 @@ public class ChunkLifecycleManager : MonoBehaviour
         }
     }
 
-    // =========================================================================
     // Helpers Privados
-    // =========================================================================
 
     /// <summary>
     /// Instancia o prefab do chunk, configura e registra no dicionário ativo.

@@ -8,15 +8,11 @@ using UnityEngine;
 /// </summary>
 public class ChunkPersistence
 {
-    // =========================================================================
     // Campos Privados
-    // =========================================================================
 
     private readonly string _savePath;
 
-    // =========================================================================
     // Inicialização
-    // =========================================================================
 
     public ChunkPersistence()
     {
@@ -24,9 +20,7 @@ public class ChunkPersistence
         if (!Directory.Exists(_savePath)) Directory.CreateDirectory(_savePath);
     }
 
-    // =========================================================================
     // API Pública
-    // =========================================================================
 
     /// <summary>
     /// Grava os bytes do chunk no arquivo <c>chunk_X_Y.dat</c>.
@@ -101,9 +95,7 @@ public class ChunkPersistence
         Debug.Log($"[ChunkPersistence] Cleared {deletedCount} save files from {_savePath}");
     }
 
-    // =========================================================================
     // Helpers Privados
-    // =========================================================================
 
     private string BuildFilePath(Vector2Int position)
         => _savePath + $"chunk_{position.x}_{position.y}.dat";
